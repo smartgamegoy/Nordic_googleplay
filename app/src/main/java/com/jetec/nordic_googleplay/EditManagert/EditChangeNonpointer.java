@@ -5,12 +5,12 @@ import android.text.Selection;
 import android.text.TextWatcher;
 import android.widget.EditText;
 
-public class EditChangeName implements TextWatcher {
+public class EditChangeNonpointer implements TextWatcher {
 
     private EditText editText;
     private boolean last = false;
 
-    public EditChangeName(EditText editText) {
+    public EditChangeNonpointer(EditText editText) {
         this.editText = editText;
     }
 

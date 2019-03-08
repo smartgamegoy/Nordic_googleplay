@@ -38,6 +38,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.jetec.nordic_googleplay.CheckDeviceName;
 import com.jetec.nordic_googleplay.GetString;
+import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.SendLog;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Thread.ConnectThread;
@@ -321,7 +322,11 @@ public class DeviceList extends AppCompatActivity {
                             for (; !Value.modelList; ) {
                                 sleep(100);
                             }
-                            new Thread(sendpassword).start();
+                            if(!NewModel.checkmodel) {
+                                new Thread(sendpassword).start();
+                            }else {
+
+                            }
                             /*sendLog = new SendLog();
                             sendLog.set_over(true);
                             sendLog.set_Service(mBluetoothLeService);
@@ -338,6 +343,7 @@ public class DeviceList extends AppCompatActivity {
                             Log.e(TAG, "Jsonlist = " + Jsonlist);*/
                             String[] arr = text.split("-");
                             if(arr.length == 3) {
+                                NewModel.checkmodel = false;
                                 String num = arr[1];
                                 Log.e(TAG, "num = " + num);
                                 String num2 = arr[2];
@@ -388,6 +394,10 @@ public class DeviceList extends AppCompatActivity {
                                 Value.Jsonlist = newList;
                                 Log.e(TAG, "newList = " + newList);
                                 Log.e(TAG, "Jsonlist = " + Value.Jsonlist);
+                            }
+                            else {
+                                NewModel.checkmodel = true;
+
                             }
                         } else if (text.startsWith("ENGE")) {
                             Value.E_word = text.substring(4, text.length());

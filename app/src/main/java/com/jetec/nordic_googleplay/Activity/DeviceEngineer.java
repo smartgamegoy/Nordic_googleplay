@@ -736,7 +736,7 @@ public class DeviceEngineer extends AppCompatActivity implements NavigationView.
                         "￡￥abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@>/<"));
                 editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);*/
                 editText.setInputType(InputType.TYPE_CLASS_TEXT);
-                editText.addTextChangedListener(new EditChangeName(this, editText, 15));
+                editText.addTextChangedListener(new EditChangeName(editText));
             }
             break;
             case "PV1": {

@@ -30,6 +30,7 @@ public class EH {
         Float Max;
         Log.e(TAG, "Text = " + t);
         if (name.matches("EH1")) {
+            Log.e(TAG,"");
             if (Value.name.get(0).toString().matches("T")) {
                 if (10 * t > 650 || 10 * t < -100) {
                     Toast.makeText(context, context.getString(R.string.wrong), Toast.LENGTH_SHORT).show();
