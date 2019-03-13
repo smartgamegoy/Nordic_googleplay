@@ -51,6 +51,7 @@ import com.jetec.nordic_googleplay.Value;
 import org.json.JSONArray;
 import org.json.JSONException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -225,8 +226,6 @@ public class DeviceList extends AppCompatActivity {
             setrecord.clear();  //清除byte[]列表
             checkHandler.removeCallbacksAndMessages(null);  //停止handler
             mHandler.removeCallbacksAndMessages(null);  //停止handler
-            Log.e(TAG, "position = " + position);
-
             ConnectThread connectThread = new ConnectThread(connectHandler);
             connectThread.run();
         }
@@ -264,32 +263,31 @@ public class DeviceList extends AppCompatActivity {
         s_connect = bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         if (s_connect) {
             progressDialog = writeDialog(DeviceList.this, getString(R.string.connecting));
-            if (!progressDialog.isShowing()) {
-                Log.e(TAG, "Dialog");
+            if (!progressDialog.isShowing()) {  //假如連線中之轉圈無顯示則顯示
                 progressDialog.show();
                 progressDialog.setCanceledOnTouchOutside(false);
             }
             registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
         } else {
-            Log.e(TAG, "服務綁訂狀態  = " + false);
+            Log.d(TAG, "服務綁訂狀態  = " + false);
         }
     }
 
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName componentName, IBinder service) {
-            Log.e(TAG, "連線中");
+            Log.d(TAG, "連線中");
             //https://github.com/googlesamples/android-BluetoothLeGatt/tree/master/Application/src/main/java/com/example/android/bluetoothlegatt
             mBluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
             if (!mBluetoothLeService.initialize()) {
-                Log.e(TAG, "初始化失敗");
+                Log.d(TAG, "初始化失敗");
             }
             mBluetoothLeService.connect(Value.BID);
-            Log.e(TAG, "進入連線");
+            Log.d(TAG, "進入連線");
         }
 
         public void onServiceDisconnected(ComponentName componentName) {
             mBluetoothLeService = null;
-            Log.e(TAG, "失去連線端");
+            Log.d(TAG, "失去連線端");
         }
     };
 
@@ -309,21 +307,18 @@ public class DeviceList extends AppCompatActivity {
             final String action = intent.getAction();
 
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
-                Log.e(TAG, "連線成功");
-            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+                Log.d(TAG, "連線成功");
+            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {    //失去連線
                 s_connect = false;
                 if (mBluetoothLeService != null)
                     unbindService(mServiceConnection);
-                Log.e(TAG, "連線中斷" + Value.connected);
-                //Toast.makeText(DeviceList.this, getString(R.string.connect_err), Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "連線中斷" + Value.connected);
                 if (progressDialog.isShowing()) {
                     progressDialog.dismiss();
-                    Log.e(TAG, "Dialog.dismiss");
                     device_list();
                 }
-                if (Value.connected) {
+                if (Value.connected) {  //取消裝置配對並嘗試重新連線
                     try {
-                        //new Thread(connectfail).start();
                         Service_close();
                         sleep(2000);
                         ConnectThread newThread = new ConnectThread(connectHandler);
@@ -331,14 +326,13 @@ public class DeviceList extends AppCompatActivity {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-
                 }
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 // Show all the supported services and characteristics on the user interface.
                 //displayGattServices(mBluetoothLeService.getSupportedGattServices());
-                Log.e(TAG, "連線狀態改變");
+                Log.d(TAG, "連線狀態改變");
                 mBluetoothLeService.enableTXNotification();
-                if (!Value.connected)
+                if (!Value.connected)   //測試裝置是否有回傳值
                     new Thread(sendcheck).start();
                 else {
                     DataSave.clear();
@@ -356,9 +350,9 @@ public class DeviceList extends AppCompatActivity {
                 runOnUiThread(() -> {
                     try {
                         txValue = intents.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
-                        if (!NewModel.checkmodel) {
+                        if (!NewModel.checkmodel) { //舊式型號
                             text = new String(txValue, "UTF-8");
-                            Log.e(TAG, "text = " + text);
+                            Log.d(TAG, "text = " + text);
                             if (text.startsWith("OK")) {
                                 DataSave.clear();
                                 return_RX.clear();
@@ -369,32 +363,17 @@ public class DeviceList extends AppCompatActivity {
                                     sleep(100);
                                 }
                                 new Thread(sendpassword).start();
-                            /*sendLog = new SendLog();
-                            sendLog.set_over(true);
-                            sendLog.set_Service(mBluetoothLeService);
-                            sendLog.start();*/
                             } else if (text.startsWith("BT")) {
                                 Jsonlist.clear();
                                 Value.model = true;
                                 Value.deviceModel = text;
-                            /*modelJSON = modelSQL.getJSON(text);
-                            for (int i = 0; i < modelJSON.length(); i++) {
-                                Jsonlist.add(modelJSON.get(i).toString());
-                            }
-                            Value.Jsonlist = Jsonlist;
-                            Log.e(TAG, "Jsonlist = " + Jsonlist);*/
                                 String[] arr = text.split("-");
-                                for (int i = 0; i < arr.length; i++) {
-                                    Log.d(TAG, "i = " + i);
-                                    Log.d(TAG, "arr[i] = " + arr[i]);
-                                    Log.d(TAG, "arr.length = " + arr.length);
-                                }
-                                if (arr.length == 3) {
+                                if (arr.length == 3) {  //若型號為舊型，則進入此
                                     NewModel.checkmodel = false;
                                     String num = arr[1];
-                                    Log.e(TAG, "num = " + num);
+                                    Log.d(TAG, "num = " + num);
                                     String num2 = arr[2];
-                                    Log.e(TAG, "num2 = " + num2);
+                                    Log.d(TAG, "num2 = " + num2);
                                     if (text.contains("Y")) { //timeclock
                                         Value.YMD = true;
                                     } else {
@@ -439,26 +418,26 @@ public class DeviceList extends AppCompatActivity {
                                     }
                                     newList.addAll(Arrays.asList(SP));
                                     Value.Jsonlist = newList;
-                                    Log.e(TAG, "newList = " + newList);
-                                    Log.e(TAG, "Jsonlist = " + Value.Jsonlist);
-                                } else {
+                                    Log.d(TAG, "newList = " + newList);
+                                    Log.d(TAG, "Jsonlist = " + Value.Jsonlist);
+                                } else {    //若為新式型號則將布林值開啟
                                     NewModel.checkmodel = true;
                                     sendValue.send("get");
                                 }
                             } else if (text.startsWith("ENGE")) {
-                                Value.E_word = text.substring(4, text.length());
-                                Log.e(TAG, "管理者密碼 = " + Value.E_word);
+                                Value.E_word = text.substring(4);
+                                Log.d(TAG, "管理者密碼 = " + Value.E_word);
                             } else if (text.startsWith("PASS")) {
-                                Value.P_word = text.substring(4, text.length());
-                                Log.e(TAG, "客戶密碼 = " + Value.P_word);
+                                Value.P_word = text.substring(4);
+                                Log.d(TAG, "客戶密碼 = " + Value.P_word);
                             } else if (text.startsWith("INIT")) {
-                                Value.I_word = text.substring(4, text.length());
-                                Log.e(TAG, "初始化密碼 = " + Value.I_word);
+                                Value.I_word = text.substring(4);
+                                Log.d(TAG, "初始化密碼 = " + Value.I_word);
                             } else if (text.startsWith("Delay")) {
-                                Log.e(TAG, "Delay時間 = " + text);
+                                Log.d(TAG, "Delay時間 = " + text);
                             } else if (text.startsWith("GUES")) {
-                                Value.G_word = text.substring(4, text.length());
-                                Log.e(TAG, "訪客密碼 = " + Value.G_word);
+                                Value.G_word = text.substring(4);
+                                Log.d(TAG, "訪客密碼 = " + Value.G_word);
                                 Value.connected = true;
                                 flag = 1;
                                 check();
@@ -474,7 +453,6 @@ public class DeviceList extends AppCompatActivity {
                                                 text.matches("LOGOFF") || text.startsWith("LOG") ||
                                                 text.startsWith("+") || text.startsWith("-") ||
                                                 text.startsWith("STOP"))) {
-                                            Log.e(TAG, "check = " + Value.Jsonlist.get(check));
                                             SelectItem.add(checkDeviceName.setName(text));
                                             return_RX.add(text);
                                             DataSave.add(text);
@@ -484,46 +462,37 @@ public class DeviceList extends AppCompatActivity {
                                                 text.matches("LOGOFF"))) {
                                             setString.set(text, check);
                                             check = check + 1;
-                                            Log.e(TAG, "check = " + Value.Jsonlist.get(check));
-                                        } else {
-                                            Log.e(TAG, "Loging = " + text);
+                                        } else {    //若裝置正在傳送Log則發送STOP停止
                                             if (text.startsWith("+") || text.startsWith("-"))
                                                 sendValue.send("STOP");
                                         }
                                     } else if (text.matches("OVER") && !text.startsWith("LOG")) {
-                                        //check = check + 1;
-                                        Log.e(TAG, "checkOVER = " + text);
-                                        Log.e(TAG, "check = " + check);
-                                        Log.e(TAG, "RX = " + return_RX);
-                                        Log.e(TAG, "SelectItem = " + SelectItem);
-                                        Log.e(TAG, "型號 = " + Value.deviceModel);
+                                        //OVER為裝置溝通結束
+                                        Log.d(TAG, "RX = " + return_RX);
+                                        Log.d(TAG, "SelectItem = " + SelectItem);
+                                        Log.d(TAG, "型號 = " + Value.deviceModel);
                                         if (Value.Jsonlist != null) {
                                             if (Value.Jsonlist.get(check).matches("OVER")) {
                                                 Value.SelectItem = SelectItem;
                                                 Value.DataSave = DataSave;
                                                 Value.return_RX = return_RX;
                                                 Value.get_noti = false;
-                                                //sendLog.interrupt();
-                                                Log.e(TAG, "Dialog.dismiss");
-                                                Log.e(TAG, "Dialog.dismiss2");
                                                 if (!Value.Engin)
                                                     device_function();
-                                                else
+                                                else    //工程模式
                                                     Engineer_function();
                                             }
                                         }
-                                    } else {
-                                        Log.e(TAG, "Loging = " + text);
                                     }
-                                } else {
+                                } else {    //若初始化設定接收到OVER即將開啟之布林值取消
                                     if (text.matches("OVER")) {
                                         Value.init = false;
                                     }
                                 }
                             }
-                        } else {
-                            text = new String(txValue, "UTF-8");
-                            Log.e(TAG, "text = " + text);
+                        } else {    //新式型號區域
+                            text = new String(txValue, StandardCharsets.UTF_8);
+                            Log.d(TAG, "text = " + text);
                             if(NewModel.checkbyte){
                                 getparse.parsebyte(txValue);
                             }
@@ -557,22 +526,19 @@ public class DeviceList extends AppCompatActivity {
                     Value.deviceModel = modelJSON.get(0).toString();
                 }
                 Value.modelList = true;
-                Log.e(TAG, "Jsonlist = " + Jsonlist);
-                Log.e(TAG, "modelList = " + Value.modelList);
+                Log.d(TAG, "Jsonlist = " + Jsonlist);
+                Log.d(TAG, "modelList = " + Value.modelList);
             } catch (InterruptedException | JSONException e) {
                 e.printStackTrace();
             }
         }
     };
 
-    //private Runnable connectfail = () -> unbindService(mServiceConnection);
-
     private Runnable sendcheck = () -> {
         try {
             sleep(500);
-            Log.e(TAG, "sends = " + Jetec);
+            Log.d(TAG, "sends = " + Jetec);
             if (s_connect) {
-                //Value.bluetoothLeService = mBluetoothLeService;
                 sendValue = new SendValue(mBluetoothLeService);
                 sendValue.send(Jetec);
             }
@@ -585,23 +551,23 @@ public class DeviceList extends AppCompatActivity {
         try {
             sleep(500);
             if (!NewModel.checkmodel) {
-                Log.e(TAG, "log delay時間");
+                Log.d(TAG, "log delay時間");
                 sendValue.send("Delay00015");
                 sleep(100);
-                Log.e(TAG, "管理者密碼確認");
+                Log.d(TAG, "管理者密碼確認");
                 sendValue.send("ENGEWD");  //ENGEWD = 管理者密碼確認
                 sleep(100);
-                Log.e(TAG, "客戶密碼確認");
+                Log.d(TAG, "客戶密碼確認");
                 sendValue.send("PASSWD");  //PASSWD = 客戶密碼確認(只有此密碼可以修改)
                 sleep(100);
-                Log.e(TAG, "初始化密碼確認");
+                Log.d(TAG, "初始化密碼確認");
                 sendValue.send("INITWD");
                 sleep(100);
-                Log.e(TAG, "訪客密碼確認");
+                Log.d(TAG, "訪客密碼確認");
                 sendValue.send("GUESWD");  //GUESWD = 訪客密碼確認
                 sleep(100);
-            } else {
-                Log.e(TAG, "New model");
+            } else {    //若為新型號，則不作用
+                Log.d(TAG, "切換至新型號function");
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -610,7 +576,6 @@ public class DeviceList extends AppCompatActivity {
 
     private void login() {
         if (progressDialog2 != null && progressDialog2.isShowing()) {
-            Log.e(TAG, "Dialog.dismiss2");
             progressDialog2.dismiss();
         }
         check = 0;
@@ -619,7 +584,6 @@ public class DeviceList extends AppCompatActivity {
         sendValue.send("get");
         progressDialog2 = writeDialog(DeviceList.this, getString(R.string.login));
         if (!progressDialog2.isShowing()) {
-            Log.e(TAG, "Dialog2");
             progressDialog2.show();
             progressDialog2.setCanceledOnTouchOutside(false);
         }
@@ -631,8 +595,6 @@ public class DeviceList extends AppCompatActivity {
         public void run() {
             try {
                 sleep(2000);
-                Log.e(TAG, "check = " + check);
-                Log.e(TAG, "getitem = " + Value.Jsonlist.get(check));
                 //noinspection StatementWithEmptyBody
                 if (Value.Jsonlist.get(check).matches("OVER")) {
                 } else {
@@ -687,36 +649,34 @@ public class DeviceList extends AppCompatActivity {
 
         getW_H();
 
-        Log.e(TAG, "Dialog.dismiss");
         progressDialog.dismiss();
         sleep(30);
 
         t1.setText(getString(R.string.device_name) + "： " + Deviceposition.get(0));
         e1.setKeyListener(DigitsKeyListener.getInstance(".,$%&^!()-_=+';:|}{[]*→←↘↖、，。?~～#€￠" +
                 "￡￥abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@>/<"));
-        //e1.setKeyListener(DigitsKeyListener.getInstance("abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789."));
         e1.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
         by.setOnClickListener(v -> {
             vibrator.vibrate(100);
             if (e1.getText().toString().length() == 6) {
-                Log.e(TAG, "e1 = " + e1.getText().toString().trim());
-                if (e1.getText().toString().trim().matches(Value.E_word)) {
+                Log.d(TAG, "輸入之密碼 = " + e1.getText().toString().trim());
+                if (e1.getText().toString().trim().matches(Value.E_word)) { //工程模式
                     Value.passwordFlag = 1;
-                    Log.e(TAG, "管理者 登入");
+                    Log.d(TAG, "管理者 登入");
                     Value.get_noti = true;
                     Engin();
-                } else if (e1.getText().toString().trim().matches(Value.P_word)) {
+                } else if (e1.getText().toString().trim().matches(Value.P_word)) {  //一般登入
                     Value.Engin = false;
                     Value.passwordFlag = 2;
-                    Log.e(TAG, "客戶 登入");
+                    Log.d(TAG, "客戶 登入");
                     Value.get_noti = true;
                     login();
-                } else if (e1.getText().toString().trim().matches(Value.I_word)) {
+                } else if (e1.getText().toString().trim().matches(Value.I_word)) {  //初始化
                     Toast.makeText(DeviceList.this, getString(R.string.initialization), Toast.LENGTH_SHORT).show();
                     initialDialog = writeDialog(this, getString(R.string.intervalset));
                     initialDialog.show();
                     initialDialog.setCanceledOnTouchOutside(false);
-                    Log.e(TAG, "Value.deviceModel = " + Value.deviceModel);
+                    Log.d(TAG, "初始化裝置 = " + Value.deviceModel);
                     initialization = new Initialization(Value.deviceModel, mBluetoothLeService);
                     try {
                         Value.Engin = false;
@@ -728,18 +688,18 @@ public class DeviceList extends AppCompatActivity {
                     } finally {
                         initialDialog.dismiss();
                         Value.passwordFlag = 3;
-                        Log.e(TAG, "初始化 原廠設定");
+                        Log.d(TAG, "開始進行原廠設定");
                         Toast.makeText(DeviceList.this, getString(R.string.complete), Toast.LENGTH_SHORT).show();
                         Value.get_noti = false;
                         Value.connected = false;
                         Service_close();
                         backtofirst();
                     }
-                } else if (e1.getText().toString().trim().matches(Value.G_word)) {
+                } else if (e1.getText().toString().trim().matches(Value.G_word)) {  //訪客登入
                     Value.passwordFlag = 4;
                     Value.Engin = false;
                     Value.get_noti = true;
-                    Log.e(TAG, "訪客 登入");
+                    Log.d(TAG, "訪客 登入");
                     login();
                 } else {
                     Toast.makeText(DeviceList.this, getString(R.string.passworderror), Toast.LENGTH_SHORT).show();
@@ -765,10 +725,9 @@ public class DeviceList extends AppCompatActivity {
         });
     }
 
-    private void Engin() {
+    private void Engin() {  //工程模式
         Value.Engin = true;
         if (progressDialog2 != null && progressDialog2.isShowing()) {
-            Log.e(TAG, "Dialog.dismiss2");
             progressDialog2.dismiss();
         }
         check = 0;
@@ -777,14 +736,13 @@ public class DeviceList extends AppCompatActivity {
         sendValue.send("get");
         progressDialog2 = writeDialog(DeviceList.this, getString(R.string.login));
         if (!progressDialog2.isShowing()) {
-            Log.e(TAG, "Dialog2");
             progressDialog2.show();
             progressDialog2.setCanceledOnTouchOutside(false);
         }
         new Thread(timedelay).start();
     }
 
-    private void Engineer_function() {
+    private void Engineer_function() {  //工程模式
 
         Intent intent = new Intent(DeviceList.this, Engineer.class);
 
@@ -794,7 +752,7 @@ public class DeviceList extends AppCompatActivity {
         finish();
     }
 
-    private void device_function() {
+    private void device_function() {    //一般模式
 
         Intent intent = new Intent(DeviceList.this, DeviceFunction.class);
 
@@ -804,9 +762,9 @@ public class DeviceList extends AppCompatActivity {
         finish();
     }
 
-    private void Service_close() {
+    private void Service_close() {  //結束配對
         if (mBluetoothLeService == null) {
-            Log.e(TAG, "service close!");
+            Log.d(TAG, "service close!");
             return;
         }
         mBluetoothLeService.disconnect();
@@ -854,7 +812,7 @@ public class DeviceList extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.e(TAG, "onDestroy()");
+        Log.d(TAG, "onDestroy()");
         if (mBluetoothLeService != null) {
             if (s_connect) {
                 unbindService(mServiceConnection);
@@ -872,18 +830,18 @@ public class DeviceList extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        Log.e(TAG, "onStop()");
+        Log.d(TAG, "onStop()");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e(TAG, "onResume()");
+        Log.d(TAG, "onResume()");
         if (s_connect) {
             registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
             if (mBluetoothLeService != null) {
                 final boolean result = mBluetoothLeService.connect(Value.BID);
-                Log.d(TAG, "Connect request result=" + result);
+                Log.d(TAG, "Connect request result = " + result);
             }
         }
         device_list();
@@ -892,7 +850,7 @@ public class DeviceList extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.e(TAG, "onPause()");
+        Log.d(TAG, "onPause()");
         //noinspection deprecation
         mBluetoothAdapter.stopLeScan(mLeScanCallback);
         checkHandler.removeCallbacksAndMessages(null);
@@ -904,25 +862,24 @@ public class DeviceList extends AppCompatActivity {
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(Configuration newConfig) {   //手機翻轉
         super.onConfigurationChanged(newConfig);
-        Log.e(TAG, "flag = " + flag);
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) { //橫向
             // land do nothing is ok
-            if (flag == 0) {
+            if (flag == 0) {    //flag = 0 → 裝置列表頁面
                 show_device();
-            } else if (flag == 1) {
+            } else if (flag == 1) { //flag = 1 → 輸入密碼頁面
                 try {
                     check();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-        } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {   //直向
             // port do nothing is ok
-            if (flag == 0) {
+            if (flag == 0) {    //flag = 0 → 裝置列表頁面
                 show_device();
-            } else if (flag == 1) {
+            } else if (flag == 1) { //flag = 1 → 輸入密碼頁面
                 try {
                     check();
                 } catch (InterruptedException e) {
