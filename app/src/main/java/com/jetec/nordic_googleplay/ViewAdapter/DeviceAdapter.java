@@ -1,35 +1,37 @@
 package com.jetec.nordic_googleplay.ViewAdapter;
 
 import android.annotation.SuppressLint;
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-
 import com.jetec.nordic_googleplay.R;
-
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DeviceAdapter extends BaseAdapter {
-    private List<BluetoothDevice> devices;
-    private LayoutInflater inflater;
 
-    public DeviceAdapter(Context context, List<BluetoothDevice> devices) {
+    private LayoutInflater inflater;
+    private Map<Integer, List<String>> newList;
+
+    @SuppressLint("UseSparseArrays")
+    public DeviceAdapter(Context context) {
         inflater = LayoutInflater.from(context);
-        this.devices = devices;
+        newList = new HashMap<>();
     }
 
     @Override
     public int getCount() {
-        return devices.size();
+        return newList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return devices.get(position);
+        return newList.get(position);
     }
 
     @Override
@@ -49,19 +51,25 @@ public class DeviceAdapter extends BaseAdapter {
             view = (ViewGroup) inflater.inflate(R.layout.search_device, null);
         }
 
-        BluetoothDevice device = devices.get(position);
+        List<String> device = new ArrayList<>();
+        device.clear();
+        device = newList.get(position);
+
         final TextView device_name = view.findViewById(R.id.search_device);
         final TextView device_address = view.findViewById(R.id.device_address);
         device_name.setVisibility(View.VISIBLE);
         device_address.setVisibility(View.VISIBLE);
-        if(device.getName() == null) {
-            device_name.setText("N/A");
-            device_address.setText(device.getAddress());
-        }
-        else {
-            device_name.setText(device.getName());
-            device_address.setText(device.getAddress());
+        assert device != null;
+        if (device.size() > 0) {
+            if(device.get(0) != null)
+                device_name.setText(device.get(0));
+            if(device.get(1) != null)
+                device_address.setText(device.get(1));
         }
         return view;
+    }
+
+    public void getList(Map<Integer, List<String>> newList) {
+        this.newList = newList;
     }
 }

@@ -35,35 +35,13 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_ACCESS_COARSE_LOCATION = 1;
     private static final int REQUEST_CODE_LOCATION_SETTINGS = 2;
     private static final int REQUEST_ENABLE_BT = 1;
-
     private Vibrator vibrator;
     private BluetoothAdapter mBluetoothAdapter;
     private ModelSQL modelSQL;
     private String TAG = "MainActivity";
-
     private static final String[] default_model = {"BT-2-THD", "PV1", "PV2", "EH1", "EL1", "EH2",
             "EL2", "CR1", "CR2", "ADR", "OVER"};
-    //↑第一台功能設定
-    /*private static final String[] BT_2_IIL = {"BT-2-IIL", "IH1", "IL1", "IH2", "IL2", "PV1", "PV2",
-            "EH1", "EL1", "EH2", "EL2", "CR1", "CR2", "SPK", "DP1", "DP2", "COUNT", "INTER", "DATE",
-            "TIME", "LOG", "OVER"};
-    private static final String[] BT_2_II = {"BT-2-II", "IH1", "IL1", "IH2", "IL2", "PV1", "PV2",
-            "EH1", "EL1", "EH2", "EL2", "CR1", "CR2", "SPK", "DP1", "DP2", "OVER"};
-    private static final String[] BT_2_TH = {"BT-2-TH", "PV1", "PV2", "EH1", "EL1", "EH2", "EL2",
-            "CR1", "CR2", "SPK", "OVER"};
-    private static final String[] BT_1_I = {"BT-1-I", "IH1", "IL1", "PV1", "EH1", "EL1", "CR1",
-            "SPK", "DP1", "OVER"};
-    private static final String[] BT_3_THC = {"BT-3-THC", "PV1", "PV2", "PV3", "EH1", "EL1", "EH2",
-            "EL2", "EH3", "EL3", "CR1", "CR2", "CR3", "SPK", "OVER"};
-    private static final String[] BT_3_THD = {"BT-3-THD", "PV1", "PV2", "PV3", "EH1", "EL1", "EH2",
-            "EL2", "EH3", "EL3", "CR1", "CR2", "CR3", "SPK", "OVER"};
-    private static final String[] BT_3_THE = {"BT-3-THE", "PV1", "PV2", "PV3", "EH1", "EL1", "EH2",
-            "EL2", "EH3", "EL3", "CR1", "CR2", "CR3", "SPK", "OVER"};
-    private static final String[] BT_2_TY = {"BT-2-TY", "PV1", "EH1", "EL1", "CR1", "SPK", "OVER"};
-    private static final String[] BT_3_THY = {"BT-3-THY", "PV1", "PV2", "EH1", "EL1", "EH2", "EL2",
-            "CR1", "CR2", "SPK", "OVER"};*/
-    private String[][] All_model = {default_model/*, BT_2_IIL, BT_2_II, BT_2_TH,
-            BT_1_I, BT_3_THC, BT_3_THD, BT_3_THE, BT_2_TY, BT_3_THY*/};
+    private String[][] All_model = {default_model};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
         return (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
     }
 
-    private boolean isLocationEnable(Context context) {
+    private boolean isLocationEnable(Context context) { //定位權限
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         boolean networkProvider = Objects.requireNonNull(locationManager).isProviderEnabled(LocationManager.NETWORK_PROVIDER);
         boolean gpsProvider = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -217,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private Runnable getmodel = () -> {
+    private Runnable getmodel = () -> { //取得預設機型資料
         for (String[] aAll_model : All_model) {
             AddJsonSQL(aAll_model);
         }
@@ -291,15 +269,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(Configuration newConfig) {   //手機翻轉
         super.onConfigurationChanged(newConfig);
 
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) { //橫向
             // land do nothing is ok
             setContentView(R.layout.logview);
             getW_H();
             meun_click();
-        } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {   //直向
             // port do nothing is ok
             setContentView(R.layout.logview);
             getW_H();

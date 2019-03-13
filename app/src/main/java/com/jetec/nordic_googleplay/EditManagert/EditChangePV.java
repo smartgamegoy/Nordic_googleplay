@@ -6,7 +6,6 @@ import android.text.Selection;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.EditText;
-
 import com.jetec.nordic_googleplay.Value;
 
 public class EditChangePV implements TextWatcher {

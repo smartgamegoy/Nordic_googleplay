@@ -36,9 +36,11 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.jetec.nordic_googleplay.CheckDeviceName;
 import com.jetec.nordic_googleplay.GetString;
 import com.jetec.nordic_googleplay.NewModel;
+import com.jetec.nordic_googleplay.ScanParse.*;
 import com.jetec.nordic_googleplay.SendLog;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Thread.ConnectThread;
@@ -48,12 +50,16 @@ import com.jetec.nordic_googleplay.SQL.ModelSQL;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.SendValue;
 import com.jetec.nordic_googleplay.Value;
+
 import org.json.JSONArray;
 import org.json.JSONException;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.Thread.sleep;
 
@@ -64,13 +70,15 @@ public class DeviceList extends AppCompatActivity {
     private CheckDeviceName checkDeviceName;
     private GetString setString;
     private Initialization initialization;
-    private Handler mHandler;
+    private Handler mHandler, checkHandler;
     private SendValue sendValue;
     private BluetoothDevice device;
     private DeviceAdapter deviceAdapter;
     private BluetoothLeService mBluetoothLeService;
     private BluetoothAdapter mBluetoothAdapter;
-    private List<BluetoothDevice> deviceList;
+    private List<BluetoothDevice> deviceList, checkdeviceList;
+    private Map<Integer, List<String>> record;
+    private List<String> Deviceposition;
     private Vibrator vibrator;
     private JSONArray modelJSON;
     private View no_device;
@@ -84,7 +92,10 @@ public class DeviceList extends AppCompatActivity {
     private int check, flag;
     private boolean s_connect = false;
     private byte[] txValue;
+    public List<byte[]> setrecord;
     private SendLog sendLog;
+    private DeviceParse deviceParse = new DeviceParse();
+    private Getparse getparse = new Getparse();
     private final String[] T = {"PV", "EH", "EL", "CR"};
     private final String[] H = {"PV", "EH", "EL", "CR"};
     private final String[] C = {"PV", "EH", "EL", "CR"};
@@ -99,8 +110,8 @@ public class DeviceList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         vibrator = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
-            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
         }
 
         BluetoothManager bluetoothManager = getManager(this);
@@ -131,7 +142,7 @@ public class DeviceList extends AppCompatActivity {
         show_device();
     }
 
-    private void getW_H(){
+    private void getW_H() {
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         Value.all_Width = dm.widthPixels;
@@ -146,6 +157,7 @@ public class DeviceList extends AppCompatActivity {
 
         getW_H();
         mHandler = new Handler();
+        checkHandler = new Handler();
         checkDeviceName = new CheckDeviceName();
         setString = new GetString();
 
@@ -154,28 +166,79 @@ public class DeviceList extends AppCompatActivity {
         device_list();
     }
 
+    @SuppressLint("UseSparseArrays")
     private void device_list() {
         return_RX = new ArrayList<>();
         SelectItem = new ArrayList<>();
         DataSave = new ArrayList<>();
         Jsonlist = new ArrayList<>();
         deviceList = new ArrayList<>();
-        deviceAdapter = new DeviceAdapter(this, deviceList);
+        Deviceposition = new ArrayList<>();
+        checkdeviceList = new ArrayList<>();
+        setrecord = new ArrayList<>();
+        record = new HashMap<>();
+
+        deviceAdapter = new DeviceAdapter(this);
 
         list_device = findViewById(R.id.list_data);
         list_device.setAdapter(deviceAdapter);
         list_device.setOnItemClickListener(mDeviceClickListener);
 
+        setList();
+        settimer();
         scanLeDevice();
+    }
+
+    private void setList() {
+        mHandler.postDelayed(() -> {
+            record = deviceParse.regetList(deviceList, setrecord);
+            //record = deviceParse.parseList(deviceList, setrecord);
+            Log.e(TAG, "record = " + record);
+            if (record != null) {
+                if (record.size() > 0) {
+                    no_device.setVisibility(View.GONE);
+                    list_device.setVisibility(View.VISIBLE);
+                    deviceAdapter.getList(record);
+                    deviceAdapter.notifyDataSetChanged();
+                    //set_View(record);
+                } else {
+                    no_device.setVisibility(View.VISIBLE);
+                    list_device.setVisibility(View.GONE);
+                }
+            }
+            mHandler.removeCallbacksAndMessages(null);
+            setList();
+        }, 1000);
+    }
+
+    private void settimer() {
+        checkHandler.postDelayed(() -> {
+            for (int i = 0; i < deviceList.size(); i++) {
+                if (checkdeviceList.indexOf(deviceList.get(i)) == -1) {
+                    //noinspection SuspiciousListRemoveInLoop
+                    deviceList.remove(i);
+                    //noinspection SuspiciousListRemoveInLoop
+                    setrecord.remove(i);
+                }
+            }
+            deviceAdapter.notifyDataSetChanged();
+            checkdeviceList.clear();
+            checkHandler.removeCallbacksAndMessages(null);
+            settimer();
+        }, 6000);
     }
 
     private AdapterView.OnItemClickListener mDeviceClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             vibrator.vibrate(100);
-            device = deviceList.get(position);
+            Deviceposition = record.get(position);
             //noinspection deprecation
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            deviceList.clear();
+            setrecord.clear();
+            checkHandler.removeCallbacksAndMessages(null);
+            mHandler.removeCallbacksAndMessages(null);
             Log.e(TAG, "position = " + position);
 
             ConnectThread connectThread = new ConnectThread(connectHandler);
@@ -184,44 +247,42 @@ public class DeviceList extends AppCompatActivity {
     };
 
     private void scanLeDevice() {
-        mHandler.postDelayed(() -> {
-            //noinspection deprecation
-            mBluetoothAdapter.stopLeScan(mLeScanCallback);
-        }, SCAN_PERIOD);
         //noinspection deprecation
         mBluetoothAdapter.startLeScan(mLeScanCallback);
     }
 
     private BluetoothAdapter.LeScanCallback mLeScanCallback =
-            (device, rssi, scanRecord) -> runOnUiThread(() -> runOnUiThread(() -> addDevice(device)));
+            (device, rssi, scanRecord) -> runOnUiThread(() -> runOnUiThread(() -> addDevice(device, scanRecord)));
 
-    private void addDevice(BluetoothDevice device) {
+    private void addDevice(BluetoothDevice device, byte[] scanRecord) {
         boolean deviceFound = false;
 
         for (BluetoothDevice listDev : deviceList) {
             if (listDev.getAddress().equals(device.getAddress())) {
                 deviceFound = true;
+                int i = deviceList.indexOf(device);
+                setrecord.set(i, scanRecord);
                 break;
             }
         }
         if (!deviceFound) {
             deviceList.add(device);
-            no_device.setVisibility(View.GONE);
-            list_device.setVisibility(View.VISIBLE);
-            deviceAdapter.notifyDataSetChanged();
+            setrecord.add(scanRecord);
+            //no_device.setVisibility(View.GONE);
+            //list_device.setVisibility(View.VISIBLE);
         }
     }
 
     private void Remote_connec() {
-        Value.BID = device.getAddress();
-        Value.BName = device.getName();
+        Value.BID = Deviceposition.get(1);
+        Value.BName = Deviceposition.get(0);
         Log.e(TAG, "BID = " + Value.BID);
         Intent gattServiceIntent = new Intent(DeviceList.this, BluetoothLeService.class);
         s_connect = bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         if (s_connect) {
-                progressDialog = writeDialog(DeviceList.this, getString(R.string.connecting));
-            if(!progressDialog.isShowing()) {
-                Log.e(TAG,"Dialog");
+            progressDialog = writeDialog(DeviceList.this, getString(R.string.connecting));
+            if (!progressDialog.isShowing()) {
+                Log.e(TAG, "Dialog");
                 progressDialog.show();
                 progressDialog.setCanceledOnTouchOutside(false);
             }
@@ -272,9 +333,10 @@ public class DeviceList extends AppCompatActivity {
                     unbindService(mServiceConnection);
                 Log.e(TAG, "連線中斷" + Value.connected);
                 //Toast.makeText(DeviceList.this, getString(R.string.connect_err), Toast.LENGTH_SHORT).show();
-                if(progressDialog.isShowing()) {
+                if (progressDialog.isShowing()) {
                     progressDialog.dismiss();
-                    Log.e(TAG,"Dialog.dismiss");
+                    Log.e(TAG, "Dialog.dismiss");
+                    device_list();
                 }
                 if (Value.connected) {
                     try {
@@ -311,169 +373,183 @@ public class DeviceList extends AppCompatActivity {
                 runOnUiThread(() -> {
                     try {
                         txValue = intents.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
-                        text = new String(txValue, "UTF-8");
-                        Log.e(TAG, "text = " + text);
-                        if (text.startsWith("OK")) {
-                            DataSave.clear();
-                            return_RX.clear();
-                            SelectItem.clear();
-                            Jsonlist.clear();
-                            new Thread(checkmodel).start();
-                            for (; !Value.modelList; ) {
-                                sleep(100);
-                            }
-                            if(!NewModel.checkmodel) {
+                        if (!NewModel.checkmodel) {
+                            text = new String(txValue, "UTF-8");
+                            Log.e(TAG, "text = " + text);
+                            if (text.startsWith("OK")) {
+                                DataSave.clear();
+                                return_RX.clear();
+                                SelectItem.clear();
+                                Jsonlist.clear();
+                                new Thread(checkmodel).start();
+                                for (; !Value.modelList; ) {
+                                    sleep(100);
+                                }
                                 new Thread(sendpassword).start();
-                            }else {
-
-                            }
                             /*sendLog = new SendLog();
                             sendLog.set_over(true);
                             sendLog.set_Service(mBluetoothLeService);
                             sendLog.start();*/
-                        } else if (text.startsWith("BT")) {
-                            Jsonlist.clear();
-                            Value.model = true;
-                            Value.deviceModel = text;
+                            } else if (text.startsWith("BT")) {
+                                Jsonlist.clear();
+                                Value.model = true;
+                                Value.deviceModel = text;
                             /*modelJSON = modelSQL.getJSON(text);
                             for (int i = 0; i < modelJSON.length(); i++) {
                                 Jsonlist.add(modelJSON.get(i).toString());
                             }
                             Value.Jsonlist = Jsonlist;
                             Log.e(TAG, "Jsonlist = " + Jsonlist);*/
-                            String[] arr = text.split("-");
-                            if(arr.length == 3) {
-                                NewModel.checkmodel = false;
-                                String num = arr[1];
-                                Log.e(TAG, "num = " + num);
-                                String num2 = arr[2];
-                                Log.e(TAG, "num2 = " + num2);
-                                if (text.contains("Y")) { //timeclock
-                                    Value.YMD = true;
-                                } else {
-                                    Value.YMD = false;
+                                String[] arr = text.split("-");
+                                for (int i = 0; i < arr.length; i++) {
+                                    Log.d(TAG, "i = " + i);
+                                    Log.d(TAG, "arr[i] = " + arr[i]);
+                                    Log.d(TAG, "arr.length = " + arr.length);
                                 }
-                                ArrayList<String> newList = new ArrayList<>();
-                                newList.clear();
-                                for (int i = 0; i < num2.length(); i++) {
-                                    if (num2.charAt(i) == 'T') {
-                                        for (int j = 0; j < T.length; j++) {
-                                            String str = T[j] + (i + 1);
-                                            newList.add(str);
-                                        }
-                                    } else if (num2.charAt(i) == 'H') {
-                                        for (int j = 0; j < H.length; j++) {
-                                            String str = H[j] + (i + 1);
-                                            newList.add(str);
-                                        }
-                                    } else if (num2.charAt(i) == 'C') {
-                                        for (int j = 0; j < C.length; j++) {
-                                            String str = C[j] + (i + 1);
-                                            newList.add(str);
-                                        }
-                                    } else if (num2.charAt(i) == 'D') {
-                                        for (int j = 0; j < D.length; j++) {
-                                            String str = D[j] + (i + 1);
-                                            newList.add(str);
-                                        }
-                                    } else if (num2.charAt(i) == 'E') {
-                                        for (int j = 0; j < E.length; j++) {
-                                            String str = E[j] + (i + 1);
-                                            newList.add(str);
-                                        }
-                                    } else if (num2.charAt(i) == 'I') {
-                                        for (int j = 0; j < I.length; j++) {
-                                            String str = I[j] + (i + 1);
-                                            newList.add(str);
-                                        }
-                                    } else if (num2.charAt(i) == 'L') {
-                                        newList.addAll(Arrays.asList(L));
+                                if (arr.length == 3) {
+                                    NewModel.checkmodel = false;
+                                    String num = arr[1];
+                                    Log.e(TAG, "num = " + num);
+                                    String num2 = arr[2];
+                                    Log.e(TAG, "num2 = " + num2);
+                                    if (text.contains("Y")) { //timeclock
+                                        Value.YMD = true;
+                                    } else {
+                                        Value.YMD = false;
                                     }
+                                    ArrayList<String> newList = new ArrayList<>();
+                                    newList.clear();
+                                    for (int i = 0; i < num2.length(); i++) {
+                                        if (num2.charAt(i) == 'T') {
+                                            for (int j = 0; j < T.length; j++) {
+                                                String str = T[j] + (i + 1);
+                                                newList.add(str);
+                                            }
+                                        } else if (num2.charAt(i) == 'H') {
+                                            for (int j = 0; j < H.length; j++) {
+                                                String str = H[j] + (i + 1);
+                                                newList.add(str);
+                                            }
+                                        } else if (num2.charAt(i) == 'C') {
+                                            for (int j = 0; j < C.length; j++) {
+                                                String str = C[j] + (i + 1);
+                                                newList.add(str);
+                                            }
+                                        } else if (num2.charAt(i) == 'D') {
+                                            for (int j = 0; j < D.length; j++) {
+                                                String str = D[j] + (i + 1);
+                                                newList.add(str);
+                                            }
+                                        } else if (num2.charAt(i) == 'E') {
+                                            for (int j = 0; j < E.length; j++) {
+                                                String str = E[j] + (i + 1);
+                                                newList.add(str);
+                                            }
+                                        } else if (num2.charAt(i) == 'I') {
+                                            for (int j = 0; j < I.length; j++) {
+                                                String str = I[j] + (i + 1);
+                                                newList.add(str);
+                                            }
+                                        } else if (num2.charAt(i) == 'L') {
+                                            newList.addAll(Arrays.asList(L));
+                                        }
+                                    }
+                                    newList.addAll(Arrays.asList(SP));
+                                    Value.Jsonlist = newList;
+                                    Log.e(TAG, "newList = " + newList);
+                                    Log.e(TAG, "Jsonlist = " + Value.Jsonlist);
+                                } else {
+                                    NewModel.checkmodel = true;
+                                    sendValue.send("get");
                                 }
-                                newList.addAll(Arrays.asList(SP));
-                                Value.Jsonlist = newList;
-                                Log.e(TAG, "newList = " + newList);
-                                Log.e(TAG, "Jsonlist = " + Value.Jsonlist);
-                            }
-                            else {
-                                NewModel.checkmodel = true;
-
-                            }
-                        } else if (text.startsWith("ENGE")) {
-                            Value.E_word = text.substring(4, text.length());
-                            Log.e(TAG, "管理者密碼 = " + Value.E_word);
-                        } else if (text.startsWith("PASS")) {
-                            Value.P_word = text.substring(4, text.length());
-                            Log.e(TAG, "客戶密碼 = " + Value.P_word);
-                        } else if (text.startsWith("INIT")) {
-                            Value.I_word = text.substring(4, text.length());
-                            Log.e(TAG, "初始化密碼 = " + Value.I_word);
-                        } else if (text.startsWith("Delay")) {
-                            Log.e(TAG, "Delay時間 = " + text);
-                        } else if (text.startsWith("GUES")) {
-                            Value.G_word = text.substring(4, text.length());
-                            Log.e(TAG, "訪客密碼 = " + Value.G_word);
-                            Value.connected = true;
-                            flag = 1;
-                            check();
-                        }else if(text.startsWith("+") || text.startsWith("-")){
-                            sleep(300);
-                            sendValue = new SendValue(mBluetoothLeService);
-                            sendValue.send("STOP");
-                        }
-                        else {
-                            if(!Value.init) {
-                                if (!text.startsWith("OVER")) {
-                                    if (!(text.startsWith("COUNT") || text.startsWith("DATE") ||
-                                            text.startsWith("TIME") || text.matches("LOGON") ||
-                                            text.matches("LOGOFF") || text.startsWith("LOG") ||
-                                            text.startsWith("+") || text.startsWith("-") ||
-                                            text.startsWith("STOP"))) {
-                                        Log.e(TAG, "check = " + Value.Jsonlist.get(check));
-                                        SelectItem.add(checkDeviceName.setName(text));
-                                        return_RX.add(text);
-                                        DataSave.add(text);
-                                        check = check + 1;
-                                    } else if ((text.startsWith("COUNT") || text.startsWith("DATE") ||
-                                            text.startsWith("TIME") || text.matches("LOGON") ||
-                                            text.matches("LOGOFF"))) {
-                                        setString.set(text, check);
-                                        check = check + 1;
-                                        Log.e(TAG, "check = " + Value.Jsonlist.get(check));
+                            } else if (text.startsWith("ENGE")) {
+                                Value.E_word = text.substring(4, text.length());
+                                Log.e(TAG, "管理者密碼 = " + Value.E_word);
+                            } else if (text.startsWith("PASS")) {
+                                Value.P_word = text.substring(4, text.length());
+                                Log.e(TAG, "客戶密碼 = " + Value.P_word);
+                            } else if (text.startsWith("INIT")) {
+                                Value.I_word = text.substring(4, text.length());
+                                Log.e(TAG, "初始化密碼 = " + Value.I_word);
+                            } else if (text.startsWith("Delay")) {
+                                Log.e(TAG, "Delay時間 = " + text);
+                            } else if (text.startsWith("GUES")) {
+                                Value.G_word = text.substring(4, text.length());
+                                Log.e(TAG, "訪客密碼 = " + Value.G_word);
+                                Value.connected = true;
+                                flag = 1;
+                                check();
+                            } else if (text.startsWith("+") || text.startsWith("-")) {
+                                sleep(300);
+                                sendValue = new SendValue(mBluetoothLeService);
+                                sendValue.send("STOP");
+                            } else {
+                                if (!Value.init) {
+                                    if (!text.startsWith("OVER")) {
+                                        if (!(text.startsWith("COUNT") || text.startsWith("DATE") ||
+                                                text.startsWith("TIME") || text.matches("LOGON") ||
+                                                text.matches("LOGOFF") || text.startsWith("LOG") ||
+                                                text.startsWith("+") || text.startsWith("-") ||
+                                                text.startsWith("STOP"))) {
+                                            Log.e(TAG, "check = " + Value.Jsonlist.get(check));
+                                            SelectItem.add(checkDeviceName.setName(text));
+                                            return_RX.add(text);
+                                            DataSave.add(text);
+                                            check = check + 1;
+                                        } else if ((text.startsWith("COUNT") || text.startsWith("DATE") ||
+                                                text.startsWith("TIME") || text.matches("LOGON") ||
+                                                text.matches("LOGOFF"))) {
+                                            setString.set(text, check);
+                                            check = check + 1;
+                                            Log.e(TAG, "check = " + Value.Jsonlist.get(check));
+                                        } else {
+                                            Log.e(TAG, "Loging = " + text);
+                                            if (text.startsWith("+") || text.startsWith("-"))
+                                                sendValue.send("STOP");
+                                        }
+                                    } else if (text.matches("OVER") && !text.startsWith("LOG")) {
+                                        //check = check + 1;
+                                        Log.e(TAG, "checkOVER = " + text);
+                                        Log.e(TAG, "check = " + check);
+                                        Log.e(TAG, "RX = " + return_RX);
+                                        Log.e(TAG, "SelectItem = " + SelectItem);
+                                        Log.e(TAG, "型號 = " + Value.deviceModel);
+                                        if (Value.Jsonlist != null) {
+                                            if (Value.Jsonlist.get(check).matches("OVER")) {
+                                                Value.SelectItem = SelectItem;
+                                                Value.DataSave = DataSave;
+                                                Value.return_RX = return_RX;
+                                                Value.get_noti = false;
+                                                //sendLog.interrupt();
+                                                Log.e(TAG, "Dialog.dismiss");
+                                                Log.e(TAG, "Dialog.dismiss2");
+                                                if (!Value.Engin)
+                                                    device_function();
+                                                else
+                                                    Engineer_function();
+                                            }
+                                        }
                                     } else {
                                         Log.e(TAG, "Loging = " + text);
-                                        if (text.startsWith("+") || text.startsWith("-"))
-                                            sendValue.send("STOP");
-                                    }
-                                } else if (text.matches("OVER") && !text.startsWith("LOG")) {
-                                    //check = check + 1;
-                                    Log.e(TAG, "checkOVER = " + text);
-                                    Log.e(TAG, "check = " + check);
-                                    Log.e(TAG, "RX = " + return_RX);
-                                    Log.e(TAG, "SelectItem = " + SelectItem);
-                                    Log.e(TAG, "型號 = " + Value.deviceModel);
-                                    if (Value.Jsonlist != null) {
-                                        if (Value.Jsonlist.get(check).matches("OVER")) {
-                                            Value.SelectItem = SelectItem;
-                                            Value.DataSave = DataSave;
-                                            Value.return_RX = return_RX;
-                                            Value.get_noti = false;
-                                            //sendLog.interrupt();
-                                            Log.e(TAG, "Dialog.dismiss");
-                                            Log.e(TAG, "Dialog.dismiss2");
-                                            if (!Value.Engin)
-                                                device_function();
-                                            else
-                                                Engineer_function();
-                                        }
                                     }
                                 } else {
-                                    Log.e(TAG, "Loging = " + text);
+                                    if (text.matches("OVER")) {
+                                        Value.init = false;
+                                    }
                                 }
                             }
-                            else {
-                                if(text.matches("OVER")){
-                                    Value.init = false;
+                        } else {
+                            text = new String(txValue, "UTF-8");
+                            Log.e(TAG, "text = " + text);
+                            if(NewModel.checkbyte){
+                                getparse.parsebyte(txValue);
+                            }
+                            if(text.matches("BYTE")){
+                                NewModel.checkbyte = true;
+                            }
+                            else if(text.matches("OVER")){
+                                if(NewModel.checkbyte){
+                                    NewModel.checkbyte = false;
                                 }
                             }
                         }
@@ -524,30 +600,34 @@ public class DeviceList extends AppCompatActivity {
 
     private Runnable sendpassword = () -> {
         try {
-            sleep(100);
-            Log.e(TAG, "log delay時間");
-            sendValue.send("Delay00015");
-            sleep(100);
-            Log.e(TAG, "管理者密碼確認");
-            sendValue.send("ENGEWD");  //ENGEWD = 管理者密碼確認
-            sleep(100);
-            Log.e(TAG, "客戶密碼確認");
-            sendValue.send("PASSWD");  //PASSWD = 客戶密碼確認(只有此密碼可以修改)
-            sleep(100);
-            Log.e(TAG, "初始化密碼確認");
-            sendValue.send("INITWD");
-            sleep(100);
-            Log.e(TAG, "訪客密碼確認");
-            sendValue.send("GUESWD");  //GUESWD = 訪客密碼確認
-            sleep(100);
+            sleep(500);
+            if (!NewModel.checkmodel) {
+                Log.e(TAG, "log delay時間");
+                sendValue.send("Delay00015");
+                sleep(100);
+                Log.e(TAG, "管理者密碼確認");
+                sendValue.send("ENGEWD");  //ENGEWD = 管理者密碼確認
+                sleep(100);
+                Log.e(TAG, "客戶密碼確認");
+                sendValue.send("PASSWD");  //PASSWD = 客戶密碼確認(只有此密碼可以修改)
+                sleep(100);
+                Log.e(TAG, "初始化密碼確認");
+                sendValue.send("INITWD");
+                sleep(100);
+                Log.e(TAG, "訪客密碼確認");
+                sendValue.send("GUESWD");  //GUESWD = 訪客密碼確認
+                sleep(100);
+            } else {
+                Log.e(TAG, "New model");
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     };
 
     private void login() {
-        if(progressDialog2 != null && progressDialog2.isShowing()){
-            Log.e(TAG,"Dialog.dismiss2");
+        if (progressDialog2 != null && progressDialog2.isShowing()) {
+            Log.e(TAG, "Dialog.dismiss2");
             progressDialog2.dismiss();
         }
         check = 0;
@@ -555,8 +635,8 @@ public class DeviceList extends AppCompatActivity {
         DataSave.add(device.getName());
         sendValue.send("get");
         progressDialog2 = writeDialog(DeviceList.this, getString(R.string.login));
-        if(!progressDialog2.isShowing()) {
-            Log.e(TAG,"Dialog2");
+        if (!progressDialog2.isShowing()) {
+            Log.e(TAG, "Dialog2");
             progressDialog2.show();
             progressDialog2.setCanceledOnTouchOutside(false);
         }
@@ -601,11 +681,10 @@ public class DeviceList extends AppCompatActivity {
             tv.setTextColor(context.getResources().getColor(R.color.colorDialog));
         }
 
-        if(Value.all_Height > Value.all_Width) {
+        if (Value.all_Height > Value.all_Width) {
             progressDialog.setContentView(layout, new LinearLayout.LayoutParams((int) (Value.all_Width / 2),
                     (int) (Value.all_Height / 5)));
-        }
-        else {
+        } else {
             progressDialog.setContentView(layout, new LinearLayout.LayoutParams((int) (Value.all_Width / 4),
                     (int) (Value.all_Height / 3)));
         }
@@ -625,7 +704,7 @@ public class DeviceList extends AppCompatActivity {
 
         getW_H();
 
-        Log.e(TAG,"Dialog.dismiss");
+        Log.e(TAG, "Dialog.dismiss");
         progressDialog.dismiss();
         sleep(30);
 
@@ -637,7 +716,7 @@ public class DeviceList extends AppCompatActivity {
         by.setOnClickListener(v -> {
             vibrator.vibrate(100);
             if (e1.getText().toString().length() == 6) {
-                Log.e(TAG,"e1 = " + e1.getText().toString().trim());
+                Log.e(TAG, "e1 = " + e1.getText().toString().trim());
                 if (e1.getText().toString().trim().matches(Value.E_word)) {
                     Value.passwordFlag = 1;
                     Log.e(TAG, "管理者 登入");
@@ -673,9 +752,7 @@ public class DeviceList extends AppCompatActivity {
                         Service_close();
                         backtofirst();
                     }
-                }
-
-                else if (e1.getText().toString().trim().matches(Value.G_word)) {
+                } else if (e1.getText().toString().trim().matches(Value.G_word)) {
                     Value.passwordFlag = 4;
                     Value.Engin = false;
                     Value.get_noti = true;
@@ -705,10 +782,10 @@ public class DeviceList extends AppCompatActivity {
         });
     }
 
-    private void Engin(){
+    private void Engin() {
         Value.Engin = true;
-        if(progressDialog2 != null && progressDialog2.isShowing()){
-            Log.e(TAG,"Dialog.dismiss2");
+        if (progressDialog2 != null && progressDialog2.isShowing()) {
+            Log.e(TAG, "Dialog.dismiss2");
             progressDialog2.dismiss();
         }
         check = 0;
@@ -716,8 +793,8 @@ public class DeviceList extends AppCompatActivity {
         DataSave.add(device.getName());
         sendValue.send("get");
         progressDialog2 = writeDialog(DeviceList.this, getString(R.string.login));
-        if(!progressDialog2.isShowing()) {
-            Log.e(TAG,"Dialog2");
+        if (!progressDialog2.isShowing()) {
+            Log.e(TAG, "Dialog2");
             progressDialog2.show();
             progressDialog2.setCanceledOnTouchOutside(false);
         }
@@ -769,6 +846,7 @@ public class DeviceList extends AppCompatActivity {
             case KeyEvent.KEYCODE_BACK:
                 if (flag == 0) {
                     vibrator.vibrate(100);
+                    NewModel.checkmodel = false;
                     backtofirst();
                 } else if (flag == 1) {
                     vibrator.vibrate(100);
@@ -777,6 +855,7 @@ public class DeviceList extends AppCompatActivity {
                         mBluetoothAdapter.stopLeScan(mLeScanCallback);
                     Value.get_noti = false;
                     Value.connected = false;
+                    NewModel.checkmodel = false;
                     Service_close();
                     show_device();
                 }
@@ -801,16 +880,22 @@ public class DeviceList extends AppCompatActivity {
             mBluetoothLeService.stopSelf();
             mBluetoothLeService = null;
         }
+        deviceList.clear();
+        setrecord.clear();
+        checkHandler.removeCallbacksAndMessages(null);
+        mHandler.removeCallbacksAndMessages(null);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        Log.e(TAG, "onStop()");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.e(TAG, "onResume()");
         if (s_connect) {
             registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
             if (mBluetoothLeService != null) {
@@ -818,11 +903,19 @@ public class DeviceList extends AppCompatActivity {
                 Log.d(TAG, "Connect request result=" + result);
             }
         }
+        device_list();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        Log.e(TAG, "onPause()");
+        //noinspection deprecation
+        mBluetoothAdapter.stopLeScan(mLeScanCallback);
+        checkHandler.removeCallbacksAndMessages(null);
+        mHandler.removeCallbacksAndMessages(null);
+        deviceList.clear();
+        setrecord.clear();
         if (s_connect)
             unregisterReceiver(mGattUpdateReceiver);
     }
