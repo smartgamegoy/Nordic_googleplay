@@ -44,13 +44,11 @@ import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Thread.ConnectThread;
 import com.jetec.nordic_googleplay.ViewAdapter.DeviceAdapter;
 import com.jetec.nordic_googleplay.Initialization;
-import com.jetec.nordic_googleplay.SQL.ModelSQL;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.SendValue;
 import com.jetec.nordic_googleplay.Value;
 import org.json.JSONArray;
 import org.json.JSONException;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -351,7 +349,7 @@ public class DeviceList extends AppCompatActivity {
                     try {
                         txValue = intents.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
                         if (!NewModel.checkmodel) { //舊式型號
-                            text = new String(txValue, "UTF-8");
+                            text = new String(txValue, StandardCharsets.UTF_8);
                             Log.d(TAG, "text = " + text);
                             if (text.startsWith("OK")) {
                                 DataSave.clear();
@@ -374,42 +372,39 @@ public class DeviceList extends AppCompatActivity {
                                     Log.d(TAG, "num = " + num);
                                     String num2 = arr[2];
                                     Log.d(TAG, "num2 = " + num2);
-                                    if (text.contains("Y")) { //timeclock
-                                        Value.YMD = true;
-                                    } else {
-                                        Value.YMD = false;
-                                    }
+                                    //timeclock
+                                    Value.YMD = text.contains("Y");
                                     ArrayList<String> newList = new ArrayList<>();
                                     newList.clear();
                                     for (int i = 0; i < num2.length(); i++) {
                                         if (num2.charAt(i) == 'T') {
-                                            for (int j = 0; j < T.length; j++) {
-                                                String str = T[j] + (i + 1);
+                                            for (String aT : T) {
+                                                String str = aT + (i + 1);
                                                 newList.add(str);
                                             }
                                         } else if (num2.charAt(i) == 'H') {
-                                            for (int j = 0; j < H.length; j++) {
-                                                String str = H[j] + (i + 1);
+                                            for (String aH : H) {
+                                                String str = aH + (i + 1);
                                                 newList.add(str);
                                             }
                                         } else if (num2.charAt(i) == 'C') {
-                                            for (int j = 0; j < C.length; j++) {
-                                                String str = C[j] + (i + 1);
+                                            for (String aC : C) {
+                                                String str = aC + (i + 1);
                                                 newList.add(str);
                                             }
                                         } else if (num2.charAt(i) == 'D') {
-                                            for (int j = 0; j < D.length; j++) {
-                                                String str = D[j] + (i + 1);
+                                            for (String aD : D) {
+                                                String str = aD + (i + 1);
                                                 newList.add(str);
                                             }
                                         } else if (num2.charAt(i) == 'E') {
-                                            for (int j = 0; j < E.length; j++) {
-                                                String str = E[j] + (i + 1);
+                                            for (String aE : E) {
+                                                String str = aE + (i + 1);
                                                 newList.add(str);
                                             }
                                         } else if (num2.charAt(i) == 'I') {
-                                            for (int j = 0; j < I.length; j++) {
-                                                String str = I[j] + (i + 1);
+                                            for (String aI : I) {
+                                                String str = aI + (i + 1);
                                                 newList.add(str);
                                             }
                                         } else if (num2.charAt(i) == 'L') {
@@ -505,7 +500,7 @@ public class DeviceList extends AppCompatActivity {
                                 }
                             }
                         }
-                    } catch (UnsupportedEncodingException | InterruptedException e/* | JSONException e*/) {
+                    } catch (InterruptedException e/* | JSONException e*/) {
                         e.printStackTrace();
                     }
                 });
