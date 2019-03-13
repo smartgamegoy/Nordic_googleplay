@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         getW_H();
         String phone = android.os.Build.BRAND;    //手機廠商
         Value.phonename = phone;
-        Log.e(TAG,"phone = " + phone);
+        Log.d(TAG,"phone = " + phone);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
@@ -88,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         Value.all_Width = dm.widthPixels;
         Value.all_Height = dm.heightPixels;
-        Log.e(TAG, "height : " + Value.all_Height + "dp" + " " + " width : " + Value.all_Width + "dp");
     }
 
     private void meun_click() {
@@ -250,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.e(TAG,"onDestroy()");
+        Log.d(TAG,"onDestroy()");
     }
 
     @Override

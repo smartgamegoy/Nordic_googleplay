@@ -36,12 +36,10 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.jetec.nordic_googleplay.CheckDeviceName;
 import com.jetec.nordic_googleplay.GetString;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.ScanParse.*;
-import com.jetec.nordic_googleplay.SendLog;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Thread.ConnectThread;
 import com.jetec.nordic_googleplay.ViewAdapter.DeviceAdapter;
@@ -50,29 +48,23 @@ import com.jetec.nordic_googleplay.SQL.ModelSQL;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.SendValue;
 import com.jetec.nordic_googleplay.Value;
-
 import org.json.JSONArray;
 import org.json.JSONException;
-
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import static java.lang.Thread.sleep;
 
 public class DeviceList extends AppCompatActivity {
 
-    private static final long SCAN_PERIOD = 8000; //8 seconds
-    private ModelSQL modelSQL;
     private CheckDeviceName checkDeviceName;
     private GetString setString;
     private Initialization initialization;
     private Handler mHandler, checkHandler;
     private SendValue sendValue;
-    private BluetoothDevice device;
     private DeviceAdapter deviceAdapter;
     private BluetoothLeService mBluetoothLeService;
     private BluetoothAdapter mBluetoothAdapter;
@@ -93,7 +85,6 @@ public class DeviceList extends AppCompatActivity {
     private boolean s_connect = false;
     private byte[] txValue;
     public List<byte[]> setrecord;
-    private SendLog sendLog;
     private DeviceParse deviceParse = new DeviceParse();
     private Getparse getparse = new Getparse();
     private final String[] T = {"PV", "EH", "EL", "CR"};
@@ -116,7 +107,6 @@ public class DeviceList extends AppCompatActivity {
 
         BluetoothManager bluetoothManager = getManager(this);
         mBluetoothAdapter = bluetoothManager.getAdapter();
-        modelSQL = new ModelSQL(this);
         try {
             get_intent();
         } catch (JSONException e) {
@@ -147,7 +137,6 @@ public class DeviceList extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         Value.all_Width = dm.widthPixels;
         Value.all_Height = dm.heightPixels;
-        Log.e(TAG, "height : " + Value.all_Height + "dp" + " " + " width : " + Value.all_Width + "dp");
     }
 
     private void show_device() {
@@ -162,7 +151,7 @@ public class DeviceList extends AppCompatActivity {
         setString = new GetString();
 
         no_device = findViewById(R.id.no_data);
-        no_device.setVisibility(View.VISIBLE);   //VISIBLE / GONE
+        no_device.setVisibility(View.VISIBLE);   //VISIBLE // GONE
         device_list();
     }
 
@@ -189,18 +178,15 @@ public class DeviceList extends AppCompatActivity {
         scanLeDevice();
     }
 
-    private void setList() {
+    private void setList() {    //每0.5秒更新顯示之裝置列表
         mHandler.postDelayed(() -> {
             record = deviceParse.regetList(deviceList, setrecord);
-            //record = deviceParse.parseList(deviceList, setrecord);
-            Log.e(TAG, "record = " + record);
             if (record != null) {
                 if (record.size() > 0) {
                     no_device.setVisibility(View.GONE);
                     list_device.setVisibility(View.VISIBLE);
                     deviceAdapter.getList(record);
                     deviceAdapter.notifyDataSetChanged();
-                    //set_View(record);
                 } else {
                     no_device.setVisibility(View.VISIBLE);
                     list_device.setVisibility(View.GONE);
@@ -208,10 +194,10 @@ public class DeviceList extends AppCompatActivity {
             }
             mHandler.removeCallbacksAndMessages(null);
             setList();
-        }, 1000);
+        }, 500);
     }
 
-    private void settimer() {
+    private void settimer() {   //每6秒檢查列表，將不再範圍內裝置從列表中移除，移除後更新列表
         checkHandler.postDelayed(() -> {
             for (int i = 0; i < deviceList.size(); i++) {
                 if (checkdeviceList.indexOf(deviceList.get(i)) == -1) {
@@ -232,13 +218,13 @@ public class DeviceList extends AppCompatActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             vibrator.vibrate(100);
-            Deviceposition = record.get(position);
+            Deviceposition = record.get(position);  //List<String>型態:{name, address}
             //noinspection deprecation
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
-            deviceList.clear();
-            setrecord.clear();
-            checkHandler.removeCallbacksAndMessages(null);
-            mHandler.removeCallbacksAndMessages(null);
+            deviceList.clear(); //清除裝置列表
+            setrecord.clear();  //清除byte[]列表
+            checkHandler.removeCallbacksAndMessages(null);  //停止handler
+            mHandler.removeCallbacksAndMessages(null);  //停止handler
             Log.e(TAG, "position = " + position);
 
             ConnectThread connectThread = new ConnectThread(connectHandler);
@@ -246,15 +232,15 @@ public class DeviceList extends AppCompatActivity {
         }
     };
 
-    private void scanLeDevice() {
+    private void scanLeDevice() {   //掃描附近設備
         //noinspection deprecation
         mBluetoothAdapter.startLeScan(mLeScanCallback);
     }
 
-    private BluetoothAdapter.LeScanCallback mLeScanCallback =
+    private BluetoothAdapter.LeScanCallback mLeScanCallback =   //將裝置與byte[]匯入
             (device, rssi, scanRecord) -> runOnUiThread(() -> runOnUiThread(() -> addDevice(device, scanRecord)));
 
-    private void addDevice(BluetoothDevice device, byte[] scanRecord) {
+    private void addDevice(BluetoothDevice device, byte[] scanRecord) { //同步新增裝置列表與byte[]列表
         boolean deviceFound = false;
 
         for (BluetoothDevice listDev : deviceList) {
@@ -268,15 +254,12 @@ public class DeviceList extends AppCompatActivity {
         if (!deviceFound) {
             deviceList.add(device);
             setrecord.add(scanRecord);
-            //no_device.setVisibility(View.GONE);
-            //list_device.setVisibility(View.VISIBLE);
         }
     }
 
-    private void Remote_connec() {
-        Value.BID = Deviceposition.get(1);
-        Value.BName = Deviceposition.get(0);
-        Log.e(TAG, "BID = " + Value.BID);
+    private void Remote_connec() {  //開始對裝置連線
+        Value.BID = Deviceposition.get(1);  //裝置address
+        Value.BName = Deviceposition.get(0);    //裝置name
         Intent gattServiceIntent = new Intent(DeviceList.this, BluetoothLeService.class);
         s_connect = bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         if (s_connect) {
@@ -632,7 +615,7 @@ public class DeviceList extends AppCompatActivity {
         }
         check = 0;
         SelectItem.add("NAME");
-        DataSave.add(device.getName());
+        DataSave.add(Deviceposition.get(0));
         sendValue.send("get");
         progressDialog2 = writeDialog(DeviceList.this, getString(R.string.login));
         if (!progressDialog2.isShowing()) {
@@ -708,7 +691,7 @@ public class DeviceList extends AppCompatActivity {
         progressDialog.dismiss();
         sleep(30);
 
-        t1.setText(getString(R.string.device_name) + "： " + device.getName());
+        t1.setText(getString(R.string.device_name) + "： " + Deviceposition.get(0));
         e1.setKeyListener(DigitsKeyListener.getInstance(".,$%&^!()-_=+';:|}{[]*→←↘↖、，。?~～#€￠" +
                 "￡￥abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@>/<"));
         //e1.setKeyListener(DigitsKeyListener.getInstance("abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789."));
@@ -790,7 +773,7 @@ public class DeviceList extends AppCompatActivity {
         }
         check = 0;
         SelectItem.add("NAME");
-        DataSave.add(device.getName());
+        DataSave.add(Deviceposition.get(0));
         sendValue.send("get");
         progressDialog2 = writeDialog(DeviceList.this, getString(R.string.login));
         if (!progressDialog2.isShowing()) {
