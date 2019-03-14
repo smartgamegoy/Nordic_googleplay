@@ -33,10 +33,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.text.InputType;
 import android.text.SpannableString;
-import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
@@ -94,9 +92,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import static com.jetec.nordic_googleplay.Activity.DeviceList.getManager;
 import static java.lang.Thread.sleep;
 
@@ -2700,7 +2695,7 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
 
         LayoutInflater inflater = LayoutInflater.from(context);
         @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.running, null);
-        LinearLayout layout = v.findViewById(R.id.ll_dialog);
+        LinearLayout linearLayout = v.findViewById(R.id.ll_dialog);
         ProgressBar pb_progress_bar = v.findViewById(R.id.pb_progress_bar);
         pb_progress_bar.setVisibility(View.VISIBLE);
         TextView tv = v.findViewById(R.id.tv_loading);
@@ -2712,7 +2707,7 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
             tv.setTextColor(context.getResources().getColor(R.color.colorDialog));
         }
 
-        progressDialog.setContentView(layout, new LinearLayout.LayoutParams((int) (Value.all_Width / 2),
+        progressDialog.setContentView(linearLayout, new LinearLayout.LayoutParams((int) (Value.all_Width / 2),
                 (int) (Value.all_Height / 5)));
 
         progressDialog.setOnKeyListener((dialog, keyCode, event) -> {

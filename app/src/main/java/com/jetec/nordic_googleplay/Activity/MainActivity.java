@@ -17,7 +17,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Button;
@@ -35,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_ACCESS_COARSE_LOCATION = 1;
     private static final int REQUEST_CODE_LOCATION_SETTINGS = 2;
     private static final int REQUEST_ENABLE_BT = 1;
-    private Vibrator vibrator;
     private BluetoothAdapter mBluetoothAdapter;
+    private Vibrator vibrator;
     private ModelSQL modelSQL;
     private String TAG = "MainActivity";
     private static final String[] default_model = {"BT-2-THD", "PV1", "PV2", "EH1", "EL1", "EH2",
@@ -49,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
         modelSQL = new ModelSQL(this);
         modelSQL.deleteAll();
         vibrator = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
-        getW_H();
         String phone = android.os.Build.BRAND;    //手機廠商
         Value.phonename = phone;
         Log.d(TAG,"phone = " + phone);
@@ -82,20 +80,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void getW_H(){
-        modelSQL = new ModelSQL(this);
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-        Value.all_Width = dm.widthPixels;
-        Value.all_Height = dm.heightPixels;
-    }
-
     private void meun_click() {
         setContentView(R.layout.firstpage);
 
         Button btn = findViewById(R.id.button);
-        Firstpage_buttonstyle firstpage_buttonstyle = new Firstpage_buttonstyle(this,
-                Value.all_Width, Value.all_Height);
+        Firstpage_buttonstyle firstpage_buttonstyle = new Firstpage_buttonstyle(this);
         firstpage_buttonstyle.buttonstyle(btn);
 
         btn.setOnClickListener(v -> {
@@ -273,13 +262,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) { //橫向
             // land do nothing is ok
-            setContentView(R.layout.logview);
-            getW_H();
             meun_click();
         } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {   //直向
             // port do nothing is ok
-            setContentView(R.layout.logview);
-            getW_H();
             meun_click();
         }
     }

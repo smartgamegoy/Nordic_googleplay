@@ -8,22 +8,22 @@ public class GetString {
         super();
     }
 
-    public void set(String text, int check){
+    public void set(String text){
         String TAG = "GetString";
         if(text.startsWith("COUNT")) {
-            Value.Count = text.substring(text.indexOf(Value.Jsonlist.get(check)) + 5, text.length());
+            Value.Count = text.substring(5);
             Log.e(TAG, "Count = " + Value.Count);
         }
         if(text.startsWith("TIME")) {
-            Value.Time = text.substring(text.indexOf(Value.Jsonlist.get(check)) + 4, text.length());
+            Value.Time = text.substring(4);
             Log.e(TAG, "Time = " + Value.Time);
         }
         if(text.startsWith("DATE")) {
-            Value.Date = text.substring(text.indexOf(Value.Jsonlist.get(check)) + 4, text.length());
+            Value.Date = text.substring(4);
             Log.e(TAG, "Date = " + Value.Date);
         }
         if(text.startsWith("LOG")){
-            Value.GetLog = text.substring(text.indexOf(Value.Jsonlist.get(check)) + 3, text.length());
+            Value.GetLog = text.substring(3);
             if(Value.GetLog.matches("ON")){
                 Value.downlog = true;
             }

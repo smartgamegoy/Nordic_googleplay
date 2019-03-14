@@ -13,4 +13,5 @@
     <color name="buttonbackground">#d6d6d6</color>
     <color name="spinnerstyle">#999999</color>
     <color name="textcolor">#000000</color>
+    <color name="dialogbackground">#00000000</color>
 </resources>

@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.os.Vibrator;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -786,7 +787,7 @@ public class LogChartView extends AppCompatActivity {
 
         LayoutInflater inflater = LayoutInflater.from(context);
         @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.running, null);
-        LinearLayout layout = v.findViewById(R.id.ll_dialog);
+        LinearLayout linearLayout = v.findViewById(R.id.ll_dialog);
         ProgressBar pb_progress_bar = v.findViewById(R.id.pb_progress_bar);
         pb_progress_bar.setVisibility(View.VISIBLE);
         TextView tv = v.findViewById(R.id.tv_loading);
@@ -798,7 +799,7 @@ public class LogChartView extends AppCompatActivity {
             tv.setTextColor(context.getResources().getColor(R.color.colorDialog));
         }
 
-        progressDialog.setContentView(layout, new LinearLayout.LayoutParams((int) (Value.all_Width / 2),
+        progressDialog.setContentView(linearLayout, new LinearLayout.LayoutParams((int) (Value.all_Width / 2),
                 (int) (Value.all_Height / 5)));
 
         progressDialog.setOnKeyListener((dialog, keyCode, event) -> {

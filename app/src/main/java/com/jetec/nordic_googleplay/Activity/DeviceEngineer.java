@@ -3267,7 +3267,6 @@ public class DeviceEngineer extends AppCompatActivity implements NavigationView.
 
         LayoutInflater inflater = LayoutInflater.from(context);
         @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.running, null);
-        LinearLayout layout = v.findViewById(R.id.ll_dialog);
         ProgressBar pb_progress_bar = v.findViewById(R.id.pb_progress_bar);
         pb_progress_bar.setVisibility(View.VISIBLE);
         TextView tv = v.findViewById(R.id.tv_loading);
@@ -3279,7 +3278,7 @@ public class DeviceEngineer extends AppCompatActivity implements NavigationView.
             tv.setTextColor(context.getResources().getColor(R.color.colorDialog));
         }
 
-        progressDialog.setContentView(layout, new LinearLayout.LayoutParams((int) (Value.all_Width / 2),
+        progressDialog.setContentView(pb_progress_bar, new LinearLayout.LayoutParams((int) (Value.all_Width / 2),
                 (int) (Value.all_Height / 5)));
 
         progressDialog.setOnKeyListener((dialog, keyCode, event) -> {

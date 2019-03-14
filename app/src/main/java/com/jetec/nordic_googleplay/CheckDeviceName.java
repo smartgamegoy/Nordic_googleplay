@@ -85,6 +85,24 @@ public class CheckDeviceName {
         else if(name.startsWith("DP3")){
             rename = "DP3";
         }
+        else if(name.startsWith("DATE")){
+            rename = "DATE";
+        }
+        else if(name.startsWith("TIME")){
+            rename = "TIME";
+        }
+        else if(name.startsWith("LOG")){
+            rename = "LOG";
+        }
+        else if(name.startsWith("SPK")){
+            rename = "SPK";
+        }
+        else if(name.startsWith("COUNT")){
+            rename = "COUNT";
+        }
+        else if(name.startsWith("OVER")){
+            rename = "OVER";
+        }
 
         return rename;
     }

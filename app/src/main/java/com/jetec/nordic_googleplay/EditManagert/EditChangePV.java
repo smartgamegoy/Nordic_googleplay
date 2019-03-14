@@ -335,6 +335,15 @@ public class EditChangePV implements TextWatcher {
                                     int selEndIndex = editText.getText().length();
                                     Selection.setSelection(editable, selEndIndex);
                                 }
+                                String[] arr = num.split("\\.");
+                                if(arr.length == 2){
+                                    if(arr[1].length() > 1){
+                                        last = true;
+                                        String reset = String.valueOf(arr[1].charAt(0));
+                                        num = arr[0] + "." + reset;
+                                        editText.setText(num);
+                                    }
+                                }
                                 if (bytes.length > len) {
                                     last = true;
                                     byte[] newBytes = new byte[len];
@@ -380,6 +389,15 @@ public class EditChangePV implements TextWatcher {
                                     last = true;
                                     num = num.substring(0, 1) + num.substring(2).replaceFirst("^0*", "");
                                     editText.setText(num);
+                                }
+                                String[] arr = num.split("\\.");
+                                if(arr.length == 2){
+                                    if(arr[1].length() > 1){
+                                        last = true;
+                                        String reset = String.valueOf(arr[1].charAt(0));
+                                        num = arr[0] + "." + reset;
+                                        editText.setText(num);
+                                    }
                                 }
                                 if (bytes.length > len) {
                                     last = true;
@@ -490,6 +508,15 @@ public class EditChangePV implements TextWatcher {
                                     int selEndIndex = editText.getText().length();
                                     Selection.setSelection(editable, selEndIndex);
                                 }
+                                String[] arr = num.split("\\.");
+                                if(arr.length == 2){
+                                    if(arr[1].length() > 1){
+                                        last = true;
+                                        String reset = String.valueOf(arr[1].charAt(0));
+                                        num = arr[0] + "." + reset;
+                                        editText.setText(num);
+                                    }
+                                }
                                 if (bytes.length > len) {
                                     last = true;
                                     byte[] newBytes = new byte[len];
@@ -535,6 +562,15 @@ public class EditChangePV implements TextWatcher {
                                     last = true;
                                     num = num.substring(0, 1) + num.substring(2).replaceFirst("^0*", "");
                                     editText.setText(num);
+                                }
+                                String[] arr = num.split("\\.");
+                                if(arr.length == 2){
+                                    if(arr[1].length() > 1){
+                                        last = true;
+                                        String reset = String.valueOf(arr[1].charAt(0));
+                                        num = arr[0] + "." + reset;
+                                        editText.setText(num);
+                                    }
                                 }
                                 if (bytes.length > len) {
                                     last = true;
@@ -645,6 +681,15 @@ public class EditChangePV implements TextWatcher {
                                     int selEndIndex = editText.getText().length();
                                     Selection.setSelection(editable, selEndIndex);
                                 }
+                                String[] arr = num.split("\\.");
+                                if(arr.length == 2){
+                                    if(arr[1].length() > 1){
+                                        last = true;
+                                        String reset = String.valueOf(arr[1].charAt(0));
+                                        num = arr[0] + "." + reset;
+                                        editText.setText(num);
+                                    }
+                                }
                                 if (bytes.length > len) {
                                     last = true;
                                     byte[] newBytes = new byte[len];
@@ -690,6 +735,15 @@ public class EditChangePV implements TextWatcher {
                                     last = true;
                                     num = num.substring(0, 1) + num.substring(2).replaceFirst("^0*", "");
                                     editText.setText(num);
+                                }
+                                String[] arr = num.split("\\.");
+                                if(arr.length == 2){
+                                    if(arr[1].length() > 1){
+                                        last = true;
+                                        String reset = String.valueOf(arr[1].charAt(0));
+                                        num = arr[0] + "." + reset;
+                                        editText.setText(num);
+                                    }
                                 }
                                 if (bytes.length > len) {
                                     last = true;

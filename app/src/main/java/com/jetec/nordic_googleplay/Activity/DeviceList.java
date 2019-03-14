@@ -20,30 +20,18 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
-import android.text.InputType;
-import android.text.method.DigitsKeyListener;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-import com.jetec.nordic_googleplay.CheckDeviceName;
-import com.jetec.nordic_googleplay.GetString;
+import com.jetec.nordic_googleplay.Dialog.WriteDialog;
+import com.jetec.nordic_googleplay.NewActivity.CheckPassword;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.ScanParse.*;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Thread.ConnectThread;
 import com.jetec.nordic_googleplay.ViewAdapter.DeviceAdapter;
-import com.jetec.nordic_googleplay.Initialization;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.SendValue;
 import com.jetec.nordic_googleplay.Value;
@@ -55,37 +43,31 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import static java.lang.Thread.sleep;
 
 public class DeviceList extends AppCompatActivity {
 
-    private CheckDeviceName checkDeviceName;
-    private GetString setString;
-    private Initialization initialization;
-    private Handler mHandler, checkHandler;
-    private SendValue sendValue;
-    private DeviceAdapter deviceAdapter;
+    private DeviceParse deviceParse = new DeviceParse();
+    private WriteDialog writeDialog = new WriteDialog();
     private BluetoothLeService mBluetoothLeService;
     private BluetoothAdapter mBluetoothAdapter;
+    private DeviceAdapter deviceAdapter;
+    private SendValue sendValue;
+    private Vibrator vibrator;
+    private Intent intents;
+    private Handler mHandler, checkHandler;
+    private ArrayList<String> Jsonlist;
     private List<BluetoothDevice> deviceList, checkdeviceList;
     private Map<Integer, List<String>> record;
     private List<String> Deviceposition;
-    private Vibrator vibrator;
+    private List<byte[]> setrecord;
+    private byte[] txValue;
     private JSONArray modelJSON;
     private View no_device;
     private ListView list_device;
-    private Intent intents;
-    private ArrayList<String> return_RX, SelectItem, DataSave, Jsonlist;
-    private Dialog progressDialog = null, progressDialog2 = null, initialDialog = null;
-    private String TAG = "DeviceList";
-    private String text;
-    private String Jetec = "Jetec";
-    private int check, flag;
     private boolean s_connect = false;
-    private byte[] txValue;
-    public List<byte[]> setrecord;
-    private DeviceParse deviceParse = new DeviceParse();
-    private Getparse getparse = new Getparse();
+    private String TAG = "DeviceList", Jetec = "Jetec", text;
     private final String[] T = {"PV", "EH", "EL", "CR"};
     private final String[] H = {"PV", "EH", "EL", "CR"};
     private final String[] C = {"PV", "EH", "EL", "CR"};
@@ -93,7 +75,7 @@ public class DeviceList extends AppCompatActivity {
     private final String[] E = {"PV", "EH", "EL", "CR"};
     private final String[] I = {"IH", "IL", "PV", "EH", "EL", "CR", "DP"};
     private final String[] L = {"COUNT", "INTER", "DATE", "TIME", "LOG"};
-    private final String[] SP = {"SPK", "OVER"};
+    private final String[] SP = {"SPK"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,23 +113,12 @@ public class DeviceList extends AppCompatActivity {
         show_device();
     }
 
-    private void getW_H() {
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-        Value.all_Width = dm.widthPixels;
-        Value.all_Height = dm.heightPixels;
-    }
-
     private void show_device() {
 
         setContentView(R.layout.activity_main);
-        flag = 0;
 
-        getW_H();
         mHandler = new Handler();
         checkHandler = new Handler();
-        checkDeviceName = new CheckDeviceName();
-        setString = new GetString();
 
         no_device = findViewById(R.id.no_data);
         no_device.setVisibility(View.VISIBLE);   //VISIBLE // GONE
@@ -156,9 +127,6 @@ public class DeviceList extends AppCompatActivity {
 
     @SuppressLint("UseSparseArrays")
     private void device_list() {
-        return_RX = new ArrayList<>();
-        SelectItem = new ArrayList<>();
-        DataSave = new ArrayList<>();
         Jsonlist = new ArrayList<>();
         deviceList = new ArrayList<>();
         Deviceposition = new ArrayList<>();
@@ -172,9 +140,9 @@ public class DeviceList extends AppCompatActivity {
         list_device.setAdapter(deviceAdapter);
         list_device.setOnItemClickListener(mDeviceClickListener);
 
-        setList();
-        settimer();
-        scanLeDevice();
+        setList();  //每0.5秒更新顯示之裝置列表
+        settimer(); //每6秒檢查列表，將不再範圍內裝置從列表中移除，移除後更新列表
+        scanLeDevice(); //掃描附近設備
     }
 
     private void setList() {    //每0.5秒更新顯示之裝置列表
@@ -260,10 +228,8 @@ public class DeviceList extends AppCompatActivity {
         Intent gattServiceIntent = new Intent(DeviceList.this, BluetoothLeService.class);
         s_connect = bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         if (s_connect) {
-            progressDialog = writeDialog(DeviceList.this, getString(R.string.connecting));
-            if (!progressDialog.isShowing()) {  //假如連線中之轉圈無顯示則顯示
-                progressDialog.show();
-                progressDialog.setCanceledOnTouchOutside(false);
+            if (!writeDialog.checkshowing()) {  //假如連線中之轉圈無顯示則顯示
+                writeDialog.set_Dialog(this, getString(R.string.connecting));
             }
             registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
         } else {
@@ -311,9 +277,8 @@ public class DeviceList extends AppCompatActivity {
                 if (mBluetoothLeService != null)
                     unbindService(mServiceConnection);
                 Log.d(TAG, "連線中斷" + Value.connected);
-                if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                    device_list();
+                if (writeDialog.checkshowing()) {
+                    writeDialog.closeDialog();
                 }
                 if (Value.connected) {  //取消裝置配對並嘗試重新連線
                     try {
@@ -329,21 +294,10 @@ public class DeviceList extends AppCompatActivity {
                 // Show all the supported services and characteristics on the user interface.
                 //displayGattServices(mBluetoothLeService.getSupportedGattServices());
                 Log.d(TAG, "連線狀態改變");
+                Log.d(TAG,"Value.connected = " + Value.connected);
                 mBluetoothLeService.enableTXNotification();
                 if (!Value.connected)   //測試裝置是否有回傳值
                     new Thread(sendcheck).start();
-                else {
-                    DataSave.clear();
-                    return_RX.clear();
-                    SelectItem.clear();
-                    try {
-                        sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    sendValue = new SendValue(mBluetoothLeService);
-                    login();
-                }
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 runOnUiThread(() -> {
                     try {
@@ -352,9 +306,6 @@ public class DeviceList extends AppCompatActivity {
                             text = new String(txValue, StandardCharsets.UTF_8);
                             Log.d(TAG, "text = " + text);
                             if (text.startsWith("OK")) {
-                                DataSave.clear();
-                                return_RX.clear();
-                                SelectItem.clear();
                                 Jsonlist.clear();
                                 new Thread(checkmodel).start();
                                 for (; !Value.modelList; ) {
@@ -417,7 +368,7 @@ public class DeviceList extends AppCompatActivity {
                                     Log.d(TAG, "Jsonlist = " + Value.Jsonlist);
                                 } else {    //若為新式型號則將布林值開啟
                                     NewModel.checkmodel = true;
-                                    sendValue.send("get");
+                                    sendValue.send("PASSWD");
                                 }
                             } else if (text.startsWith("ENGE")) {
                                 Value.E_word = text.substring(4);
@@ -434,71 +385,19 @@ public class DeviceList extends AppCompatActivity {
                                 Value.G_word = text.substring(4);
                                 Log.d(TAG, "訪客密碼 = " + Value.G_word);
                                 Value.connected = true;
-                                flag = 1;
                                 check();
-                            } else if (text.startsWith("+") || text.startsWith("-")) {
-                                sleep(300);
-                                sendValue = new SendValue(mBluetoothLeService);
-                                sendValue.send("STOP");
-                            } else {
-                                if (!Value.init) {
-                                    if (!text.startsWith("OVER")) {
-                                        if (!(text.startsWith("COUNT") || text.startsWith("DATE") ||
-                                                text.startsWith("TIME") || text.matches("LOGON") ||
-                                                text.matches("LOGOFF") || text.startsWith("LOG") ||
-                                                text.startsWith("+") || text.startsWith("-") ||
-                                                text.startsWith("STOP"))) {
-                                            SelectItem.add(checkDeviceName.setName(text));
-                                            return_RX.add(text);
-                                            DataSave.add(text);
-                                            check = check + 1;
-                                        } else if ((text.startsWith("COUNT") || text.startsWith("DATE") ||
-                                                text.startsWith("TIME") || text.matches("LOGON") ||
-                                                text.matches("LOGOFF"))) {
-                                            setString.set(text, check);
-                                            check = check + 1;
-                                        } else {    //若裝置正在傳送Log則發送STOP停止
-                                            if (text.startsWith("+") || text.startsWith("-"))
-                                                sendValue.send("STOP");
-                                        }
-                                    } else if (text.matches("OVER") && !text.startsWith("LOG")) {
-                                        //OVER為裝置溝通結束
-                                        Log.d(TAG, "RX = " + return_RX);
-                                        Log.d(TAG, "SelectItem = " + SelectItem);
-                                        Log.d(TAG, "型號 = " + Value.deviceModel);
-                                        if (Value.Jsonlist != null) {
-                                            if (Value.Jsonlist.get(check).matches("OVER")) {
-                                                Value.SelectItem = SelectItem;
-                                                Value.DataSave = DataSave;
-                                                Value.return_RX = return_RX;
-                                                Value.get_noti = false;
-                                                if (!Value.Engin)
-                                                    device_function();
-                                                else    //工程模式
-                                                    Engineer_function();
-                                            }
-                                        }
-                                    }
-                                } else {    //若初始化設定接收到OVER即將開啟之布林值取消
-                                    if (text.matches("OVER")) {
-                                        Value.init = false;
-                                    }
-                                }
                             }
                         } else {    //新式型號區域
                             text = new String(txValue, StandardCharsets.UTF_8);
                             Log.d(TAG, "text = " + text);
-                            if(NewModel.checkbyte){
-                                getparse.parsebyte(txValue);
+                            if (text.startsWith("PASS")) {
+                                Value.P_word = text.substring(4);
+                                Log.d(TAG, "客戶密碼 = " + Value.P_word);
                             }
-                            if(text.matches("BYTE")){
-                                NewModel.checkbyte = true;
-                            }
-                            else if(text.matches("OVER")){
-                                if(NewModel.checkbyte){
-                                    NewModel.checkbyte = false;
-                                }
-                            }
+                            Value.G_word = "111111";    //訪客密碼
+                            Value.E_word = "@JETEC";    //工程模式
+                            Value.I_word = ">////<";    //初始化
+                            new_deviceFunction();
                         }
                     } catch (InterruptedException e/* | JSONException e*/) {
                         e.printStackTrace();
@@ -569,191 +468,39 @@ public class DeviceList extends AppCompatActivity {
         }
     };
 
-    private void login() {
-        if (progressDialog2 != null && progressDialog2.isShowing()) {
-            progressDialog2.dismiss();
-        }
-        check = 0;
-        SelectItem.add("NAME");
-        DataSave.add(Deviceposition.get(0));
-        sendValue.send("get");
-        progressDialog2 = writeDialog(DeviceList.this, getString(R.string.login));
-        if (!progressDialog2.isShowing()) {
-            progressDialog2.show();
-            progressDialog2.setCanceledOnTouchOutside(false);
-        }
-        new Thread(timedelay).start();
-    }
-
-    private Runnable timedelay = new Runnable() {
-        @Override
-        public void run() {
+    private void new_deviceFunction() {
+        Intent intent = new Intent(DeviceList.this, CheckPassword.class);
+        String[] default_model = new String[modelJSON.length()];
+        for (int i = 0; i < modelJSON.length(); i++) {
             try {
-                sleep(2000);
-                //noinspection StatementWithEmptyBody
-                if (Value.Jsonlist.get(check).matches("OVER")) {
-                } else {
-                    //noinspection deprecation
-                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                    Service_close();
-                }
-            } catch (InterruptedException e) {
+                default_model[i] = modelJSON.get(i).toString();
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-    };
-
-    private Dialog writeDialog(Context context, String message) {
-        final Dialog progressDialog = new Dialog(context);
-        progressDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        LayoutInflater inflater = LayoutInflater.from(context);
-        @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.running, null);
-        LinearLayout layout = v.findViewById(R.id.ll_dialog);
-        ProgressBar pb_progress_bar = v.findViewById(R.id.pb_progress_bar);
-        pb_progress_bar.setVisibility(View.VISIBLE);
-        TextView tv = v.findViewById(R.id.tv_loading);
-
-        if (message == null || message.equals("")) {
-            tv.setVisibility(View.GONE);
-        } else {
-            tv.setText(message);
-            tv.setTextColor(context.getResources().getColor(R.color.colorDialog));
-        }
-
-        if (Value.all_Height > Value.all_Width) {
-            progressDialog.setContentView(layout, new LinearLayout.LayoutParams((int) (Value.all_Width / 2),
-                    (int) (Value.all_Height / 5)));
-        } else {
-            progressDialog.setContentView(layout, new LinearLayout.LayoutParams((int) (Value.all_Width / 4),
-                    (int) (Value.all_Height / 3)));
-        }
-
-        return progressDialog;
-    }
-
-    @SuppressLint("SetTextI18n")
-    private void check() throws InterruptedException {
-
-        setContentView(R.layout.checkpassword);
-
-        Button by = findViewById(R.id.button2);
-        Button bn = findViewById(R.id.button1);
-        TextView t1 = findViewById(R.id.textView3);
-        EditText e1 = findViewById(R.id.editText1);
-
-        getW_H();
-
-        progressDialog.dismiss();
-        sleep(30);
-
-        t1.setText(getString(R.string.device_name) + "： " + Deviceposition.get(0));
-        e1.setKeyListener(DigitsKeyListener.getInstance(".,$%&^!()-_=+';:|}{[]*→←↘↖、，。?~～#€￠" +
-                "￡￥abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@>/<"));
-        e1.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-        by.setOnClickListener(v -> {
-            vibrator.vibrate(100);
-            if (e1.getText().toString().length() == 6) {
-                Log.d(TAG, "輸入之密碼 = " + e1.getText().toString().trim());
-                if (e1.getText().toString().trim().matches(Value.E_word)) { //工程模式
-                    Value.passwordFlag = 1;
-                    Log.d(TAG, "管理者 登入");
-                    Value.get_noti = true;
-                    Engin();
-                } else if (e1.getText().toString().trim().matches(Value.P_word)) {  //一般登入
-                    Value.Engin = false;
-                    Value.passwordFlag = 2;
-                    Log.d(TAG, "客戶 登入");
-                    Value.get_noti = true;
-                    login();
-                } else if (e1.getText().toString().trim().matches(Value.I_word)) {  //初始化
-                    Toast.makeText(DeviceList.this, getString(R.string.initialization), Toast.LENGTH_SHORT).show();
-                    initialDialog = writeDialog(this, getString(R.string.intervalset));
-                    initialDialog.show();
-                    initialDialog.setCanceledOnTouchOutside(false);
-                    Log.d(TAG, "初始化裝置 = " + Value.deviceModel);
-                    initialization = new Initialization(Value.deviceModel, mBluetoothLeService);
-                    try {
-                        Value.Engin = false;
-                        Value.get_noti = true;
-                        Value.init = true;
-                        initialization.start();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } finally {
-                        initialDialog.dismiss();
-                        Value.passwordFlag = 3;
-                        Log.d(TAG, "開始進行原廠設定");
-                        Toast.makeText(DeviceList.this, getString(R.string.complete), Toast.LENGTH_SHORT).show();
-                        Value.get_noti = false;
-                        Value.connected = false;
-                        Service_close();
-                        backtofirst();
-                    }
-                } else if (e1.getText().toString().trim().matches(Value.G_word)) {  //訪客登入
-                    Value.passwordFlag = 4;
-                    Value.Engin = false;
-                    Value.get_noti = true;
-                    Log.d(TAG, "訪客 登入");
-                    login();
-                } else {
-                    Toast.makeText(DeviceList.this, getString(R.string.passworderror), Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(DeviceList.this, getString(R.string.inputerror), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        bn.setOnClickListener(v -> {
-            vibrator.vibrate(100);
-            if (mBluetoothAdapter != null && mBluetoothLeService != null) {
-                //noinspection deprecation
-                mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                Value.connected = false;
-                Value.get_noti = false;
-                Service_close();
-                if (s_connect) {
-                    s_connect = false;
-                }
-            }
-            show_device();
-        });
-    }
-
-    private void Engin() {  //工程模式
-        Value.Engin = true;
-        if (progressDialog2 != null && progressDialog2.isShowing()) {
-            progressDialog2.dismiss();
-        }
-        check = 0;
-        SelectItem.add("NAME");
-        DataSave.add(Deviceposition.get(0));
-        sendValue.send("get");
-        progressDialog2 = writeDialog(DeviceList.this, getString(R.string.login));
-        if (!progressDialog2.isShowing()) {
-            progressDialog2.show();
-            progressDialog2.setCanceledOnTouchOutside(false);
-        }
-        new Thread(timedelay).start();
-    }
-
-    private void Engineer_function() {  //工程模式
-
-        Intent intent = new Intent(DeviceList.this, Engineer.class);
-
+        intent.putExtra("default_model", default_model);
         startActivity(intent);
-        progressDialog.dismiss();
-        progressDialog2.dismiss();
         finish();
     }
 
-    private void device_function() {    //一般模式
-
-        Intent intent = new Intent(DeviceList.this, DeviceFunction.class);
-
+    private void check() {
+        Intent intent = new Intent(this, Check.class);
+        String[] default_model = new String[modelJSON.length()];
+        for (int i = 0; i < modelJSON.length(); i++) {
+            try {
+                default_model[i] = modelJSON.get(i).toString();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        intent.putExtra("default_model", default_model);
         startActivity(intent);
-        progressDialog.dismiss();
-        progressDialog2.dismiss();
+        finish();
+    }
+
+    private void backtofirst() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
         finish();
     }
 
@@ -769,32 +516,13 @@ public class DeviceList extends AppCompatActivity {
         return (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
     }
 
-    private void backtofirst() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
     public boolean onKeyDown(int key, KeyEvent event) {
         switch (key) {
             case KeyEvent.KEYCODE_SEARCH:
                 break;
             case KeyEvent.KEYCODE_BACK:
-                if (flag == 0) {
-                    vibrator.vibrate(100);
-                    NewModel.checkmodel = false;
-                    backtofirst();
-                } else if (flag == 1) {
-                    vibrator.vibrate(100);
-                    if (mBluetoothAdapter != null)
-                        //noinspection deprecation
-                        mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                    Value.get_noti = false;
-                    Value.connected = false;
-                    NewModel.checkmodel = false;
-                    Service_close();
-                    show_device();
-                }
+                vibrator.vibrate(100);
+                backtofirst();
                 break;
             case KeyEvent.KEYCODE_DPAD_CENTER:
                 break;
@@ -820,6 +548,7 @@ public class DeviceList extends AppCompatActivity {
         setrecord.clear();
         checkHandler.removeCallbacksAndMessages(null);
         mHandler.removeCallbacksAndMessages(null);
+        writeDialog.closeDialog();
     }
 
     @Override
@@ -861,26 +590,10 @@ public class DeviceList extends AppCompatActivity {
         super.onConfigurationChanged(newConfig);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) { //橫向
             // land do nothing is ok
-            if (flag == 0) {    //flag = 0 → 裝置列表頁面
-                show_device();
-            } else if (flag == 1) { //flag = 1 → 輸入密碼頁面
-                try {
-                    check();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            show_device();
         } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {   //直向
             // port do nothing is ok
-            if (flag == 0) {    //flag = 0 → 裝置列表頁面
-                show_device();
-            } else if (flag == 1) { //flag = 1 → 輸入密碼頁面
-                try {
-                    check();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            show_device();
         }
     }
 }

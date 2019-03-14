@@ -3,18 +3,19 @@ package com.jetec.nordic_googleplay;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v4.content.ContextCompat;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Button;
 
 public class Firstpage_buttonstyle {
 
     private Context context;
-    private double all_Width, all_Height;
+    private DisplayMetrics dm;
 
-    public Firstpage_buttonstyle(Context context, double all_Width, double all_Height){
+    public Firstpage_buttonstyle(Context context){
+        Screen screen = new Screen(context);
+        dm = screen.size();
         this.context = context;
-        this.all_Width = all_Width;
-        this.all_Height = all_Height;
     }
 
     public void buttonstyle(Button btn){
@@ -22,11 +23,11 @@ public class Firstpage_buttonstyle {
         int roundRadius;    //圓半徑
         int strokeColor = ContextCompat.getColor(context, R.color.colormenu_btn);   //邊框顏色
         int fillColor = ContextCompat.getColor(context, R.color.colorBackground);   //內部填充顏色
-        if (all_Width > all_Height) {
-            roundRadius = (int) (all_Height / 2);
+        if (dm.widthPixels > dm.heightPixels) {
+            roundRadius = dm.heightPixels / 2;
         }
         else {
-            roundRadius = (int) (all_Width / 2);
+            roundRadius = dm.widthPixels / 2;
         }
         GradientDrawable gd = new GradientDrawable();   //創建drawable
         gd.setColor(fillColor);
