@@ -10,7 +10,7 @@ import com.jetec.nordic_googleplay.Value;
 
 public class EditChangePV implements TextWatcher {
 
-    private String TAG = "EditChangeNum";
+    private String TAG = "EditChangePV";
     private EditText editText;
     private String name;
     private boolean last;
@@ -245,7 +245,7 @@ public class EditChangePV implements TextWatcher {
                     }
                 }
             }
-        }else if(name.matches("I") && Value.name.get(0).toString().matches("I")){
+        }else if(name.matches("I1")){
             Log.e(TAG, "name = " + name);
             if (!Value.IDP1) {
                 if (!num.matches("-") && !num.matches("")) {
@@ -419,7 +419,7 @@ public class EditChangePV implements TextWatcher {
                     }
                 }
             }
-        }else if(name.matches("I") && Value.name.get(1).toString().matches("I")){
+        }else if(name.matches("I2")){
             if (!Value.IDP2) {
                 if (!num.matches("-") && !num.matches("")) {
                     if (Integer.valueOf(num) > 999) {
@@ -488,15 +488,15 @@ public class EditChangePV implements TextWatcher {
                         if (num.equals("-."))
                             editText.setText("-0.");
                     } else {
-                        if (Float.valueOf(num) > 99.9) {
+                        if (Float.valueOf(num) * 10 > 999) {
                             last = true;
                             editText.setText("99.9");
-                        } else if (Float.valueOf(num) < -99.9) {
+                        } else if (Float.valueOf(num) * 10 < -999) {
                             last = true;
                             editText.setText("-99.9");
                         } else {
                             if (Float.valueOf(num) > 0) {
-                                int len = 3;
+                                int len = 4;
                                 byte[] bytes = String.valueOf(editable).getBytes();
                                 if (num.startsWith("0") && !num.startsWith("0.")) {
                                     last = true;
@@ -552,7 +552,7 @@ public class EditChangePV implements TextWatcher {
                                     }
                                 }
                             } else {
-                                int len = 4;
+                                int len = 5;
                                 byte[] bytes = String.valueOf(editable).getBytes();
                                 if (num.startsWith("-00") && !num.startsWith("0.")) {
                                     last = true;
@@ -592,7 +592,7 @@ public class EditChangePV implements TextWatcher {
                     }
                 }
             }
-        }else if(name.matches("I") && Value.name.get(2).toString().matches("I")){
+        }else if(name.matches("I3")){
             if (!Value.IDP3) {
                 if (!num.matches("-") && !num.matches("")) {
                     if (Integer.valueOf(num) > 999) {
@@ -661,15 +661,15 @@ public class EditChangePV implements TextWatcher {
                         if (num.equals("-."))
                             editText.setText("-0.");
                     } else {
-                        if (Float.valueOf(num) > 99.9) {
+                        if (Float.valueOf(num) * 10 > 999) {
                             last = true;
                             editText.setText("99.9");
-                        } else if (Float.valueOf(num) < -99.9) {
+                        } else if (Float.valueOf(num) * 10 < -999) {
                             last = true;
                             editText.setText("-99.9");
                         } else {
                             if (Float.valueOf(num) > 0) {
-                                int len = 3;
+                                int len = 4;
                                 byte[] bytes = String.valueOf(editable).getBytes();
                                 if (num.startsWith("0") && !num.startsWith("0.")) {
                                     last = true;
@@ -725,7 +725,7 @@ public class EditChangePV implements TextWatcher {
                                     }
                                 }
                             } else {
-                                int len = 4;
+                                int len = 5;
                                 byte[] bytes = String.valueOf(editable).getBytes();
                                 if (num.startsWith("-00") && !num.startsWith("0.")) {
                                     last = true;

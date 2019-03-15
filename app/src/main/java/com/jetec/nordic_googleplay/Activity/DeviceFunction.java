@@ -763,12 +763,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                         editText.setHint(" 999 ~ -999");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
-                        editText.addTextChangedListener(new EditChangePV(editText, "I"));
+                        editText.addTextChangedListener(new EditChangePV(editText, "I1"));
                     } else {
                         editText.setHint(" 99.9 ~ -99.9");
                         editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                                 InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                        editText.addTextChangedListener(new EditChangePV(editText, "I"));
+                        editText.addTextChangedListener(new EditChangePV(editText, "I1"));
                     }
                 }
             }
@@ -802,12 +802,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                         editText.setHint(" 999 ~ -999");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
-                        editText.addTextChangedListener(new EditChangePV(editText, "I"));
+                        editText.addTextChangedListener(new EditChangePV(editText, "I2"));
                     } else {
                         editText.setHint(" 99.9 ~ -99.9");
                         editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                                 InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                        editText.addTextChangedListener(new EditChangePV(editText, "I"));
+                        editText.addTextChangedListener(new EditChangePV(editText, "I2"));
                     }
                 }
             }
@@ -841,12 +841,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                         editText.setHint(" 999 ~ -999");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
-                        editText.addTextChangedListener(new EditChangePV(editText, "I"));
+                        editText.addTextChangedListener(new EditChangePV(editText, "I3"));
                     } else {
                         editText.setHint(" 99.9 ~ -99.9");
                         editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                                 InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                        editText.addTextChangedListener(new EditChangePV(editText, "I"));
+                        editText.addTextChangedListener(new EditChangePV(editText, "I3"));
                     }
                 }
             }
@@ -888,12 +888,16 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                 } else if (Value.name.get(0).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP1) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     }
                 }
             }
@@ -935,12 +939,16 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                 } else if (Value.name.get(1).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP2) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     }
                 }
             }
@@ -982,12 +990,16 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                 } else if (Value.name.get(2).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP3) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     }
                 }
             }
@@ -1029,12 +1041,16 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                 } else if (Value.name.get(0).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP1) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     }
                 }
             }
@@ -1076,12 +1092,16 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                 } else if (Value.name.get(1).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP2) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     }
                 }
             }
@@ -1123,12 +1143,16 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                 } else if (Value.name.get(2).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP3) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     }
                 }
             }
@@ -1170,12 +1194,16 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                 } else if (Value.name.get(0).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP1) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     }
                 }
             }
@@ -1217,12 +1245,16 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                 } else if (Value.name.get(1).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP2) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     }
                 }
             }
@@ -1264,12 +1296,16 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                 } else if (Value.name.get(2).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP3) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     }
                 }
             }
@@ -1311,12 +1347,16 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                 } else if (Value.name.get(0).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP1) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     }
                 }
             }
@@ -1358,12 +1398,16 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                 } else if (Value.name.get(1).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP2) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     }
                 }
             }
@@ -1405,12 +1449,16 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                 } else if (Value.name.get(2).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP3) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     }
                 }
             }
@@ -1452,12 +1500,16 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                 } else if (Value.name.get(0).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP1) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     }
                 }
             }
@@ -1499,12 +1551,16 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                 } else if (Value.name.get(1).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP2) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     }
                 }
             }
@@ -1546,12 +1602,16 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                 } else if (Value.name.get(2).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP3) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     }
                 }
             }

@@ -138,7 +138,7 @@ public class Check extends AppCompatActivity {
                     login();
                 } else if (e1.getText().toString().trim().matches(Value.I_word)) {  //初始化
                     Toast.makeText(Check.this, getString(R.string.initialization), Toast.LENGTH_SHORT).show();
-                    writeDialog.set_Dialog(this, getString(R.string.intervalset));
+                    writeDialog.set_Dialog(this);
                     Log.d(TAG, "初始化裝置 = " + Value.deviceModel);
                     initialization = new Initialization(Value.deviceModel, mBluetoothLeService);
                     try {
@@ -298,7 +298,7 @@ public class Check extends AppCompatActivity {
         sendValue.send("get");
 
         if (!writeDialog.checkshowing()) {
-            writeDialog.set_Dialog(this, getString(R.string.login));
+            writeDialog.set_Dialog(this);
         }
 
         new Thread(timedelay).start();
