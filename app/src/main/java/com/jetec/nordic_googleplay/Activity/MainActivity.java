@@ -38,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private Vibrator vibrator;
     private ModelSQL modelSQL;
     private String TAG = "MainActivity";
-    private static final String[] default_model = {"BT-2-THD", "PV1", "PV2", "EH1", "EL1", "EH2",
-            "EL2", "CR1", "CR2", "ADR", "OVER"};
+    private static final String[] default_model = {"BT-2-TH", "PV1", "PV2", "EH1", "EL1", "EH2",
+            "EL2", "CR1", "CR2", "OVER"};
     private String[][] All_model = {default_model};
 
     @Override

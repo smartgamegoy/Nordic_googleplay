@@ -8,7 +8,6 @@ import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -72,9 +71,7 @@ import com.jetec.nordic_googleplay.GetDeviceName;
 import com.jetec.nordic_googleplay.GetDeviceNum;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.SQL.JsonSQL;
-import com.jetec.nordic_googleplay.SQL.ModelSQL;
 import com.jetec.nordic_googleplay.SQL.SQLData;
-import com.jetec.nordic_googleplay.SendLog;
 import com.jetec.nordic_googleplay.SendValue;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Thread.ConnectThread;
@@ -83,7 +80,7 @@ import com.jetec.nordic_googleplay.ViewAdapter.DataList;
 import com.jetec.nordic_googleplay.ViewAdapter.Function;
 import org.json.JSONArray;
 import org.json.JSONException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -101,24 +98,27 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
     private static final int REQUEST_EXTERNAL_STORAGE = 3;
     private float MaxEH1, MinEL1, MaxEH2, MinEL2, MaxEH3, MinEL3, MaxIH1, MinIL1, MaxIH2, MinIL2, MaxIH3, MinIL3;
     private ModifyPassword modifyPassword;
-    private String TAG = "devicefunction", text, log = "log", set, set2, showtext, getdate,
-            getcount, gettime, gettoast1, gettoast2,
-            gettoast3, gettoast4, gettoast5, gettoast6, get_fun = "get";
+    private String TAG = "devicefunction";
+    private String text;
+    private String showtext;
+    private String gettoast1;
+    private String gettoast2;
+    private String gettoast3;
+    private String gettoast4;
+    private String gettoast5;
+    private String gettoast6;
     private boolean s_connect = false, c = false;
     private int connect_flag, send, check, test = 0, totle, jsonflag, select_item = -1;
-    private Dialog progressDialog2 = null, ask_Dialog = null, checkpassword = null, saveDialog = null,
+    private Dialog progressDialog2 = null, ask_Dialog = null, saveDialog = null,
             showDialog = null, inDialog = null, upDialog = null, choseDialog = null, modify = null;
     private BluetoothLeService mBluetoothLeService;
     private Intent intents;
-    private ConnectThread connectThread;
     private byte[] txValue;
     private ArrayList<String> SQLdata, Logdata, Firstlist, Secondlist, Thirdlist,
-            timelist, charttime, List_d_num, List_d_function, Jsonlist, Countlist;
-    private View header, engin, button;
+            timelist, charttime, List_d_num, List_d_function, Countlist;
     private Function function;
     private TextView showing;
     private BluetoothAdapter mBluetoothAdapter;
-    private ModelSQL modelSQL;
     private View view1;
     private ListView list;
     private JSONArray Chart_json, TimeList_json, Firstjson, Secondjson, Thirdjson;
@@ -126,20 +126,16 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
     private JsonSQL data_Json;
     private SQLData data_table;
     private DataList dataList;
-    private Interval interval;
-    private GetDeviceName getDeviceName;
     private GetDeviceNum getDeviceNum;
     private NavigationView navigationView;
     private SendValue sendValue;
     private CheckDeviceName checkDeviceName;
-    private PV pv;
+    private PV pv = new PV();
     private EH eh;
     private EL el;
-    private CR cr;
+    private CR cr = new CR();
     private IH ih;
     private IL il;
-    private SwitchDialog switchDialog;
-    private SendLog sendLog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,7 +175,6 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
         timelist = new ArrayList<>();
         Thirdlist = new ArrayList<>();
         charttime = new ArrayList<>();
-        Jsonlist = new ArrayList<>();
         Countlist = new ArrayList<>();
     }
 
@@ -262,7 +257,6 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
 
         data_table = new SQLData(this);
         data_Json = new JsonSQL(this);
-        modelSQL = new ModelSQL(this);
         checkDeviceName = new CheckDeviceName();
 
         if (progressDialog2 != null) {
@@ -291,7 +285,7 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
         List_d_function.add(getString(R.string.device_name));
         List_d_num.add(Value.BName);
 
-        getDeviceName = new GetDeviceName(this, Value.deviceModel);
+        GetDeviceName getDeviceName = new GetDeviceName(this, Value.deviceModel);
         getDeviceNum = new GetDeviceNum();
 
         for (int i = 0; i < Value.return_RX.size(); i++) {
@@ -484,10 +478,10 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                 //String output = switch_dialog(select, List_d_function.get(position));
                 if (select.startsWith("INTER")) {
                     String description = getString(R.string.description);
-                    interval = new Interval(DeviceFunction.this, Value.all_Width, Value.all_Height, mBluetoothLeService, description);
+                    Interval interval = new Interval(DeviceFunction.this, Value.all_Width, Value.all_Height, mBluetoothLeService, description);
                     interval.showDialog();
                 } else if (select.startsWith("DP") || select.startsWith("SPK")) {
-                    switchDialog = new SwitchDialog(DeviceFunction.this, mBluetoothLeService);
+                    SwitchDialog switchDialog = new SwitchDialog(DeviceFunction.this, mBluetoothLeService);
                     choseDialog = switchDialog.chose(select, List_d_num.get(position), List_d_function.get(position), vibrator);
                     switchDialog.setDialog(choseDialog);
                     choseDialog.show();
@@ -527,11 +521,6 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                         switch (name) {
                             case "NAME": {
                                 String out = "NAME" + gets;
-                                if (Value.downlog) {
-                                    sendValue.send("END");
-                                    sleep(100);
-                                    Value.downlog = false;
-                                }
                                 sendValue.send(out);
                                 if (mBluetoothLeService != null) {
                                     Value.BName = gets;
@@ -541,110 +530,104 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                             break;
                             case "PV1": {
                                 float t = Float.valueOf(gets);
-                                pv = new PV(this, function);
                                 pv.todo(t, name, inDialog, mBluetoothLeService, gets);
                             }
                             break;
                             case "PV2": {
                                 float t = Float.valueOf(gets);
-                                pv = new PV(this, function);
                                 pv.todo(t, name, inDialog, mBluetoothLeService, gets);
                             }
                             break;
                             case "PV3": {
                                 float t = Float.valueOf(gets);
-                                pv = new PV(this, function);
                                 pv.todo(t, name, inDialog, mBluetoothLeService, gets);
                             }
                             break;
                             case "EH1": {
                                 float t = Float.valueOf(gets);
                                 Log.e(TAG, "Text = " + t);
-                                eh = new EH(this, function);
+                                eh = new EH(this);
                                 eh.todo(t, name, inDialog, mBluetoothLeService, gets, MinEL1);
                             }
                             break;
                             case "EH2": {
                                 float t = Float.valueOf(gets);
-                                eh = new EH(this, function);
+                                eh = new EH(this);
                                 eh.todo(t, name, inDialog, mBluetoothLeService, gets, MinEL2);
                             }
                             break;
                             case "EH3": {
                                 float t = Float.valueOf(gets);
-                                eh = new EH(this, function);
+                                eh = new EH(this);
                                 eh.todo(t, name, inDialog, mBluetoothLeService, gets, MinEL3);
                             }
                             break;
                             case "EL1": {
                                 float t = Float.valueOf(gets);
-                                el = new EL(this, function);
+                                el = new EL(this);
                                 el.todo(t, name, inDialog, mBluetoothLeService, gets, MaxEH1);
                             }
                             break;
                             case "EL2": {
                                 float t = Float.valueOf(gets);
-                                el = new EL(this, function);
+                                el = new EL(this);
                                 el.todo(t, name, inDialog, mBluetoothLeService, gets, MaxEH2);
                             }
                             break;
                             case "EL3": {
                                 float t = Float.valueOf(gets);
-                                el = new EL(this, function);
+                                el = new EL(this);
                                 el.todo(t, name, inDialog, mBluetoothLeService, gets, MaxEH3);
                             }
                             break;
                             case "CR1": {
                                 float t = Float.valueOf(gets);
-                                cr = new CR(this, function);
                                 cr.todo(t, name, inDialog, mBluetoothLeService, gets);
                             }
                             break;
                             case "CR2": {
                                 float t = Float.valueOf(gets);
-                                cr = new CR(this, function);
                                 cr.todo(t, name, inDialog, mBluetoothLeService, gets);
                             }
                             break;
                             case "CR3": {
                                 float t = Float.valueOf(gets);
-                                cr = new CR(this, function);
                                 cr.todo(t, name, inDialog, mBluetoothLeService, gets);
                             }
                             break;
                             case "IH1": {
                                 float t = Float.valueOf(gets);
-                                ih = new IH(this, function);
+                                ih = new IH(this);
                                 ih.todo(t, name, inDialog, mBluetoothLeService, gets, MinIL1);
                             }
                             break;
                             case "IH2": {
                                 float t = Float.valueOf(gets);
-                                ih = new IH(this, function);
+                                ih = new IH(this);
                                 ih.todo(t, name, inDialog, mBluetoothLeService, gets, MinIL2);
                             }
                             break;
                             case "IH3": {
                                 float t = Float.valueOf(gets);
-                                ih = new IH(this, function);
+                                ih = new IH(this);
                                 ih.todo(t, name, inDialog, mBluetoothLeService, gets, MinIL3);
                             }
                             break;
                             case "IL1": {
                                 float t = Float.valueOf(gets);
-                                il = new IL(this, function);
+                                il = new IL(this);
                                 il.todo(t, name, inDialog, mBluetoothLeService, gets, MaxIH1);
                             }
                             break;
                             case "IL2": {
                                 float t = Float.valueOf(gets);
-                                il = new IL(this, function);
+                                il = new IL(this);
                                 il.todo(t, name, inDialog, mBluetoothLeService, gets, MaxIH2);
                             }
                             break;
                             case "IL3": {
                                 float t = Float.valueOf(gets);
-                                il = new IL(this, function);
+                                il = new IL(this);
                                 il.todo(t, name, inDialog, mBluetoothLeService, gets, MaxIH3);
                             }
                             break;
@@ -890,8 +873,8 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                     if (!Value.IDP1) {
                         editText.setHint(" 9999 ~ -999");
-                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
-                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                         editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
@@ -941,8 +924,8 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                     if (!Value.IDP2) {
                         editText.setHint(" 9999 ~ -999");
-                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
-                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                         editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
@@ -992,8 +975,8 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                     if (!Value.IDP3) {
                         editText.setHint(" 9999 ~ -999");
-                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
-                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                         editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
@@ -1043,8 +1026,8 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                     if (!Value.IDP1) {
                         editText.setHint(" 9999 ~ -999");
-                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
-                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                         editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
@@ -1094,8 +1077,8 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                     if (!Value.IDP2) {
                         editText.setHint(" 9999 ~ -999");
-                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
-                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                         editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
@@ -1145,8 +1128,8 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                     if (!Value.IDP3) {
                         editText.setHint(" 9999 ~ -999");
-                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
-                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                         editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
@@ -1196,8 +1179,8 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                     if (!Value.IDP1) {
                         editText.setHint(" 9999 ~ -999");
-                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
-                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                         editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
@@ -1247,8 +1230,8 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                     if (!Value.IDP2) {
                         editText.setHint(" 9999 ~ -999");
-                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
-                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                         editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
@@ -1298,8 +1281,8 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                     if (!Value.IDP3) {
                         editText.setHint(" 9999 ~ -999");
-                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
-                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                         editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
@@ -1349,8 +1332,8 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                     if (!Value.IDP1) {
                         editText.setHint(" 9999 ~ -999");
-                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
-                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                         editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
@@ -1400,8 +1383,8 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                     if (!Value.IDP2) {
                         editText.setHint(" 9999 ~ -999");
-                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
-                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                         editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
@@ -1451,8 +1434,8 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                     if (!Value.IDP3) {
                         editText.setHint(" 9999 ~ -999");
-                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
-                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                         editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
@@ -1502,8 +1485,8 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                     if (!Value.IDP1) {
                         editText.setHint(" 9999 ~ -999");
-                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
-                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                         editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
@@ -1553,8 +1536,8 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                     if (!Value.IDP2) {
                         editText.setHint(" 9999 ~ -999");
-                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
-                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                         editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
@@ -1604,8 +1587,8 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     c = true;
                     if (!Value.IDP3) {
                         editText.setHint(" 9999 ~ -999");
-                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
-                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                         editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
@@ -1671,7 +1654,6 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
         Spinner s1 = v.findViewById(R.id.spinner);
         Button bn = v.findViewById(R.id.button1);
         Button by = v.findViewById(R.id.button2);
-        Button bs = v.findViewById(R.id.button3);
         TextView t2 = v.findViewById(R.id.textView2);
 
         sendValue = new SendValue(mBluetoothLeService);
@@ -1736,48 +1718,39 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
             new AlertDialog.Builder(DeviceFunction.this)
                     .setTitle(R.string.choseway)
                     .setMessage(R.string.chosewaymessage)
-                    .setPositiveButton(R.string.highspeed, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            t2.setVisibility(View.GONE);
-                            s1.setVisibility(View.GONE);
-                            if (mBluetoothLeService.mConnectionState != 0) {
-                                Toast.makeText(DeviceFunction.this, getString(R.string.prepare), Toast.LENGTH_SHORT).show();
-                                Value.downloading = true;
-                                test = 0;
-                                Value.connect_flag = 1;
-                                sendValue.send("STOP");
-                                if (data_Json.getCount() > 0) {
-                                    data_Json.delete(Value.BID);
-                                    Log.e(TAG, "刪除紀錄 = " + data_Json.getCount());
-                                    data_Json.close();
-                                }
+                    .setPositiveButton(R.string.highspeed, (dialog, which) -> {
+                        t2.setVisibility(View.GONE);
+                        s1.setVisibility(View.GONE);
+                        if (mBluetoothLeService.mConnectionState != 0) {
+                            Toast.makeText(DeviceFunction.this, getString(R.string.prepare), Toast.LENGTH_SHORT).show();
+                            Value.downloading = true;
+                            test = 0;
+                            Value.connect_flag = 1;
+                            sendValue.send("STOP");
+                            if (data_Json.getCount() > 0) {
+                                data_Json.delete(Value.BID);
+                                Log.e(TAG, "刪除紀錄 = " + data_Json.getCount());
+                                data_Json.close();
                             }
                         }
                     })
-                    .setNegativeButton(R.string.stable, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            t2.setVisibility(View.GONE);
-                            s1.setVisibility(View.GONE);
-                            if (mBluetoothLeService.mConnectionState != 0) {
-                                Toast.makeText(DeviceFunction.this, getString(R.string.prepare), Toast.LENGTH_SHORT).show();
-                                Value.downloading = true;
-                                test = 0;
-                                Value.connect_flag = 2;
-                                sendValue.send("STOP");
-                                if (data_Json.getCount() > 0) {
-                                    data_Json.delete(Value.BID);
-                                    Log.e(TAG, "刪除紀錄 = " + data_Json.getCount());
-                                    data_Json.close();
-                                }
+                    .setNegativeButton(R.string.stable, (dialog, which) -> {
+                        t2.setVisibility(View.GONE);
+                        s1.setVisibility(View.GONE);
+                        if (mBluetoothLeService.mConnectionState != 0) {
+                            Toast.makeText(DeviceFunction.this, getString(R.string.prepare), Toast.LENGTH_SHORT).show();
+                            Value.downloading = true;
+                            test = 0;
+                            Value.connect_flag = 2;
+                            sendValue.send("STOP");
+                            if (data_Json.getCount() > 0) {
+                                data_Json.delete(Value.BID);
+                                Log.e(TAG, "刪除紀錄 = " + data_Json.getCount());
+                                data_Json.close();
                             }
                         }
                     })
-                    .setNeutralButton(R.string.butoon_no, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
+                    .setNeutralButton(R.string.butoon_no, (dialog, which) -> {
                     })
                     .show();
         });
@@ -2185,35 +2158,7 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     Log.e(TAG, "重新連線");
                     ConnectThread newThread = new ConnectThread(connectHandler);
                     newThread.run();
-                }/*else {
-                //Service_close();
-                //Value.connected = true;
-                //try {
-                //new Thread(connectfail).start();
-                        /*sleep(2000);
-                        ConnectThread newThread = new ConnectThread(connectHandler);
-                        newThread.run();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }*/
-
-                    /*new AlertDialog.Builder(DeviceFunction.this)
-                            .setTitle(R.string.action_settings)
-                            .setMessage(R.string.cant_reconnect)
-                            .setPositiveButton(R.string.butoon_yes, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (mBluetoothAdapter != null)
-                                        //noinspection deprecation
-                                        mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                                    Service_close();
-                                    Value.connected = false;
-                                    data_table.close();
-                                    disconnect();
-                                }
-                            })
-                            .show();
-                }*/
+                }
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 // Show all the supported services and characteristics on the user interface.
                 //displayGattServices(mBluetoothLeService.getSupportedGattServices());
@@ -2221,44 +2166,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                 mBluetoothLeService.enableTXNotification();
                 if (!Value.connected) {
                     new Thread(sendcheck).start();
-                } else {
-                    /*try {
-                        sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }*/
-                    /*sendValue = new SendValue(mBluetoothLeService);
-                    if (Value.downloading) {
-                        sendValue.send("STOP");
-                        try {
-                            sleep(100);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        if (ask_Dialog != null) {
-                            //ask_Dialog.dismiss();
-                            Value.opendialog = false;
-                            Value.downloading = false;
-                        }
-                    } else {
-                        Value.connected = false;
-                        new Thread(connectfail).start();
-                        Log.e(TAG, "走到這");
-                        try {
-                            sleep(2000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        sendValue = new SendValue(mBluetoothLeService);
-                        ConnectThread reThread = new ConnectThread(connectHandler);
-                        reThread.run();
-                    }*/
                 }
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 runOnUiThread(() -> {
                     try {
                         txValue = intents.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
-                        text = new String(txValue, "UTF-8");
+                        text = new String(txValue, StandardCharsets.UTF_8);
                         Log.e(TAG, "text = " + text);
                         if (!Value.downloading) {
                             if (text.startsWith("NAME")) {    //Nordic_UART
@@ -2285,7 +2198,7 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                                 } else if (text.startsWith("COUNT")) {
                                     Log.e(TAG, "停止紀錄 = " + text);
                                     Countlist.clear();
-                                    Value.Count = text.substring(text.indexOf(Value.Jsonlist.get(check)) + 6, text.length());
+                                    Value.Count = text.substring(text.indexOf(Value.Jsonlist.get(check)) + 6);
                                     int sum = Integer.valueOf(Value.Count);
                                     int count = sum / 1000;
                                     for (int i = 1; i <= count; i++) {
@@ -2295,11 +2208,7 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                                         Countlist.add(String.valueOf(sum));
                                     }
                                     Value.downlog = false;
-                                    if (!Value.downlog) {
-                                        navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.start) + getString(R.string.LOG));
-                                    } else {
-                                        navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.end) + getString(R.string.LOG));
-                                    }
+                                    navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.start) + getString(R.string.LOG));
                                     Value.setdataview = true;
                                     if (Value.opendialog) {
                                         ask_Dialog = askDialog(DeviceFunction.this);
@@ -2307,7 +2216,7 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                                         ask_Dialog.setCanceledOnTouchOutside(false);
                                     }
                                 } else if (text.startsWith("PWR")) {
-                                    Value.P_word = text.substring(4, text.length());
+                                    Value.P_word = text.substring(4);
                                     Log.e(TAG, "客戶密碼 = " + Value.P_word);
                                 } else if (text.startsWith("+") || text.startsWith("-")) {
                                     sendValue = new SendValue(mBluetoothLeService);
@@ -2317,24 +2226,15 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                                 }
                             }
                         } else {
+                            //noinspection StatementWithEmptyBody,StatementWithEmptyBody
                             if (text.startsWith("OK")) {
-                                //sendValue = new SendValue(mBluetoothLeService);
-                                //sleep(200);
-                                //sendValue.send("DOWNLOAD");
-                                /*sendLog = new SendLog();
-                                sendLog.set_over(true);
-                                sendLog.set_Service(mBluetoothLeService);
-                                sendLog.start();*/
                             } else if (text.startsWith("Count")) {
-                                //Value.Count = text.substring(text.indexOf(Value.Jsonlist.get(check)) + 6, text.length());
-                                //sendValue.send("DOWNLOAD");
                                 if (Value.startdown) {
                                     sleep(100);
                                     sendValue.send("DOWNLOAD");
                                     Value.startdown = false;
                                 }
                             } else if (text.startsWith("OVER")) {
-                                //sendLog.interrupt();
                                 Log.e(TAG, "Logdata.size() = " + Logdata.size());
                                 if (Logdata.size() == totle) {
                                     //sendLog.interrupt();
@@ -2391,11 +2291,11 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                                 sendValue.send("Count" + "0" + totle);
                                 Value.startdown = true;
                             } else if (text.startsWith("DATE")) {
-                                Value.Date = text.substring(4, text.length());
+                                Value.Date = text.substring(4);
                             } else if (text.startsWith("TIME")) {
-                                Value.Time = text.substring(4, text.length());
+                                Value.Time = text.substring(4);
                             } else if (text.startsWith("INTER")) {
-                                Value.Inter = text.substring(5, text.length());
+                                Value.Inter = text.substring(5);
                             } else if (text.startsWith("+") || text.startsWith("-")) {
                                 if (Value.stop) {
                                     if (text.startsWith("+") || text.startsWith("-")) {
@@ -2438,7 +2338,7 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                             }
 
                         }
-                    } catch (UnsupportedEncodingException | InterruptedException /*| JSONException*/ e) {
+                    } catch (InterruptedException /*| JSONException*/ e) {
                         e.printStackTrace();
                     }
                 });
@@ -2467,76 +2367,6 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
         }
     };
 
-    private void login() {
-        check = 0;
-        send = 0;
-        sendValue = new SendValue(mBluetoothLeService);
-        Value.SelectItem.add("NAME");
-        Value.DataSave.add(Value.deviceModel);
-        sendValue.send(get_fun);
-        if (progressDialog2 == null) {
-            progressDialog2 = writeDialog(DeviceFunction.this, getString(R.string.login));
-            progressDialog2.show();
-            progressDialog2.setCanceledOnTouchOutside(false);
-        }
-        new Thread(timedelay).start();
-    }
-
-    private Runnable timedelay = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                sleep(1500);
-                sendValue = new SendValue(mBluetoothLeService);
-                Log.e(TAG, "check = " + check);
-                Log.e(TAG, "Jsonlist = " + Jsonlist.get(check));
-                //noinspection StatementWithEmptyBody
-                if (Jsonlist.get(check).matches("OVER")) {
-                } else {
-                    connect_flag = 4;
-                    if (progressDialog2 != null)
-                        progressDialog2.dismiss();
-                    sendValue.send("STOP");
-                    //noinspection deprecation
-                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                    Service_close();
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    };
-
-    private Runnable timeprocess = new Runnable() {
-        @Override
-        public void run() {
-            String year, month, day, hour, minute, second;
-            year = getdate.substring(0, 4);
-            month = getdate.substring(4, 6);
-            day = getdate.substring(6, 8);
-            hour = getdate.substring(8, 10); //24hour
-            minute = getdate.substring(10, 12);
-            second = getdate.substring(12, 14);
-            getdate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
-        }
-    };
-
-    private Runnable getc = new Runnable() {
-        @Override
-        public void run() {
-            getcount = getcount.substring(getcount.indexOf("COU") + 3, getcount.length()).replaceFirst("^0*", "");
-            Log.e(TAG, "getcount = " + getcount);
-        }
-    };
-
-    private Runnable uptime = new Runnable() {
-        @Override
-        public void run() {
-            gettime = gettime.substring(gettime.indexOf("INT") + 3, gettime.length()).replaceFirst("^0*", "");
-            Log.e(TAG, "gettime = " + gettime);
-        }
-    };
-
     private Runnable down_log = new Runnable() {
         @Override
         public void run() {
@@ -2545,14 +2375,6 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
             downloading.sendMessage(m2);
         }
     };
-
-    private void showtext() {
-        test++;
-        Logdata.add(text);
-        showtext = String.valueOf(test) + " / " + String.valueOf(totle);
-        showing.setText(showtext);
-        //Log.e(TAG, "test = " + test);
-    }
 
     @SuppressLint("HandlerLeak")
     Handler downloading = new Handler() {
@@ -2566,26 +2388,6 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
             showing.setTextSize(21);
             showing.setText(showtext);
             Log.e(TAG, "test = " + test);
-            /*if (Logdata.size() == totle) {
-                connect_flag = 4;
-                new Thread(analysislog).start();
-                for (; jsonflag == 0; ) {
-                    try {
-                        sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                new Thread(maketime).start();
-                for (; jsonflag == 1; ) {
-                    try {
-                        sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                new Thread(logSQL).start();
-            }*/
         }
     };
 
@@ -2595,7 +2397,7 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
             if (Value.modelsign == 1) {
                 for (int i = 0; i < Logdata.size(); i++) {
                     String firstrow = Logdata.get(i);
-                    int math = (int) Math.pow(10, Integer.valueOf(firstrow.substring(firstrow.length() - 1, firstrow.length())));
+                    int math = (int) Math.pow(10, Integer.valueOf(firstrow.substring(firstrow.length() - 1)));
                     if (firstrow.startsWith("+")) {
                         firstrow = firstrow.substring(1, firstrow.length() - 1);
                         Float num = Float.valueOf(firstrow) / math;
@@ -2610,9 +2412,9 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                 for (int i = 0; i < Logdata.size(); i++) {
                     String getvalue = Logdata.get(i);
                     String firstrow = getvalue.substring(0, 6);
-                    String secondrow = getvalue.substring(6, getvalue.length());
-                    int math = (int) Math.pow(10, Integer.valueOf(firstrow.substring(firstrow.length() - 1, firstrow.length())));
-                    int math2 = (int) Math.pow(10, Integer.valueOf(secondrow.substring(firstrow.length() - 1, secondrow.length())));
+                    String secondrow = getvalue.substring(6);
+                    int math = (int) Math.pow(10, Integer.valueOf(firstrow.substring(firstrow.length() - 1)));
+                    int math2 = (int) Math.pow(10, Integer.valueOf(secondrow.substring(firstrow.length() - 1)));
                     if (firstrow.startsWith("+")) {
                         firstrow = firstrow.substring(1, 5);
                         Float num = Float.valueOf(firstrow) / math;
@@ -2637,10 +2439,10 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     String getvalue = Logdata.get(i);
                     String firstrow = getvalue.substring(0, 6);
                     String secondrow = getvalue.substring(6, 12);
-                    String thirdrow = getvalue.substring(12, getvalue.length());
-                    int math = (int) Math.pow(10, Integer.valueOf(firstrow.substring(firstrow.length() - 1, firstrow.length())));
-                    int math2 = (int) Math.pow(10, Integer.valueOf(secondrow.substring(firstrow.length() - 1, secondrow.length())));
-                    int math3 = (int) Math.pow(10, Integer.valueOf(thirdrow.substring(firstrow.length() - 1, thirdrow.length())));
+                    String thirdrow = getvalue.substring(12);
+                    int math = (int) Math.pow(10, Integer.valueOf(firstrow.substring(firstrow.length() - 1)));
+                    int math2 = (int) Math.pow(10, Integer.valueOf(secondrow.substring(firstrow.length() - 1)));
+                    int math3 = (int) Math.pow(10, Integer.valueOf(thirdrow.substring(firstrow.length() - 1)));
                     if (firstrow.startsWith("+")) {
                         firstrow = firstrow.substring(1, 5);
                         Float num = Float.valueOf(firstrow) / math;
@@ -2746,44 +2548,6 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
             jsonflag = 3;
         }
     };
-
-    private Dialog writeDialog(Context context, String message) {
-        final Dialog progressDialog = new Dialog(context);
-        progressDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        progressDialog.dismiss();
-
-        LayoutInflater inflater = LayoutInflater.from(context);
-        @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.running, null);
-        LinearLayout linearLayout = v.findViewById(R.id.ll_dialog);
-        ProgressBar pb_progress_bar = v.findViewById(R.id.pb_progress_bar);
-        pb_progress_bar.setVisibility(View.VISIBLE);
-        TextView tv = v.findViewById(R.id.tv_loading);
-
-        if (message == null || message.equals("")) {
-            tv.setVisibility(View.GONE);
-        } else {
-            tv.setText(message);
-            tv.setTextColor(context.getResources().getColor(R.color.colorDialog));
-        }
-
-        progressDialog.setContentView(linearLayout, new LinearLayout.LayoutParams((int) (Value.all_Width / 2),
-                (int) (Value.all_Height / 5)));
-
-        progressDialog.setOnKeyListener((dialog, keyCode, event) -> {
-            vibrator.vibrate(100);
-            if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-                //noinspection deprecation
-                mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                if (checkpassword != null)
-                    checkpassword.dismiss();
-                return false;
-            } else {
-                return false;
-            }
-        });
-        return progressDialog;
-    }
 
     public void Service_close() {
         if (mBluetoothLeService == null) {
@@ -2955,7 +2719,7 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
 
         // setContentView(R.layout.device_function);
@@ -3033,41 +2797,31 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                 new AlertDialog.Builder(this)
                         .setTitle(R.string.warning)
                         .setMessage(R.string.restart)
-                        .setPositiveButton(R.string.butoon_yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                try {
-                                    Value.loading = true;
-                                    Value.downlog = true;
-                                    if (!Value.downlog) {
-                                        navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.start) + getString(R.string.LOG));
-                                    } else {
-                                        navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.end) + getString(R.string.LOG));
-                                    }
-                                    @SuppressLint("SimpleDateFormat")
-                                    SimpleDateFormat get_date = new SimpleDateFormat("yyMMdd");
-                                    @SuppressLint("SimpleDateFormat")
-                                    SimpleDateFormat get_time = new SimpleDateFormat("HHmmss");
-                                    Date date = new Date();
-                                    String strDate = get_date.format(date);
-                                    String strtime = get_time.format(date);
-                                    sendValue.send("DATE" + strDate);
-                                    sleep(500);
-                                    sendValue.send("TIME" + strtime);
-                                    sleep(500);
-                                    Log.e(TAG, "Value.return_RX = " + Value.return_RX.get(Value.SelectItem.indexOf("INTER") - 1));
-                                    sendValue.send(Value.return_RX.get(Value.SelectItem.indexOf("INTER") - 1));
-                                    sleep(500);
-                                    sendValue.send("START");
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
+                        .setPositiveButton(R.string.butoon_yes, (dialog, which) -> {
+                            try {
+                                Value.loading = true;
+                                Value.downlog = true;
+                                navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.end) + getString(R.string.LOG));
+                                @SuppressLint("SimpleDateFormat")
+                                SimpleDateFormat get_date = new SimpleDateFormat("yyMMdd");
+                                @SuppressLint("SimpleDateFormat")
+                                SimpleDateFormat get_time = new SimpleDateFormat("HHmmss");
+                                Date date = new Date();
+                                String strDate = get_date.format(date);
+                                String strtime = get_time.format(date);
+                                sendValue.send("DATE" + strDate);
+                                sleep(500);
+                                sendValue.send("TIME" + strtime);
+                                sleep(500);
+                                Log.e(TAG, "Value.return_RX = " + Value.return_RX.get(Value.SelectItem.indexOf("INTER") - 1));
+                                sendValue.send(Value.return_RX.get(Value.SelectItem.indexOf("INTER") - 1));
+                                sleep(500);
+                                sendValue.send("START");
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
                             }
                         })
-                        .setNegativeButton(R.string.butoon_no, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
+                        .setNegativeButton(R.string.butoon_no, (dialog, which) -> {
                         })
                         .show();
             } else {
@@ -3076,7 +2830,7 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
             }
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

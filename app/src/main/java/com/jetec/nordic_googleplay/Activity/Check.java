@@ -1,8 +1,6 @@
 package com.jetec.nordic_googleplay.Activity;
 
 import android.annotation.SuppressLint;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -41,7 +39,6 @@ public class Check extends AppCompatActivity {
     private Intent intents;
     private String[] default_model;
     private BluetoothLeService mBluetoothLeService;
-    private BluetoothAdapter mBluetoothAdapter;
     private Initialization initialization;
     private boolean s_connect = false;
     private SendValue sendValue;
@@ -55,8 +52,6 @@ public class Check extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         vibrator = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
 
-        BluetoothManager bluetoothManager = getManager(this);
-        mBluetoothAdapter = bluetoothManager.getAdapter();
         if (mBluetoothLeService == null) {
             Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
             s_connect = bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
@@ -138,7 +133,7 @@ public class Check extends AppCompatActivity {
                     login();
                 } else if (e1.getText().toString().trim().matches(Value.I_word)) {  //初始化
                     Toast.makeText(Check.this, getString(R.string.initialization), Toast.LENGTH_SHORT).show();
-                    writeDialog.set_Dialog(this);
+                    writeDialog.set_Dialog(this, true);
                     Log.d(TAG, "初始化裝置 = " + Value.deviceModel);
                     initialization = new Initialization(Value.deviceModel, mBluetoothLeService);
                     try {
@@ -298,7 +293,7 @@ public class Check extends AppCompatActivity {
         sendValue.send("get");
 
         if (!writeDialog.checkshowing()) {
-            writeDialog.set_Dialog(this);
+            writeDialog.set_Dialog(this, true);
         }
 
         new Thread(timedelay).start();
@@ -348,10 +343,6 @@ public class Check extends AppCompatActivity {
             return;
         }
         mBluetoothLeService.disconnect();
-    }
-
-    public static BluetoothManager getManager(Context context) {    //獲取此設備默認藍芽適配器
-        return (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
     }
 
     public boolean onKeyDown(int key, KeyEvent event) {

@@ -140,10 +140,10 @@ public class DeviceEngineer extends AppCompatActivity implements NavigationView.
     private NavigationView navigationView;
     private SendValue sendValue;
     private CheckDeviceName checkDeviceName;
-    private PV pv;
+    private PV pv = new PV();
     private EH eh;
     private EL el;
-    private CR cr;
+    private CR cr = new CR();
     private IH ih;
     private IL il;
     private SwitchDialog switchDialog;
@@ -548,110 +548,104 @@ public class DeviceEngineer extends AppCompatActivity implements NavigationView.
                         break;
                         case "PV1": {
                             float t = Float.valueOf(gets);
-                            pv = new PV(this, function);
                             pv.todo(t, name, inDialog, mBluetoothLeService, gets);
                         }
                         break;
                         case "PV2": {
                             float t = Float.valueOf(gets);
-                            pv = new PV(this, function);
                             pv.todo(t, name, inDialog, mBluetoothLeService, gets);
                         }
                         break;
                         case "PV3": {
                             float t = Float.valueOf(gets);
-                            pv = new PV(this, function);
                             pv.todo(t, name, inDialog, mBluetoothLeService, gets);
                         }
                         break;
                         case "EH1": {
                             float t = Float.valueOf(gets);
                             Log.e(TAG, "Text = " + t);
-                            eh = new EH(this, function);
+                            eh = new EH(this);
                             eh.todo(t, name, inDialog, mBluetoothLeService, gets, MinEL1);
                         }
                         break;
                         case "EH2": {
                             float t = Float.valueOf(gets);
-                            eh = new EH(this, function);
+                            eh = new EH(this);
                             eh.todo(t, name, inDialog, mBluetoothLeService, gets, MinEL2);
                         }
                         break;
                         case "EH3": {
                             float t = Float.valueOf(gets);
-                            eh = new EH(this, function);
+                            eh = new EH(this);
                             eh.todo(t, name, inDialog, mBluetoothLeService, gets, MinEL3);
                         }
                         break;
                         case "EL1": {
                             float t = Float.valueOf(gets);
-                            el = new EL(this, function);
+                            el = new EL(this);
                             el.todo(t, name, inDialog, mBluetoothLeService, gets, MaxEH1);
                         }
                         break;
                         case "EL2": {
                             float t = Float.valueOf(gets);
-                            el = new EL(this, function);
+                            el = new EL(this);
                             el.todo(t, name, inDialog, mBluetoothLeService, gets, MaxEH2);
                         }
                         break;
                         case "EL3": {
                             float t = Float.valueOf(gets);
-                            el = new EL(this, function);
+                            el = new EL(this);
                             el.todo(t, name, inDialog, mBluetoothLeService, gets, MaxEH3);
                         }
                         break;
                         case "CR1": {
                             float t = Float.valueOf(gets);
-                            cr = new CR(this, function);
                             cr.todo(t, name, inDialog, mBluetoothLeService, gets);
                         }
                         break;
                         case "CR2": {
                             float t = Float.valueOf(gets);
-                            cr = new CR(this, function);
                             cr.todo(t, name, inDialog, mBluetoothLeService, gets);
                         }
                         break;
                         case "CR3": {
                             float t = Float.valueOf(gets);
-                            cr = new CR(this, function);
                             cr.todo(t, name, inDialog, mBluetoothLeService, gets);
                         }
                         break;
                         case "IH1": {
                             float t = Float.valueOf(gets);
-                            ih = new IH(this, function);
+                            ih = new IH(this);
                             ih.todo(t, name, inDialog, mBluetoothLeService, gets, MinIL1);
                         }
                         break;
                         case "IH2": {
                             float t = Float.valueOf(gets);
-                            ih = new IH(this, function);
+                            ih = new IH(this);
                             ih.todo(t, name, inDialog, mBluetoothLeService, gets, MinIL2);
                         }
                         break;
                         case "IH3": {
                             float t = Float.valueOf(gets);
-                            ih = new IH(this, function);
+                            ih = new IH(this);
                             ih.todo(t, name, inDialog, mBluetoothLeService, gets, MinIL3);
                         }
                         break;
                         case "IL1": {
                             float t = Float.valueOf(gets);
-                            il = new IL(this, function);
+                            il = new IL(this);
                             il.todo(t, name, inDialog, mBluetoothLeService, gets, MaxIH1);
                         }
                         break;
                         case "IL2": {
                             float t = Float.valueOf(gets);
-                            il = new IL(this, function);
+                            il = new IL(this);
                             il.todo(t, name, inDialog, mBluetoothLeService, gets, MaxIH2);
                         }
                         break;
                         case "IL3": {
                             float t = Float.valueOf(gets);
-                            il = new IL(this, function);
+                            il = new IL(this);
                             il.todo(t, name, inDialog, mBluetoothLeService, gets, MaxIH3);
                         }
                         break;

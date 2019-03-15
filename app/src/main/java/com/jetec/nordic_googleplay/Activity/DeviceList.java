@@ -1,7 +1,6 @@
 package com.jetec.nordic_googleplay.Activity;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -229,7 +228,7 @@ public class DeviceList extends AppCompatActivity {
         s_connect = bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         if (s_connect) {
             if (!writeDialog.checkshowing()) {  //假如連線中之轉圈無顯示則顯示
-                writeDialog.set_Dialog(this, getString(R.string.connecting));
+                writeDialog.set_Dialog(this, false);
             }
             registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
         } else {
