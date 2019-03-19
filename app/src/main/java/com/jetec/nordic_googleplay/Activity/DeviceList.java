@@ -26,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import com.jetec.nordic_googleplay.Dialog.WriteDialog;
 import com.jetec.nordic_googleplay.NewActivity.CheckPassword;
+import com.jetec.nordic_googleplay.NewActivity.ErrActivity;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.ScanParse.*;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
@@ -81,9 +82,9 @@ public class DeviceList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         vibrator = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        /*if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-        }
+        }*/
 
         BluetoothManager bluetoothManager = getManager(this);
         mBluetoothAdapter = bluetoothManager.getAdapter();
@@ -385,6 +386,8 @@ public class DeviceList extends AppCompatActivity {
                                 Log.d(TAG, "訪客密碼 = " + Value.G_word);
                                 Value.connected = true;
                                 check();
+                            }else if(text.matches("ERR")){
+                                resetmodel();
                             }
                         } else {    //新式型號區域
                             text = new String(txValue, StandardCharsets.UTF_8);
@@ -466,6 +469,21 @@ public class DeviceList extends AppCompatActivity {
             e.printStackTrace();
         }
     };
+
+    private void resetmodel(){
+        Intent intent = new Intent(this, ErrActivity.class);
+        String[] default_model = new String[modelJSON.length()];
+        for (int i = 0; i < modelJSON.length(); i++) {
+            try {
+                default_model[i] = modelJSON.get(i).toString();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        intent.putExtra("default_model", default_model);
+        startActivity(intent);
+        finish();
+    }
 
     private void new_deviceFunction() {
         Intent intent = new Intent(DeviceList.this, CheckPassword.class);
@@ -589,10 +607,8 @@ public class DeviceList extends AppCompatActivity {
         super.onConfigurationChanged(newConfig);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) { //橫向
             // land do nothing is ok
-            show_device();
         } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {   //直向
             // port do nothing is ok
-            show_device();
         }
     }
 }

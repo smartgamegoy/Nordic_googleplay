@@ -21,15 +21,19 @@ import android.view.KeyEvent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import com.jetec.nordic_googleplay.Activity.DeviceList;
-import com.jetec.nordic_googleplay.Dialog.*;
+import com.jetec.nordic_googleplay.Dialog.WriteDialog;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
+import com.jetec.nordic_googleplay.ScanParse.Getparse;
 import com.jetec.nordic_googleplay.SendValue;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Value;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import static com.jetec.nordic_googleplay.Activity.DeviceList.getManager;
 
 public class CheckPassword extends AppCompatActivity {
@@ -42,6 +46,11 @@ public class CheckPassword extends AppCompatActivity {
     private BluetoothAdapter mBluetoothAdapter;
     private boolean s_connect = false;
     private SendValue sendValue;
+    private ArrayList<String> return_RX, SelectItem, DataSave, checklist;
+    private WriteDialog writeDialog = new WriteDialog();
+    private Getparse getparse = new Getparse();
+    private boolean getlist = false;
+    private byte[] getbyte = {0x42, 0x59, 0x54, 0x45}, getover = {0x4F, 0x56, 0x45, 0x52};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +75,16 @@ public class CheckPassword extends AppCompatActivity {
 
         Intent intent = getIntent();
         default_model = intent.getStringArrayExtra("default_model");
+
+        return_RX = new ArrayList<>();
+        SelectItem = new ArrayList<>();
+        DataSave = new ArrayList<>();
+        checklist = new ArrayList<>();
+
+        return_RX.clear();
+        SelectItem.clear();
+        DataSave.clear();
+        checklist.clear();
 
         check();
     }
@@ -92,12 +111,70 @@ public class CheckPassword extends AppCompatActivity {
 
         by.setOnClickListener(v -> {
             vibrator.vibrate(100);
-
-
+            if (e1.getText().toString().length() == 6) {
+                Log.d(TAG, "輸入之密碼 = " + e1.getText().toString().trim());
+                if (e1.getText().toString().trim().matches(Value.E_word)) { //工程模式
+                    Value.passwordFlag = 1;
+                    Value.Engin = true;
+                    Log.d(TAG, "管理者 登入");
+                    Value.get_noti = true;
+                    login();
+                } else if (e1.getText().toString().trim().matches(Value.P_word)) {  //一般登入
+                    Value.Engin = false;
+                    Value.passwordFlag = 2;
+                    Log.d(TAG, "客戶 登入");
+                    Value.get_noti = true;
+                    login();
+                } else if (e1.getText().toString().trim().matches(Value.I_word)) {  //初始化
+                    Toast.makeText(CheckPassword.this, getString(R.string.initialization), Toast.LENGTH_SHORT).show();
+                    writeDialog.set_Dialog(this, true);
+                    Log.d(TAG, "初始化裝置 = " + Value.deviceModel);
+                    //initialization = new Initialization(Value.deviceModel, mBluetoothLeService);
+                    try {
+                        Value.Engin = false;
+                        Value.get_noti = true;
+                        Value.init = true;
+                        //initialization.start();
+                    /*} catch (InterruptedException e) {
+                        e.printStackTrace();*/
+                    } finally {
+                        if(writeDialog.checkshowing()) {
+                            writeDialog.closeDialog();
+                        }
+                        Value.passwordFlag = 3;
+                        Log.d(TAG, "開始進行原廠設定");
+                        Toast.makeText(CheckPassword.this, getString(R.string.complete), Toast.LENGTH_SHORT).show();
+                        Value.get_noti = false;
+                        Value.connected = false;
+                        Service_close();
+                        //backtofirst();
+                    }
+                } else if (e1.getText().toString().trim().matches(Value.G_word)) {  //訪客登入
+                    Value.passwordFlag = 4;
+                    Value.Engin = false;
+                    Value.get_noti = true;
+                    Log.d(TAG, "訪客 登入");
+                    login();
+                } else {
+                    Toast.makeText(CheckPassword.this, getString(R.string.passworderror), Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(CheckPassword.this, getString(R.string.inputerror), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
-    private void devicelist() {    //一般模式
+    private void login() {
+        SelectItem.add("NAME");
+        DataSave.add(Value.BName);
+        sendValue.send("get");
+
+        if (!writeDialog.checkshowing()) {
+            writeDialog.set_Dialog(this, true);
+        }
+    }
+
+    private void devicelist() {
 
         Intent intent = new Intent(CheckPassword.this, DeviceList.class);
         NewModel.checkmodel = false;
@@ -135,7 +212,19 @@ public class CheckPassword extends AppCompatActivity {
                 runOnUiThread(() -> {
                     byte[] txValue = intents.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
                     String text = new String(txValue, StandardCharsets.UTF_8);
-
+                    if(Arrays.equals(getbyte,txValue)){
+                        getlist = true;
+                    }else if(Arrays.equals(getover, txValue)){
+                        getlist = false;
+                    }
+                    if(getlist){
+                        if(!text.matches("OVER") || !text.matches("BYTE")){
+                            Log.e(TAG, "text = " + text);
+                            getparse.parsebyte(txValue);
+                        }
+                    }
+                    else {
+                    }
                 });
             }
         }
@@ -149,6 +238,7 @@ public class CheckPassword extends AppCompatActivity {
                 Log.d(TAG, "初始化失敗");
             }
             mBluetoothLeService.connect(Value.BID);
+            sendValue = new SendValue(mBluetoothLeService);
             Log.d(TAG, "進入連線");
         }
 
@@ -229,10 +319,8 @@ public class CheckPassword extends AppCompatActivity {
         super.onConfigurationChanged(newConfig);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) { //橫向
             // land do nothing is ok
-            Log.d(TAG, "橫向");
         } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {   //直向
             // port do nothing is ok
-            Log.d(TAG, "直向");
         }
     }
 }

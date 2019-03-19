@@ -60,7 +60,6 @@ public class Check extends AppCompatActivity {
             else
                 Log.d(TAG, "連線失敗");
         }
-
         get_Intent();
     }
 

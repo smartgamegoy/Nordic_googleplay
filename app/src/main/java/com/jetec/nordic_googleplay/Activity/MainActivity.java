@@ -263,9 +263,11 @@ public class MainActivity extends AppCompatActivity {
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) { //橫向
             // land do nothing is ok
             meun_click();
+            Log.e("test", "橫向了");
         } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {   //直向
             // port do nothing is ok
             meun_click();
+            Log.e("test", "直向了");
         }
     }
 }

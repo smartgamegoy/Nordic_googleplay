@@ -172,4 +172,17 @@
     <string name="chosewaymessage">High speed only useful on advanced hardware device</string>
     <string name="complete">Complete</string>
     <string name="quick">Quick set</string>
+    <string name="errmodel">Model has not been initialized</string>
+    <string name="modelnum">Please enter the model number</string>
+    <string name="bt_t">Temperature\n(-10~65℃)</string>
+    <string name="bt_h">Humidity\n(0~100%)</string>
+    <string name="bt_c">CO2\n(0~2000ppm)</string>
+    <string name="bt_d">CO2\n(0~3000ppm)</string>
+    <string name="bt_e">CO2\n(0~5000ppm)</string>
+    <string name="bt_co">CO\n(?~?ppm)</string>
+    <string name="bt_i">I\n(4~20mA)</string>
+    <string name="bt_time">Time\n(Year/Month/Day)</string>
+    <string name="bt_log">Download\n(LOG record)</string>
+    <string name="bt_back">back</string>
+    <string name="bt_reset">reset</string>
 </resources>

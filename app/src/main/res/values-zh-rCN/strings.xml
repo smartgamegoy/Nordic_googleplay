@@ -172,4 +172,17 @@
     <string name="chosewaymessage">高速下载仅适用较高阶之手机设备</string>
     <string name="complete">完成</string>
     <string name="quick">快速设定</string>
+    <string name="errmodel">型号尚未初始化</string>
+    <string name="modelnum">请输入型号</string>
+    <string name="bt_t">温度\n(-10~65℃)</string>
+    <string name="bt_h">湿度\n(0~100%)</string>
+    <string name="bt_c">二氧化碳\n(0~2000ppm)</string>
+    <string name="bt_d">二氧化碳\n(0~3000ppm)</string>
+    <string name="bt_e">二氧化碳\n(0~5000ppm)</string>
+    <string name="bt_co">一氧化碳\n(?~?ppm)</string>
+    <string name="bt_i">量程\n(4~20mA)</string>
+    <string name="bt_time">时间\n(年/月/日)</string>
+    <string name="bt_log">下载\n(LOG纪录)</string>
+    <string name="bt_back">退格</string>
+    <string name="bt_reset">清除</string>
 </resources>
