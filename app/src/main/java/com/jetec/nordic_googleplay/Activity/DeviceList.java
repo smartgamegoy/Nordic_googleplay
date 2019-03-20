@@ -399,7 +399,8 @@ public class DeviceList extends AppCompatActivity {
                             Value.G_word = "111111";    //訪客密碼
                             Value.E_word = "@JETEC";    //工程模式
                             Value.I_word = ">////<";    //初始化
-                            new_deviceFunction();
+                            //new_deviceFunction();
+                            resetmodel();
                         }
                     } catch (InterruptedException e/* | JSONException e*/) {
                         e.printStackTrace();

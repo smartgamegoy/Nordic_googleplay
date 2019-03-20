@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.jetec.nordic_googleplay.Activity.DeviceList;
 import com.jetec.nordic_googleplay.Dialog.WriteDialog;
+import com.jetec.nordic_googleplay.NewActivity.SendByte.Initialization;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.SendValue;
@@ -44,6 +45,7 @@ public class ErrActivity extends AppCompatActivity {
     private boolean s_connect = false, log = false;
     private SendValue sendValue;
     private WriteDialog writeDialog = new WriteDialog();
+    private Initialization initialization = new Initialization();
     private String str = "", getchar = "", modelhead = "BT-", dash = "-", newmodel = "N", allstr = "";
 
     @Override
@@ -77,7 +79,7 @@ public class ErrActivity extends AppCompatActivity {
     private void setmodel() {
         setContentView(R.layout.errdialog);
 
-        Button by = findViewById(R.id.button1);
+        Button by = findViewById(R.id.button);
         Button bn = findViewById(R.id.button2);
         Button bt = findViewById(R.id.button3);
         Button bh = findViewById(R.id.button4);
@@ -97,17 +99,18 @@ public class ErrActivity extends AppCompatActivity {
             devicelist();
         });
 
-        by.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    vibrator.vibrate(100);
+        by.setOnClickListener(v -> {
+            try {
+                vibrator.vibrate(100);
+                if(!str.matches("")) {
                     sendValue.send(allstr);
-                    sleep(1000);
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    initialization.setinitial(str, mBluetoothLeService);
+                    sleep(2000);
+                    initialization.startinitial();
+                    devicelist();
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         });
 
