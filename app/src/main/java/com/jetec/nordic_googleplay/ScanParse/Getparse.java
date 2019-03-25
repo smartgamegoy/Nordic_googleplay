@@ -64,6 +64,8 @@ public class Getparse {
             else if(btValue[0] == 7){
                 s7.add(str2);
             }
+
+            text = str2;
         }
         Log.e(TAG,"s1 = " + s1);
         Log.e(TAG,"s2 = " + s2);

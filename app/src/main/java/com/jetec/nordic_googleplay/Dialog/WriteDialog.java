@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Vibrator;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ public class WriteDialog {
     private Dialog progressDialog = null;
     private Vibrator vibrator;
     private boolean password = false;
+    private String TAG = "WriteDialog";
 
     public WriteDialog(){
         super();

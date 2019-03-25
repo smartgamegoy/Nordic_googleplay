@@ -268,32 +268,31 @@ public class Engineer extends AppCompatActivity {
         init.setOnClickListener(v -> {
             vibrator.vibrate(100);
             sendValue = new SendValue(mBluetoothLeService);
-            int i = 0;
-            if (Value.deviceModel.substring(3, 4).matches("1")) {
-                i = 1;    //幾排
-            } else if (Value.deviceModel.substring(3, 4).matches("2")) {
-                i = 2;
-            } else if (Value.deviceModel.substring(3, 4).matches("3")) {
-                i = 3;
-            }
-
+            String str = Value.deviceModel;
+            String[] arr = str.split("-");
+            String str2 = arr[2];
+            Log.e(TAG,"str2 = " + str2);
             String sp, er, sv;
-
-            for (int j = 0; j < i; j++) {
-                try {
-                    sp = "SP" + i + "+1250.0";
-                    sendValue.send(sp);
-                    sleep(100);
-                    er = "ER" + i + "+1000.0";
-                    sendValue.send(er);
-                    sleep(100);
-                    sv = "SV" + i + "+0000.0";
-                    sendValue.send(sv);
-                    sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            //noinspection MismatchedQueryAndUpdateOfCollection
+            for (int i = 0; i < str2.length(); i++) {
+                if(str2.charAt(i) == 'I'){
+                    try {
+                        sp = "SP" + (i + 1) + "+1250.0";
+                        showsending(sp);
+                        sendValue.send(sp);
+                        sleep(100);
+                        er = "ER" + (i + 1) + "+1000.0";
+                        showsending(er);
+                        sendValue.send(er);
+                        sleep(100);
+                        sv = "SV" + (i + 1) + "+0000.0";
+                        showsending(sv);
+                        sendValue.send(sv);
+                        sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-
             }
         });
 
@@ -549,5 +548,11 @@ public class Engineer extends AppCompatActivity {
         intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
         intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
         return intentFilter;
+    }
+
+    private void showsending(String message){
+        String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
+        listAdapter.add("[" + currentDateTimeString + "] send: " + message);
+        list1.smoothScrollToPosition(listAdapter.getCount() - 1);
     }
 }

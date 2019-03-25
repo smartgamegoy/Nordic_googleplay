@@ -6,6 +6,8 @@ import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 
 import java.util.Arrays;
 
+import static java.lang.Thread.sleep;
+
 public class Send {
     /*
             PV 1
@@ -69,18 +71,27 @@ public class Send {
         this.bluetoothLeService = bluetoothLeService;
     }
 
-    public void sendinitial(String str){
-        Log.e("set", "str = " + str);
-        String[] arr = str.split("\\+");
-        byte[] value = arr(arr[0], arr[1]);
-        byte[] data = Arrays.copyOfRange(value, 3, value.length);
-        Log.d("send", "sendbyte = " + "[" + value[0] + "," + value[1] + "," + value[2] + "," + byteArrayToInt(data) + "]");
-        bluetoothLeService.writeRXCharacteristic(value);
+    public void sendinitial(String str) {
+        try {
+            Log.e("set", "str = " + str);
+            String[] arr = str.split("\\+");
+            byte[] value = arr(arr[0], arr[1]);
+            byte[] data = Arrays.copyOfRange(value, 3, value.length);
+            Log.d("send", "sendbyte = " + "[" + value[0] + "," + value[1] + "," + value[2] + "," + byteArrayToInt(data) + "]");
+            sleep(100);
+            bluetoothLeService.writeRXCharacteristic(value);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
-    private byte[] arr(String str1, String str2){
+    private void sendByte(String str){
+
+    }
+
+    private byte[] arr(String str1, String str2) {
         byte[] arr = new byte[7], arr2;
-        switch (str1){
+        switch (str1) {
             case "PV1":
                 arr[0] = PV1[0];
                 arr[1] = PV1[1];
@@ -328,7 +339,7 @@ public class Send {
         return ret;
     }
 
-    private  int byteArrayToInt(byte[] b) {
+    private int byteArrayToInt(byte[] b) {
         if (b.length == 4)
             return b[0] << 24 | (b[1] & 0xff) << 16 | (b[2] & 0xff) << 8
                     | (b[3] & 0xff);

@@ -62,6 +62,13 @@
             tools:ignore="InnerclassSeparator">
         </activity>
         <activity
+            android:name=".NewActivity.New_Engin"
+            android:theme="@style/nordic_use"
+            android:screenOrientation="user"
+            android:windowSoftInputMode="stateUnchanged|adjustResize"
+            tools:ignore="InnerclassSeparator">
+        </activity>
+        <activity
             android:name=".Activity.Engineer"
             android:theme="@style/nordic_use"
             android:screenOrientation="portrait"

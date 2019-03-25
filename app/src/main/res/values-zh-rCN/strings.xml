@@ -185,4 +185,5 @@
     <string name="bt_log">下载\n(LOG纪录)</string>
     <string name="bt_back">退格</string>
     <string name="bt_reset">清除</string>
+    <string name="engin_mode">工程模式</string>
 </resources>

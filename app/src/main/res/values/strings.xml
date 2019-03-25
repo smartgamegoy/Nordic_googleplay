@@ -185,4 +185,5 @@
     <string name="bt_log">Download\n(LOG record)</string>
     <string name="bt_back">back</string>
     <string name="bt_reset">reset</string>
+    <string name="engin_mode">Engin mode</string>
 </resources>
