@@ -15,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -24,12 +25,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.jetec.nordic_googleplay.Activity.DeviceEngineer;
-import com.jetec.nordic_googleplay.Activity.Engineer;
 import com.jetec.nordic_googleplay.Activity.MainActivity;
 import com.jetec.nordic_googleplay.DialogFunction.ENGIN;
-import com.jetec.nordic_googleplay.Initialization;
+import com.jetec.nordic_googleplay.EditManagert.EditChangePointer;
 import com.jetec.nordic_googleplay.NewActivity.GetString.*;
+import com.jetec.nordic_googleplay.NewActivity.SendByte.*;
+import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.ScanParse.*;
 import com.jetec.nordic_googleplay.SendValue;
@@ -37,7 +38,6 @@ import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Value;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
@@ -49,16 +49,20 @@ public class New_Engin extends AppCompatActivity {
     private Vibrator vibrator;
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothLeService mBluetoothLeService;
-    private boolean s_connect = false, byteconvert = false, b_bool = false;
-    private String TAG = "New_Engin";
+    private String[] default_model;
+    private boolean s_connect = false, byteconvert = false, b_bool = false, change = false;
+    private String TAG = "New_Engin", name;
     private Intent intents;
     private ListView list1;
-    private Button b_send;
+    private Button b_send, SP1, ER1, SV1, SP2, ER2, SV2, SP3, ER3, SV3;
+    private EditText e1;
     private ArrayAdapter<String> listAdapter;
     private SendValue sendValue;
+    private Send send;
     private byte[] getbyte = {0x42, 0x59, 0x54, 0x45}, getover = {0x4F, 0x56, 0x45, 0x52};
     private ByteToHex byteToHex = new ByteToHex();
     private Getparse getparse = new Getparse();
+    private Initialization initialization = new Initialization();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,74 +82,128 @@ public class New_Engin extends AppCompatActivity {
     }
 
     private void get_intent() {
+        Intent intent = getIntent();
+        default_model = intent.getStringArrayExtra("default_model");
+
+        showlist();
+    }
+
+    private void showlist() {
 
         setContentView(R.layout.engineer_title);
 
         Toolbar myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
+        myToolbar.setTitle(Value.deviceModel);
 
         ENGIN engin = new ENGIN(this);
+
         list1 = findViewById(R.id.listMessage);
-        EditText e1 = findViewById(R.id.sendText);
+        e1 = findViewById(R.id.sendText);
         b_send = findViewById(R.id.sendButton);
         Button fix = findViewById(R.id.button);
-        Button SP1 = findViewById(R.id.button2);
-        Button ER1 = findViewById(R.id.button3);
-        Button SV1 = findViewById(R.id.button4);
+        SP1 = findViewById(R.id.button2);
+        ER1 = findViewById(R.id.button3);
+        SV1 = findViewById(R.id.button4);
         Button GET = findViewById(R.id.button5);
-        Button SP2 = findViewById(R.id.button6);
-        Button ER2 = findViewById(R.id.button7);
-        Button SV2 = findViewById(R.id.button8);
+        SP2 = findViewById(R.id.button6);
+        ER2 = findViewById(R.id.button7);
+        SV2 = findViewById(R.id.button8);
         Button init = findViewById(R.id.button9);
-        Button SP3 = findViewById(R.id.button10);
-        Button ER3 = findViewById(R.id.button11);
-        Button SV3 = findViewById(R.id.button12);
+        SP3 = findViewById(R.id.button10);
+        ER3 = findViewById(R.id.button11);
+        SV3 = findViewById(R.id.button12);
+
+        b_send.setText("string");
+        fix.setText("zerospn");
+        if(!change)
+            GET.setText("get");
+        else
+            GET.setText("fix");
 
         listAdapter = new ArrayAdapter<>(this, R.layout.message_detail);
         list1.setAdapter(listAdapter);
         list1.setDivider(null);
 
-        if(b_bool){
+        String model = Value.deviceModel;
+        String[] modelname = model.split("-");
+        name = modelname[2];
+        Log.e(TAG, "str2 = " + name);
+        String sp1, sr1, sv1, sp2, sr2, sv2, sp3, sr3, sv3; //sp, sr, sv
+        /*for(int i = 0; i < name.length(); i++){
+            if()
+        }*/
+
+        if (b_bool) {
+            e1.setKeyListener(DigitsKeyListener.getInstance("0123456789ABCDEF"));
             b_send.setText("byte");
-        }
-        else {
+        } else {
+            e1.setKeyListener(DigitsKeyListener.getInstance("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ+-."));
             b_send.setText("string");
         }
-
-        e1.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
         b_send.setOnClickListener(v -> {
             vibrator.vibrate(100);
             String message = e1.getText().toString().trim();
             if (!message.matches("")) {
-                try {
-                    String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
-                    sendValue = new SendValue(mBluetoothLeService);
-                    sendValue.send(message);
-                    sleep(100);
-                    listAdapter.add("[" + currentDateTimeString + "] send: " + message);
-                    list1.smoothScrollToPosition(listAdapter.getCount() - 1);
-                    e1.setText("");
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                if(b_send.getText().toString().trim().matches("string")) {
+                    try {
+                        byteconvert = false;
+                        String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
+                        sendValue = new SendValue(mBluetoothLeService);
+                        sendValue.send(message);
+                        sleep(100);
+                        listAdapter.add("[" + currentDateTimeString + "] send: " + message);
+                        list1.smoothScrollToPosition(listAdapter.getCount() - 1);
+                        e1.setText("");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else if(b_send.getText().toString().trim().matches("byte")){
+                    try {
+                        byteconvert = true;
+                        String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
+                        send = new Send(mBluetoothLeService);
+                        message = message.toUpperCase();
+                        send.sendByte(message);
+                        sleep(100);
+                        listAdapter.add("[" + currentDateTimeString + "] send: " + message);
+                        list1.smoothScrollToPosition(listAdapter.getCount() - 1);
+                        e1.setText("");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
 
         fix.setOnClickListener(v -> {
             vibrator.vibrate(100);
-            try {
-                String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
-                sendValue = new SendValue(mBluetoothLeService);
-                sendValue.send("FIX");
-                sleep(100);
-                listAdapter.add("[" + currentDateTimeString + "] send: " + "FIX");
-                list1.smoothScrollToPosition(listAdapter.getCount() - 1);
-                e1.setText("");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            change = !change;
+            if (change) {
+                GET.setText("fix");
+                SP1.setText("SP4");
+                ER1.setText("ER4");
+                SV1.setText("SV4");
+                SP2.setText("SP5");
+                ER2.setText("ER5");
+                SV2.setText("SV5");
+                SP3.setText("SP6");
+                ER3.setText("ER6");
+                SV3.setText("SV6");
+            } else {
+                GET.setText("get");
+                SP1.setText("SP1");
+                ER1.setText("ER1");
+                SV1.setText("SV1");
+                SP2.setText("SP2");
+                ER2.setText("ER2");
+                SV2.setText("SV2");
+                SP3.setText("SP3");
+                ER3.setText("ER3");
+                SV3.setText("SV3");
             }
         });
 
@@ -154,7 +212,13 @@ public class New_Engin extends AppCompatActivity {
             String message = e1.getText().toString().trim();
             if (!message.matches("")) {
                 try {
-                    message = engin.todo(Float.valueOf(message), "SP1", message);
+                    byteconvert = false;
+                    if(change){
+                        message = engin.todo(Float.valueOf(message), "SP4", message);
+                    }
+                    else {
+                        message = engin.todo(Float.valueOf(message), "SP1", message);
+                    }
                     String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                     sendValue = new SendValue(mBluetoothLeService);
                     sendValue.send(message);
@@ -173,7 +237,13 @@ public class New_Engin extends AppCompatActivity {
             String message = e1.getText().toString().trim();
             if (!message.matches("")) {
                 try {
-                    message = engin.todo(Float.valueOf(message), "ER1", message);
+                    byteconvert = false;
+                    if(change){
+                        message = engin.todo(Float.valueOf(message), "ER4", message);
+                    }
+                    else {
+                        message = engin.todo(Float.valueOf(message), "ER1", message);
+                    }
                     String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                     sendValue = new SendValue(mBluetoothLeService);
                     sendValue.send(message);
@@ -192,7 +262,13 @@ public class New_Engin extends AppCompatActivity {
             String message = e1.getText().toString().trim();
             if (!message.matches("")) {
                 try {
-                    message = engin.todo(Float.valueOf(message), "SV1", message);
+                    byteconvert = false;
+                    if(change){
+                        message = engin.todo(Float.valueOf(message), "SV4", message);
+                    }
+                    else {
+                        message = engin.todo(Float.valueOf(message), "SV1", message);
+                    }
                     String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                     sendValue = new SendValue(mBluetoothLeService);
                     sendValue.send(message);
@@ -208,16 +284,32 @@ public class New_Engin extends AppCompatActivity {
 
         GET.setOnClickListener(v -> {
             vibrator.vibrate(100);
-            try {
-                String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
-                sendValue = new SendValue(mBluetoothLeService);
-                sendValue.send("get");
-                sleep(100);
-                listAdapter.add("[" + currentDateTimeString + "] send: " + "get");
-                list1.smoothScrollToPosition(listAdapter.getCount() - 1);
-                e1.setText("");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if(change){
+                try {
+                    byteconvert = false;
+                    String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
+                    sendValue = new SendValue(mBluetoothLeService);
+                    sendValue.send("FIX");
+                    sleep(100);
+                    listAdapter.add("[" + currentDateTimeString + "] send: " + "FIX");
+                    list1.smoothScrollToPosition(listAdapter.getCount() - 1);
+                    e1.setText("");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                try {
+                    String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
+                    sendValue = new SendValue(mBluetoothLeService);
+                    sendValue.send("get");
+                    sleep(100);
+                    listAdapter.add("[" + currentDateTimeString + "] send: " + "get");
+                    list1.smoothScrollToPosition(listAdapter.getCount() - 1);
+                    e1.setText("");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -226,7 +318,13 @@ public class New_Engin extends AppCompatActivity {
             String message = e1.getText().toString().trim();
             if (!message.matches("")) {
                 try {
-                    message = engin.todo(Float.valueOf(message), "SP2", message);
+                    byteconvert = false;
+                    if(change){
+                        message = engin.todo(Float.valueOf(message), "SV5", message);
+                    }
+                    else {
+                        message = engin.todo(Float.valueOf(message), "SP2", message);
+                    }
                     String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                     sendValue = new SendValue(mBluetoothLeService);
                     sendValue.send(message);
@@ -245,7 +343,13 @@ public class New_Engin extends AppCompatActivity {
             String message = e1.getText().toString().trim();
             if (!message.matches("")) {
                 try {
-                    message = engin.todo(Float.valueOf(message), "ER2", message);
+                    byteconvert = false;
+                    if(change){
+                        message = engin.todo(Float.valueOf(message), "ER5", message);
+                    }
+                    else {
+                        message = engin.todo(Float.valueOf(message), "ER2", message);
+                    }
                     String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                     sendValue = new SendValue(mBluetoothLeService);
                     sendValue.send(message);
@@ -264,7 +368,13 @@ public class New_Engin extends AppCompatActivity {
             String message = e1.getText().toString().trim();
             if (!message.matches("")) {
                 try {
-                    message = engin.todo(Float.valueOf(message), "SV2", message);
+                    byteconvert = false;
+                    if(change){
+                        message = engin.todo(Float.valueOf(message), "SV5", message);
+                    }
+                    else {
+                        message = engin.todo(Float.valueOf(message), "SV2", message);
+                    }
                     String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                     sendValue = new SendValue(mBluetoothLeService);
                     sendValue.send(message);
@@ -280,15 +390,16 @@ public class New_Engin extends AppCompatActivity {
 
         init.setOnClickListener(v -> {
             vibrator.vibrate(100);
+            byteconvert = false;
             sendValue = new SendValue(mBluetoothLeService);
             String str = Value.deviceModel;
             String[] arr = str.split("-");
             String str2 = arr[2];
-            Log.e(TAG,"str2 = " + str2);
+            Log.e(TAG, "str2 = " + str2);
             String sp, er, sv;
             //noinspection MismatchedQueryAndUpdateOfCollection
             for (int i = 0; i < str2.length(); i++) {
-                if(str2.charAt(i) == 'I'){
+                if (str2.charAt(i) == 'I') {
                     try {
                         sp = "SP" + (i + 1) + "+1250.0";
                         showsending(sp);
@@ -314,7 +425,13 @@ public class New_Engin extends AppCompatActivity {
             String message = e1.getText().toString().trim();
             if (!message.matches("")) {
                 try {
-                    message = engin.todo(Float.valueOf(message), "SP3", message);
+                    byteconvert = false;
+                    if(change){
+                        message = engin.todo(Float.valueOf(message), "SP6", message);
+                    }
+                    else {
+                        message = engin.todo(Float.valueOf(message), "SP3", message);
+                    }
                     String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                     sendValue = new SendValue(mBluetoothLeService);
                     sendValue.send(message);
@@ -333,7 +450,13 @@ public class New_Engin extends AppCompatActivity {
             String message = e1.getText().toString().trim();
             if (!message.matches("")) {
                 try {
-                    message = engin.todo(Float.valueOf(message), "ER3", message);
+                    byteconvert = false;
+                    if(change){
+                        message = engin.todo(Float.valueOf(message), "ER6", message);
+                    }
+                    else {
+                        message = engin.todo(Float.valueOf(message), "ER3", message);
+                    }
                     String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                     sendValue = new SendValue(mBluetoothLeService);
                     sendValue.send(message);
@@ -352,7 +475,13 @@ public class New_Engin extends AppCompatActivity {
             String message = e1.getText().toString().trim();
             if (!message.matches("")) {
                 try {
-                    message = engin.todo(Float.valueOf(message), "SV3", message);
+                    byteconvert = false;
+                    if(change){
+                        message = engin.todo(Float.valueOf(message), "SV6", message);
+                    }
+                    else {
+                        message = engin.todo(Float.valueOf(message), "SV3", message);
+                    }
                     String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                     sendValue = new SendValue(mBluetoothLeService);
                     sendValue.send(message);
@@ -391,19 +520,16 @@ public class New_Engin extends AppCompatActivity {
                     try {
                         String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                         byte[] txValue = intents.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
-                        if(Arrays.equals(getbyte, txValue)){
+                        if (Arrays.equals(getbyte, txValue)) {
                             byteconvert = true;
                             showhex(txValue);
-                        }
-                        else if(Arrays.equals(getover, txValue)){
+                        } else if (Arrays.equals(getover, txValue)) {
                             byteconvert = false;
                             showhex(txValue);
-                        }
-                        else {
-                            if(byteconvert){
+                        } else {
+                            if (byteconvert) {
                                 showhex(txValue);
-                            }
-                            else {
+                            } else {
                                 String text = new String(txValue, "UTF-8");
                                 listAdapter.add("[" + currentDateTimeString + "] RE: " + text);
                                 list1.smoothScrollToPosition(listAdapter.getCount() - 1);
@@ -417,15 +543,23 @@ public class New_Engin extends AppCompatActivity {
         }
     };
 
-    private void showhex(byte[] txValue){
+    private void showhex(byte[] txValue) {
         String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
         String[] arr = byteToHex.hexstring(txValue);
         StringBuilder str = new StringBuilder();
-        String str2;
-        for(String s : arr){
+        String str2 = "";
+        for (String s : arr) {
             str.append(s).append(" ");
         }
-        str2 = getparse.parsebyte(txValue);
+        if (txValue.length == 4) {
+            if (Arrays.equals(getbyte, txValue)) {
+                str2 = "BYTE";
+            } else if (Arrays.equals(getover, txValue)) {
+                str2 = "OVER";
+            }
+        } else {
+            str2 = getparse.parsebyte(txValue);
+        }
         listAdapter.add("[" + currentDateTimeString + "] RE: " + str2);
         listAdapter.add("[" + currentDateTimeString + "] RE: " + str);
         list1.smoothScrollToPosition(listAdapter.getCount() - 1);
@@ -457,6 +591,14 @@ public class New_Engin extends AppCompatActivity {
         }
     };
 
+    private void resetmodel() {
+        Intent intent = new Intent(this, ErrActivity.class);
+        NewModel.checkmodel = false;
+        intent.putExtra("default_model", default_model);
+        startActivity(intent);
+        finish();
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -469,6 +611,7 @@ public class New_Engin extends AppCompatActivity {
             mBluetoothLeService.stopSelf();
             mBluetoothLeService = null;
         }
+        NewModel.checkmodel = false;
     }
 
     @Override
@@ -511,6 +654,9 @@ public class New_Engin extends AppCompatActivity {
                                 mBluetoothAdapter.stopLeScan(mLeScanCallback);
                             Service_close();
                             Value.connected = false;
+                            Value.deviceModel = "";
+                            Value.BID = "";
+                            Value.BName = "";
                             disconnect();
                         })
                         .setNeutralButton(R.string.butoon_no, (dialog, which) -> {
@@ -534,8 +680,12 @@ public class New_Engin extends AppCompatActivity {
     }
 
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem setTime = menu.findItem(R.id.string_byte);
-        setTime.setTitle(R.string.mes_title);
+        MenuItem value = menu.findItem(R.id.string_byte);
+        if (b_bool) {
+            value.setTitle("string");
+        } else {
+            value.setTitle("byte");
+        }
         return true;
     }
 
@@ -555,12 +705,25 @@ public class New_Engin extends AppCompatActivity {
             return true;
         } else if (id == R.id.reset) {
             vibrator.vibrate(100);
-            Initialization initialization = new Initialization(Value.deviceModel, mBluetoothLeService);
-            try {
-                initialization.start();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            byteconvert = true;
+            initialization.setinitial(name, mBluetoothLeService);
+            initialization.startinitial();
+            return true;
+        } else if (id == R.id.string_byte) {
+            vibrator.vibrate(100);
+            b_bool = !b_bool;
+            if (b_bool) {
+                e1.setKeyListener(DigitsKeyListener.getInstance("0123456789abcdefABCDEF"));
+                e1.addTextChangedListener(new EditChangePointer(e1));
+                b_send.setText("byte");
+            } else {
+                e1.setKeyListener(DigitsKeyListener.getInstance("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ+-."));
+                b_send.setText("string");
             }
+            return true;
+        } else if (id == R.id.resetmodel) {
+            vibrator.vibrate(100);
+            resetmodel();
             return true;
         }
 
@@ -588,7 +751,7 @@ public class New_Engin extends AppCompatActivity {
     private void addDevice() {
     }
 
-    private void showsending(String message){
+    private void showsending(String message) {
         String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
         listAdapter.add("[" + currentDateTimeString + "] send: " + message);
         list1.smoothScrollToPosition(listAdapter.getCount() - 1);

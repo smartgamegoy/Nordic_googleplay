@@ -85,8 +85,25 @@ public class Send {
         }
     }
 
-    private void sendByte(String str){
+    public void sendByte(String str){
+        String getstr = str.replace(" ","");
+        byte[] value = bytes(getstr);
+        bluetoothLeService.writeRXCharacteristic(value);
+    }
 
+    private byte[] bytes(String getnum){
+        String str = "0123456789ABCDEF";
+        char[] hexs = getnum.toCharArray();
+        byte[] bytes = new byte[getnum.length() / 2];
+        int n;
+
+        for (int i = 0; i < bytes.length; i++) {
+            n = str.indexOf(hexs[2 * i]) * 16;
+            n += str.indexOf(hexs[2 * i + 1]);
+            bytes[i] = (byte) (n & 0xff);
+        }
+
+        return bytes;
     }
 
     private byte[] arr(String str1, String str2) {
@@ -337,6 +354,21 @@ public class Send {
         ret[1] = (byte) ((a >> 16) & 0xFF);
         ret[0] = (byte) ((a >> 24) & 0xFF);
         return ret;
+    }
+
+    private String getname(String getname){
+        String str = "0123456789ABCDEF";
+        char[] hexs = getname.toCharArray();
+        byte[] bytes = new byte[getname.length() / 2];
+        int n;
+
+        for (int i = 0; i < bytes.length; i++) {
+            n = str.indexOf(hexs[2 * i]) * 16;
+            n += str.indexOf(hexs[2 * i + 1]);
+            bytes[i] = (byte) (n & 0xff);
+        }
+
+        return new String(bytes);
     }
 
     private int byteArrayToInt(byte[] b) {

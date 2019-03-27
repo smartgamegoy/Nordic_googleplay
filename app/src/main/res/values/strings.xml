@@ -92,6 +92,7 @@
     <string name="connecting">Connecting</string>
     <string name="login">Login...</string>
     <string name="inputerror">Input error</string>
+    <string name="geterror">Please try again!</string>
     <string name="passworderror">Password error</string>
     <string name="modifypassword">Modify password</string>
     <string name="original">Original password</string>

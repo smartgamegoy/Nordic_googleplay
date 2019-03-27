@@ -50,12 +50,12 @@ public class CheckPassword extends AppCompatActivity {
     private BluetoothAdapter mBluetoothAdapter;
     private boolean s_connect = false;
     private SendValue sendValue;
-    private Handler mHandler;
+    private Handler mHandler, setTime;
     private ArrayList<String> return_RX, SelectItem, DataSave, checklist;
     private WriteDialog writeDialog = new WriteDialog();
     private Getparse getparse = new Getparse();
     private Initialization initialization = new Initialization();
-    private boolean getlist = false;
+    private boolean getlist = false, check = false;
     private byte[] getbyte = {0x42, 0x59, 0x54, 0x45}, getover = {0x4F, 0x56, 0x45, 0x52};
 
     @Override
@@ -87,6 +87,7 @@ public class CheckPassword extends AppCompatActivity {
         DataSave = new ArrayList<>();
         checklist = new ArrayList<>();
         mHandler = new Handler();
+        setTime = new Handler();
 
         return_RX.clear();
         SelectItem.clear();
@@ -163,6 +164,14 @@ public class CheckPassword extends AppCompatActivity {
             } else {
                 Toast.makeText(CheckPassword.this, getString(R.string.inputerror), Toast.LENGTH_SHORT).show();
             }
+            setTime.postDelayed(() -> {
+                if(!check) {
+                    Toast.makeText(CheckPassword.this, getString(R.string.geterror), Toast.LENGTH_SHORT).show();
+                    if (writeDialog.checkshowing()) {
+                        writeDialog.closeDialog();
+                    }
+                }
+            }, 5000);
         });
     }
 
@@ -217,6 +226,7 @@ public class CheckPassword extends AppCompatActivity {
                     if (Arrays.equals(getbyte, txValue)) {
                         getlist = true;
                     } else if (Arrays.equals(getover, txValue)) {
+                        check = true;
                         getlist = false;
                         if(Value.Engin){
                             gotoEngin();
@@ -239,6 +249,7 @@ public class CheckPassword extends AppCompatActivity {
 
     private void gotoEngin(){
         Intent intent = new Intent(CheckPassword.this, New_Engin.class);
+        intent.putExtra("default_model", default_model);
         startActivity(intent);
         finish();
     }
@@ -297,6 +308,7 @@ public class CheckPassword extends AppCompatActivity {
             mBluetoothLeService = null;
         }
         Value.get_noti = false;
+        NewModel.checkmodel = false;
         writeDialog.closeDialog();
         Service_close();
     }

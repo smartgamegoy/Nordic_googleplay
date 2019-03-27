@@ -5,18 +5,24 @@
         android:id="@+id/action_settings"
         android:orderInCategory="1"
         android:title="check"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/reset"
         android:orderInCategory="2"
         android:title="害羞臉"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/string_byte"
         android:orderInCategory="3"
         android:title=""
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/resetmodel"
+        android:orderInCategory="3"
+        android:title="型號重置"
+        app:showAsAction="never" />
 
 </menu>

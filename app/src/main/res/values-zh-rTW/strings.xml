@@ -92,6 +92,7 @@
     <string name="connecting">連線中</string>
     <string name="login">登入中</string>
     <string name="inputerror">輸入錯誤</string>
+    <string name="geterror">請再試一次!</string>
     <string name="passworderror">密碼錯誤</string>
     <string name="modifypassword">修改密碼</string>
     <string name="original">舊密碼</string>

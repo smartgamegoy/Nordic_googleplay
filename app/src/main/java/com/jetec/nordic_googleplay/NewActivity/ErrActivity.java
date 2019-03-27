@@ -529,6 +529,7 @@ public class ErrActivity extends AppCompatActivity {
             mBluetoothLeService.stopSelf();
             mBluetoothLeService = null;
         }
+        NewModel.checkmodel = false;
         Service_close();
     }
 
