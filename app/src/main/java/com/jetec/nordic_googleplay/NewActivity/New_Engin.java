@@ -130,16 +130,10 @@ public class New_Engin extends AppCompatActivity {
         String[] modelname = model.split("-");
         name = modelname[2];
         Log.e(TAG, "str2 = " + name);
-        String sp1, sr1, sv1, sp2, sr2, sv2, sp3, sr3, sv3; //sp, sr, sv
-        /*for(int i = 0; i < name.length(); i++){
-            if()
-        }*/
 
         if (b_bool) {
-            e1.setKeyListener(DigitsKeyListener.getInstance("0123456789ABCDEF"));
             b_send.setText("byte");
         } else {
-            e1.setKeyListener(DigitsKeyListener.getInstance("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ+-."));
             b_send.setText("string");
         }
 
@@ -397,22 +391,24 @@ public class New_Engin extends AppCompatActivity {
             String str2 = arr[2];
             Log.e(TAG, "str2 = " + str2);
             String sp, er, sv;
+            int j = 1;
             //noinspection MismatchedQueryAndUpdateOfCollection
             for (int i = 0; i < str2.length(); i++) {
                 if (str2.charAt(i) == 'I') {
                     try {
-                        sp = "SP" + (i + 1) + "+1250.0";
+                        sp = "SP" + j + "+1250.0";
                         showsending(sp);
                         sendValue.send(sp);
                         sleep(100);
-                        er = "ER" + (i + 1) + "+1000.0";
+                        er = "ER" + j + "+1000.0";
                         showsending(er);
                         sendValue.send(er);
                         sleep(100);
-                        sv = "SV" + (i + 1) + "+0000.0";
+                        sv = "SV" + j + "+0000.0";
                         showsending(sv);
                         sendValue.send(sv);
                         sleep(100);
+                        j = j + 1;
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -717,7 +713,7 @@ public class New_Engin extends AppCompatActivity {
                 e1.addTextChangedListener(new EditChangePointer(e1));
                 b_send.setText("byte");
             } else {
-                e1.setKeyListener(DigitsKeyListener.getInstance("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ+-."));
+                e1.setInputType(InputType.TYPE_CLASS_TEXT);
                 b_send.setText("string");
             }
             return true;
