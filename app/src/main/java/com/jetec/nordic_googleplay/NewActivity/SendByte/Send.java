@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import static java.lang.Thread.sleep;
@@ -88,7 +89,15 @@ public class Send {
     public void sendByte(String str){
         String getstr = str.replace(" ","");
         byte[] value = bytes(getstr);
+        Log.w(TAG, "str = " + str);
         bluetoothLeService.writeRXCharacteristic(value);
+    }
+
+    public void sendString(String str){
+        byte[] sends;
+        sends = str.getBytes(StandardCharsets.UTF_8);
+        Log.e(TAG, "str = " + str);
+        bluetoothLeService.writeRXCharacteristic(sends);
     }
 
     private byte[] bytes(String getnum){

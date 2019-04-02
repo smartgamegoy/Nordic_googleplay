@@ -89,6 +89,7 @@ public class ErrActivity extends AppCompatActivity {
         Button b_co = findViewById(R.id.button8);
         Button bi = findViewById(R.id.button9);
         Button b_time = findViewById(R.id.button10);
+        Button b_ztime = findViewById(R.id.button14);
         Button b_log = findViewById(R.id.button11);
         Button b_back = findViewById(R.id.button12);
         Button b_reset = findViewById(R.id.button13);
@@ -386,6 +387,40 @@ public class ErrActivity extends AppCompatActivity {
             }
         });
 
+        b_ztime.setOnClickListener(v -> {
+            vibrator.vibrate(100);
+            getchar = "Z";
+            if (!log) {
+                if (str.length() < 6) {
+                    if (!log) {
+                        str = str + getchar;
+                        int count = str.length();
+                        textView.setText(modelhead + count + dash + str + dash + newmodel);
+                        allstr = modelhead + count + dash + str + dash + newmodel;
+                    } else {
+                        str = str.substring(0, str.length() - 1) + getchar + str.substring(str.length() - 1);
+                        int count = str.length() - 1;
+                        textView.setText(modelhead + count + dash + str + dash + newmodel);
+                        allstr = modelhead + count + dash + str + dash + newmodel;
+                    }
+                }
+            } else {
+                if (str.length() < 7) {
+                    if (!log) {
+                        str = str + getchar;
+                        int count = str.length();
+                        textView.setText(modelhead + count + dash + str + dash + newmodel);
+                        allstr = modelhead + count + dash + str + dash + newmodel;
+                    } else {
+                        str = str.substring(0, str.length() - 1) + getchar + str.substring(str.length() - 1);
+                        int count = str.length() - 1;
+                        textView.setText(modelhead + count + dash + str + dash + newmodel);
+                        allstr = modelhead + count + dash + str + dash + newmodel;
+                    }
+                }
+            }
+        });
+
         b_log.setOnClickListener(v -> {
             vibrator.vibrate(100);
             if (str.length() <= 6 && !str.matches("")) {
@@ -529,6 +564,7 @@ public class ErrActivity extends AppCompatActivity {
             mBluetoothLeService.stopSelf();
             mBluetoothLeService = null;
         }
+        Value.YMD = false;
         NewModel.checkmodel = false;
         Service_close();
     }

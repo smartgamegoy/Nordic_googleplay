@@ -69,6 +69,13 @@
             tools:ignore="InnerclassSeparator">
         </activity>
         <activity
+            android:name=".NewActivity.UserFunction"
+            android:theme="@style/nordic_use"
+            android:screenOrientation="user"
+            android:configChanges="orientation|keyboardHidden"
+            tools:ignore="InnerclassSeparator">
+        </activity>
+        <activity
             android:name=".Activity.Engineer"
             android:theme="@style/nordic_use"
             android:screenOrientation="portrait"

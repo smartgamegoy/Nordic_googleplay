@@ -316,6 +316,8 @@ public class DeviceList extends AppCompatActivity {
                                 Jsonlist.clear();
                                 Value.model = true;
                                 Value.deviceModel = text;
+                                if(text.contains("Y") || text.contains("Z"))
+                                    Value.YMD = true;
                                 String[] arr = text.split("-");
                                 if (arr.length == 3) {  //若型號為舊型，則進入此
                                     NewModel.checkmodel = false;
@@ -324,7 +326,6 @@ public class DeviceList extends AppCompatActivity {
                                     String num2 = arr[2];
                                     Log.d(TAG, "num2 = " + num2);
                                     //timeclock
-                                    Value.YMD = text.contains("Y");
                                     ArrayList<String> newList = new ArrayList<>();
                                     newList.clear();
                                     for (int i = 0; i < num2.length(); i++) {

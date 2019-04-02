@@ -90,9 +90,14 @@ public class Initialization {
             sleep(500);
             if (Value.YMD) {
                 @SuppressLint("SimpleDateFormat")
+                SimpleDateFormat get_date = new SimpleDateFormat("yyMMdd");
+                @SuppressLint("SimpleDateFormat")
                 SimpleDateFormat get_time = new SimpleDateFormat("HHmmss");
                 Date date = new Date();
+                String strDate = get_date.format(date);
                 String strtime = get_time.format(date);
+                sendValue.send("DATE" + strDate);
+                sleep(500);
                 sendValue.send("TIME" + strtime);
                 sleep(500);
             }

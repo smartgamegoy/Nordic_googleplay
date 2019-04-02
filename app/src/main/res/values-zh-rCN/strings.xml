@@ -182,7 +182,9 @@
     <string name="bt_e">二氧化碳\n(0~5000ppm)</string>
     <string name="bt_co">一氧化碳\n(?~?ppm)</string>
     <string name="bt_i">量程\n(4~20mA)</string>
-    <string name="bt_time">时间\n(年/月/日)</string>
+    <string name="table_i">量程</string>
+    <string name="bt_time">Y时间\n(年/月/日)</string>
+    <string name="bt_ztime">Z时间\n(年/月/日)</string>
     <string name="bt_log">下载\n(LOG纪录)</string>
     <string name="bt_back">退格</string>
     <string name="bt_reset">清除</string>

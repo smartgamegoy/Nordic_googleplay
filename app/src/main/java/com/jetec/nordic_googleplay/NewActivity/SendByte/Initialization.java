@@ -1,8 +1,14 @@
 package com.jetec.nordic_googleplay.NewActivity.SendByte;
 
-import com.jetec.nordic_googleplay.Service.BluetoothLeService;
+import android.annotation.SuppressLint;
+import android.util.Log;
 
+import com.jetec.nordic_googleplay.Service.BluetoothLeService;
+import com.jetec.nordic_googleplay.Value;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static java.lang.Thread.enumerate;
 import static java.lang.Thread.sleep;
@@ -33,6 +39,18 @@ public class Initialization {
         model.clear();
         for (int i = 0; i < str.length(); i++) {
             model.add(str.charAt(i));
+        }
+    }
+
+    public void initialname() {
+        try {
+            sleep(100);
+            send.sendString("NAMEJTC-N");
+            sleep(100);
+            send.sendString("PWR=000000");
+            sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -145,8 +163,26 @@ public class Initialization {
                     str = RL[j] + (i + 1) + "+" + "0";
                     send.sendinitial(str);
                 }
+            } else if (Value.YMD) {
+                try {
+                    Log.e("在哪", "到底");
+                    @SuppressLint("SimpleDateFormat")
+                    SimpleDateFormat get_date = new SimpleDateFormat("yyMMdd");
+                    @SuppressLint("SimpleDateFormat")
+                    SimpleDateFormat get_time = new SimpleDateFormat("HHmmss");
+                    Date date = new Date();
+                    String strDate = get_date.format(date);
+                    String strtime = get_time.format(date);
+                    send.sendString("DATE" + strDate);
+                    sleep(100);
+                    send.sendString("TIME" + strtime);
+                    sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
+        Log.e("在哪", "Value.YMD = " + Value.YMD);
         for (int i = 0; i < OT.length; i++) {
             str = OT[i] + "+" + "0";
             send.sendinitial(str);

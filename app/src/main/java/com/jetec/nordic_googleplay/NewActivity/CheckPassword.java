@@ -114,6 +114,7 @@ public class CheckPassword extends AppCompatActivity {
 
         bn.setOnClickListener(v -> {
             vibrator.vibrate(100);
+            Value.YMD = false;
             devicelist();
         });
 
@@ -143,6 +144,7 @@ public class CheckPassword extends AppCompatActivity {
                         } finally {
                             Log.d(TAG, "開始進行原廠設定");
                             initialization.startinitial();
+                            initialization.initialname();
                             Toast.makeText(CheckPassword.this, getString(R.string.complete), Toast.LENGTH_SHORT).show();
                             Value.connected = false;
                             Service_close();
@@ -232,7 +234,7 @@ public class CheckPassword extends AppCompatActivity {
                             gotoEngin();
                         }
                         else {
-
+                            userlist();
                         }
                     }
                     if (getlist) {
@@ -250,6 +252,15 @@ public class CheckPassword extends AppCompatActivity {
     private void gotoEngin(){
         Intent intent = new Intent(CheckPassword.this, New_Engin.class);
         intent.putExtra("default_model", default_model);
+        getparse.recodesub();
+        startActivity(intent);
+        finish();
+    }
+
+    private void userlist(){
+        Intent intent = new Intent(CheckPassword.this, UserFunction.class);
+        intent.putExtra("default_model", default_model);
+        getparse.recodesub();
         startActivity(intent);
         finish();
     }

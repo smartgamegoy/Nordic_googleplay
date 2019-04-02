@@ -38,95 +38,97 @@ public class EditChangeNum implements TextWatcher {
         String num = editText.getText().toString().trim();
         Log.e(TAG, "num = " + num);
         if (name.matches("T")) {
-            if (!num.equals("-") && !num.equals("")) {
-                if (num.equals(".")) {
-                    last = true;
-                    editText.setText("0.");
-                } else if (num.matches("-\\.") && !num.matches("-0")) {
-                    last = true;
-                    if (num.equals("-."))
-                        editText.setText("-0.");
-                } else {
-                    if (Float.valueOf(num) > 65.0) {
+            if(!num.contains("+")) {
+                if (!num.equals("-") && !num.equals("")) {
+                    if (num.equals(".")) {
                         last = true;
-                        editText.setText("65");
-                    } else if (Float.valueOf(num) < -10.0) {
+                        editText.setText("0.");
+                    } else if (num.matches("-\\.") && !num.matches("-0")) {
                         last = true;
-                        editText.setText("-10");
+                        if (num.equals("-."))
+                            editText.setText("-0.");
                     } else {
-                        if (Float.valueOf(num) > 0) {
-                            int len = 3;
-                            byte[] bytes = String.valueOf(editable).getBytes();
-                            if (num.startsWith("0") && !num.startsWith("0.")) {
-                                last = true;
-                                num = num.replaceFirst("^0*", "");
-                                editText.setText(num);
-                            }
-                            if (last) {
-                                last = false;
-                                int selEndIndex = editText.getText().length();
-                                Selection.setSelection(editable, selEndIndex);
-                            }
-                            if (bytes.length > len) {
-                                last = true;
-                                byte[] newBytes = new byte[len];
-                                System.arraycopy(bytes, 0, newBytes, 0, len);
-                                String newStr = new String(newBytes);
-                                editText.setText(newStr);
-                            } else {
-                                int index = editText.getSelectionStart();
-                                Selection.setSelection(editable, index);
-                            }
-                        } else if (Float.valueOf(num) == 0 && !num.equals("0.") && !num.equals("-0.") && !num.equals("-0")) {
-                            int len = 1;
-                            byte[] bytes = String.valueOf(editable).getBytes();
-                            if (last) {
-                                last = false;
-                                int selEndIndex = editText.getText().length();
-                                Selection.setSelection(editable, selEndIndex);
-                            }
-                            if (bytes.length > len) {
-                                last = true;
-                                byte[] newBytes = new byte[len];
-                                if (!num.startsWith("-")) {
-                                    System.arraycopy(bytes, 0, newBytes, 0, len);
-                                    String newStr = new String(newBytes);
-                                    editText.setText(newStr);
-                                } else {
-                                    editText.setText("-0");
-                                }
-                            } else {
-                                if (!num.startsWith("-")) {
-                                    int index = editText.getSelectionStart();
-                                    Selection.setSelection(editable, index);
-                                }
-                            }
+                        if (Float.valueOf(num) > 65.0) {
+                            last = true;
+                            editText.setText("65");
+                        } else if (Float.valueOf(num) < -10.0) {
+                            last = true;
+                            editText.setText("-10");
                         } else {
-                            int len = 4;
-                            byte[] bytes = String.valueOf(editable).getBytes();
-                            if (num.startsWith("-00") && !num.startsWith("0.")) {
-                                last = true;
-                                num = num.substring(0, 2) + num.substring(2).replaceFirst("^0*", "");
-                                editText.setText(num);
-                            } else if (num.matches("-0.") && !num.matches("-0\\.")) {
-                                last = true;
-                                num = num.substring(0, 1) + num.substring(2).replaceFirst("^0*", "");
-                                editText.setText(num);
-                            }
-                            if (bytes.length > len) {
-                                last = true;
-                                byte[] newBytes = new byte[len];
-                                System.arraycopy(bytes, 0, newBytes, 0, len);
-                                String newStr = new String(newBytes);
-                                editText.setText(newStr);
-                            } else {
+                            if (Float.valueOf(num) > 0) {
+                                int len = 3;
+                                byte[] bytes = String.valueOf(editable).getBytes();
+                                if (num.startsWith("0") && !num.startsWith("0.")) {
+                                    last = true;
+                                    num = num.replaceFirst("^0*", "");
+                                    editText.setText(num);
+                                }
                                 if (last) {
                                     last = false;
                                     int selEndIndex = editText.getText().length();
                                     Selection.setSelection(editable, selEndIndex);
                                 }
-                                int index = editText.getSelectionStart();
-                                Selection.setSelection(editable, index);
+                                if (bytes.length > len) {
+                                    last = true;
+                                    byte[] newBytes = new byte[len];
+                                    System.arraycopy(bytes, 0, newBytes, 0, len);
+                                    String newStr = new String(newBytes);
+                                    editText.setText(newStr);
+                                } else {
+                                    int index = editText.getSelectionStart();
+                                    Selection.setSelection(editable, index);
+                                }
+                            } else if (Float.valueOf(num) == 0 && !num.equals("0.") && !num.equals("-0.") && !num.equals("-0")) {
+                                int len = 1;
+                                byte[] bytes = String.valueOf(editable).getBytes();
+                                if (last) {
+                                    last = false;
+                                    int selEndIndex = editText.getText().length();
+                                    Selection.setSelection(editable, selEndIndex);
+                                }
+                                if (bytes.length > len) {
+                                    last = true;
+                                    byte[] newBytes = new byte[len];
+                                    if (!num.startsWith("-")) {
+                                        System.arraycopy(bytes, 0, newBytes, 0, len);
+                                        String newStr = new String(newBytes);
+                                        editText.setText(newStr);
+                                    } else {
+                                        editText.setText("-0");
+                                    }
+                                } else {
+                                    if (!num.startsWith("-")) {
+                                        int index = editText.getSelectionStart();
+                                        Selection.setSelection(editable, index);
+                                    }
+                                }
+                            } else {
+                                int len = 4;
+                                byte[] bytes = String.valueOf(editable).getBytes();
+                                if (num.startsWith("-00") && !num.startsWith("0.")) {
+                                    last = true;
+                                    num = num.substring(0, 2) + num.substring(2).replaceFirst("^0*", "");
+                                    editText.setText(num);
+                                } else if (num.matches("-0.") && !num.matches("-0\\.")) {
+                                    last = true;
+                                    num = num.substring(0, 1) + num.substring(2).replaceFirst("^0*", "");
+                                    editText.setText(num);
+                                }
+                                if (bytes.length > len) {
+                                    last = true;
+                                    byte[] newBytes = new byte[len];
+                                    System.arraycopy(bytes, 0, newBytes, 0, len);
+                                    String newStr = new String(newBytes);
+                                    editText.setText(newStr);
+                                } else {
+                                    if (last) {
+                                        last = false;
+                                        int selEndIndex = editText.getText().length();
+                                        Selection.setSelection(editable, selEndIndex);
+                                    }
+                                    int index = editText.getSelectionStart();
+                                    Selection.setSelection(editable, index);
+                                }
                             }
                         }
                     }

@@ -59,7 +59,9 @@ public class New_Engin extends AppCompatActivity {
     private ArrayAdapter<String> listAdapter;
     private SendValue sendValue;
     private Send send;
-    private byte[] getbyte = {0x42, 0x59, 0x54, 0x45}, getover = {0x4F, 0x56, 0x45, 0x52};
+    private byte[] getbyte = {0x42, 0x59, 0x54, 0x45}, getover = {0x4F, 0x56, 0x45, 0x52},
+            getDate = {0x44, 0x41, 0x54, 0x45}, getTime = {0x54, 0x49, 0x4D, 0x45},
+            getPWR = {0x50, 0x57, 0x52, 0x3D}, getName = {0x4E, 0x41, 0x4D, 0x45};
     private ByteToHex byteToHex = new ByteToHex();
     private Getparse getparse = new Getparse();
     private Initialization initialization = new Initialization();
@@ -521,10 +523,34 @@ public class New_Engin extends AppCompatActivity {
                             showhex(txValue);
                         } else if (Arrays.equals(getover, txValue)) {
                             byteconvert = false;
+                            getparse.recodesub();
                             showhex(txValue);
                         } else {
                             if (byteconvert) {
-                                showhex(txValue);
+                                byte[] data = Arrays.copyOfRange(txValue, 0, 4);
+                                if(Arrays.equals(data, getDate)){
+                                    String text = new String(txValue, "UTF-8");
+                                    listAdapter.add("[" + currentDateTimeString + "] RE: " + text);
+                                    list1.smoothScrollToPosition(listAdapter.getCount() - 1);
+                                }
+                                else if(Arrays.equals(data, getTime)){
+                                    String text = new String(txValue, "UTF-8");
+                                    listAdapter.add("[" + currentDateTimeString + "] RE: " + text);
+                                    list1.smoothScrollToPosition(listAdapter.getCount() - 1);
+                                }
+                                else if(Arrays.equals(data, getPWR)){
+                                    String text = new String(txValue, "UTF-8");
+                                    listAdapter.add("[" + currentDateTimeString + "] RE: " + text);
+                                    list1.smoothScrollToPosition(listAdapter.getCount() - 1);
+                                    getparse.recodesub();
+                                }
+                                else if(Arrays.equals(data, getName)){
+                                    String text = new String(txValue, "UTF-8");
+                                    listAdapter.add("[" + currentDateTimeString + "] RE: " + text);
+                                    list1.smoothScrollToPosition(listAdapter.getCount() - 1);
+                                }
+                                else
+                                    showhex(txValue);
                             } else {
                                 String text = new String(txValue, "UTF-8");
                                 listAdapter.add("[" + currentDateTimeString + "] RE: " + text);
@@ -649,6 +675,7 @@ public class New_Engin extends AppCompatActivity {
                                 //noinspection deprecation
                                 mBluetoothAdapter.stopLeScan(mLeScanCallback);
                             Service_close();
+                            Value.YMD = false;
                             Value.connected = false;
                             Value.deviceModel = "";
                             Value.BID = "";
@@ -704,6 +731,7 @@ public class New_Engin extends AppCompatActivity {
             byteconvert = true;
             initialization.setinitial(name, mBluetoothLeService);
             initialization.startinitial();
+            initialization.initialname();
             return true;
         } else if (id == R.id.string_byte) {
             vibrator.vibrate(100);
