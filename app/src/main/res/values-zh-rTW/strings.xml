@@ -51,6 +51,8 @@
     <string name="IL2">第二排 最小量程</string>
     <string name="IH3">第三排 最大量程</string>
     <string name="IL3">第三排 最小量程</string>
+    <string name="IH">最大量程</string>
+    <string name="IL">最小量程</string>
     <string name="SPK">警報</string>
     <string name="DP1">小數點</string>
     <string name="DP2">小數點</string>
@@ -181,12 +183,15 @@
     <string name="bt_d">二氧化碳\n(0~3000ppm)</string>
     <string name="bt_e">二氧化碳\n(0~5000ppm)</string>
     <string name="bt_co">一氧化碳\n(?~?ppm)</string>
-    <string name="bt_i">量程\n(4~20mA)</string>
-    <string name="table_i">量程</string>
+    <string name="bt_i">類比\n(4~20mA)</string>
+    <string name="table_i">類比</string>
     <string name="bt_time">Y時間\n(年/月/日)</string>
     <string name="bt_ztime">Z時間\n(年/月/日)</string>
     <string name="bt_log">下載\n(LOG紀錄)</string>
     <string name="bt_back">退格</string>
     <string name="bt_reset">清除</string>
     <string name="engin_mode">工程模式</string>
+    <string name="RL1">警報1</string>
+    <string name="RL2">警報2</string>
+    <string name="RL3">警報3</string>
 </resources>

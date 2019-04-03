@@ -51,6 +51,8 @@
     <string name="IL2">2nd min range</string>
     <string name="IH3">3rd max range</string>
     <string name="IL3">3rd min range</string>
+    <string name="IH">Max range</string>
+    <string name="IL">Min range</string>
     <string name="SPK">Alter</string>
     <string name="DP1">decimal point</string>
     <string name="DP2">decimal point</string>
@@ -181,12 +183,15 @@
     <string name="bt_d">CO2\n(0~3000ppm)</string>
     <string name="bt_e">CO2\n(0~5000ppm)</string>
     <string name="bt_co">CO\n(?~?ppm)</string>
-    <string name="bt_i">I\n(4~20mA)</string>
-    <string name="table_i">I</string>
+    <string name="bt_i">Analogy\n(4~20mA)</string>
+    <string name="table_i">Analogy</string>
     <string name="bt_time">YTime\n(Year/Month/Day)</string>
     <string name="bt_ztime">ZTime\n(Year/Month/Day)</string>
     <string name="bt_log">Download\n(LOG record)</string>
     <string name="bt_back">back</string>
     <string name="bt_reset">reset</string>
     <string name="engin_mode">Engin mode</string>
+    <string name="RL1">Alarm1</string>
+    <string name="RL2">Alarm2</string>
+    <string name="RL3">Alarm3</string>
 </resources>

@@ -13,19 +13,23 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 
+import com.jetec.nordic_googleplay.Activity.MainActivity;
 import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToHex;
 import com.jetec.nordic_googleplay.NewActivity.SendByte.Send;
+import com.jetec.nordic_googleplay.NewActivity.ViewAdapter.SetPagerAdapter;
+import com.jetec.nordic_googleplay.NewActivity.ViewAdapter.SetViewPager;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.ScanParse.Getparse;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Value;
-
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -45,10 +49,14 @@ public class UserFunction extends AppCompatActivity {
     private boolean s_connect = false;
     private Send send;
     private Intent intents;
-    public static List<byte[]> list1, list2, list3, list4, list5, list6, list7;
+    private List<byte[]> list1, list2, list3, list4, list5, list6, list7;
+    private List<View> listview;
+    private List<List<byte[]>> savelist;
     private byte[] getbyte = {0x42, 0x59, 0x54, 0x45}, getover = {0x4F, 0x56, 0x45, 0x52};
     private ByteToHex byteToHex = new ByteToHex();
     private Getparse getparse = new Getparse();
+    private SetViewPager setViewPager = new SetViewPager();
+    private SetPagerAdapter setPagerAdapter = new SetPagerAdapter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +78,27 @@ public class UserFunction extends AppCompatActivity {
     private void get_intent() {
         Intent intent = getIntent();
         default_model = intent.getStringArrayExtra("default_model");
+
+        listview = new ArrayList<>();
+        savelist = new ArrayList<>();
+        list1 = new ArrayList<>();
+        list2 = new ArrayList<>();
+        list3 = new ArrayList<>();
+        list4 = new ArrayList<>();
+        list5 = new ArrayList<>();
+        list6 = new ArrayList<>();
+        list7 = new ArrayList<>();
+
+        listview.clear();
+        savelist.clear();
+        list1.clear();
+        list2.clear();
+        list3.clear();
+        list4.clear();
+        list5.clear();
+        list6.clear();
+        list7.clear();
+
         list1 = NewModel.sub1;
         list2 = NewModel.sub2;
         list3 = NewModel.sub3;
@@ -77,6 +106,21 @@ public class UserFunction extends AppCompatActivity {
         list5 = NewModel.sub5;
         list6 = NewModel.sub6;
         list7 = NewModel.sub7;
+
+        if(list1.size() != 0)
+            savelist.add(list1);
+        if(list2.size() != 0)
+            savelist.add(list2);
+        if(list3.size() != 0)
+            savelist.add(list3);
+        if(list4.size() != 0)
+            savelist.add(list4);
+        if(list5.size() != 0)
+            savelist.add(list5);
+        if(list6.size() != 0)
+            savelist.add(list6);
+        if(list7.size() != 0)
+            savelist.add(list7);
 
         showlist();
     }
@@ -142,6 +186,9 @@ public class UserFunction extends AppCompatActivity {
         String model = Value.deviceModel;
         String[] arr = model.split("-");
         String name = arr[2];
+        name = name.replace("Y", "");
+        name = name.replace("L", "");
+        name = name.replace("Z", "");
         List<Character> ch = new ArrayList<>();
         for (int i = 0; i < name.length(); i++) {
             ch.add(name.charAt(i));
@@ -149,40 +196,91 @@ public class UserFunction extends AppCompatActivity {
         Log.e(TAG, "name = " + name);
 
         TabLayout tabLayout = findViewById(R.id.tablayout);
+        ViewPager viewPager = findViewById(R.id.viewpager);
 
         int count = 1;
         for (int i = 0; i < ch.size(); i++) {
+            //TabLayout.Tab tab = tabLayout.newTab();
             if (ch.get(i).toString().matches("T")) {
+                /*tab.setCustomView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
+                tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i)).setText(getString(R.string.bt_t));
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
+                //setPagerAdapter.setView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
             } else if (ch.get(i).toString().matches("H")) {
+                /*tab.setCustomView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
+                tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i)).setText(getString(R.string.bt_h));
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
+                //setPagerAdapter.setView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
             } else if (ch.get(i).toString().matches("C")) {
+                /*tab.setCustomView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
+                tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i)).setText(getString(R.string.bt_c));
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
+                //setPagerAdapter.setView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
             } else if (ch.get(i).toString().matches("D")) {
+                /*tab.setCustomView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
+                tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i)).setText(getString(R.string.bt_d));
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
+                //setPagerAdapter.setView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
             } else if (ch.get(i).toString().matches("E")) {
+                /*tab.setCustomView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
+                tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i)).setText(getString(R.string.bt_e));
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
             } else if (ch.get(i).toString().matches("I")) {
+                /*tab.setCustomView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
+                tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i)).setText(getString(R.string.table_i) + count + "\n" + "(4~20mA)");
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
+                //setPagerAdapter.setView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
                 count++;
             } else if (ch.get(i).toString().matches("S")) {
+                /*tab.setCustomView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
+                tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i)).setText(getString(R.string.bt_co));
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
+                //setPagerAdapter.setView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
             }
         }
 
-        tabLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-            }
-        });
+        setPagerAdapter.setView(listview);
+        viewPager.setAdapter(setPagerAdapter);
+        //viewPager.setCurrentItem((listview.size()) * 1000);
+
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
+    }
+
+    private BluetoothAdapter.LeScanCallback mLeScanCallback =
+            (device, rssi, scanRecord) -> runOnUiThread(() -> runOnUiThread(this::addDevice));
+
+    private void addDevice() {
+    }
+
+    public void Service_close() {
+        if (mBluetoothLeService == null) {
+            Log.e(TAG, "masaga");
+            return;
+        }
+        mBluetoothLeService.disconnect();
+    }
+
+    private void disconnect() {
+        Intent intent = new Intent(this, MainActivity.class);
+        //Value.Jsonlist.clear();
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -227,9 +325,29 @@ public class UserFunction extends AppCompatActivity {
         switch (key) {
             case KeyEvent.KEYCODE_SEARCH:
                 break;
-            case KeyEvent.KEYCODE_BACK:
+            case KeyEvent.KEYCODE_BACK: {
                 vibrator.vibrate(100);
-                break;
+                new AlertDialog.Builder(this)
+                        .setTitle("結束連線")
+                        .setMessage("斷開藍牙")
+                        .setPositiveButton(R.string.butoon_yes, (dialog, which) -> {
+                            vibrator.vibrate(100);
+                            if (mBluetoothAdapter != null)
+                                //noinspection deprecation
+                                mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                            Service_close();
+                            Value.YMD = false;
+                            Value.connected = false;
+                            Value.deviceModel = "";
+                            Value.BID = "";
+                            Value.BName = "";
+                            disconnect();
+                        })
+                        .setNeutralButton(R.string.butoon_no, (dialog, which) -> {
+                        })
+                        .show();
+            }
+            break;
             case KeyEvent.KEYCODE_DPAD_CENTER:
                 break;
             default:
