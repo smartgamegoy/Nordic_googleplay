@@ -7,6 +7,7 @@
     <string name="menu_btn">Scan</string>
     <string name="menu_copyright">JETEC ELECTRONICSCO.,LTD.</string>
     <string name="app_bar">Device information</string>
+    <string name="bluetoothset">Device setting</string>
     <string name="app_message">Do you want to close this app?</string>
     <string name="app_message_b1">Exit</string>
     <string name="app_message_b2">Cancel</string>

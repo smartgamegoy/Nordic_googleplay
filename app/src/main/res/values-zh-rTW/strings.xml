@@ -7,6 +7,7 @@
     <string name="menu_btn">搜尋裝置</string>
     <string name="menu_copyright">JETEC ELECTRONICSCO.,LTD.</string>
     <string name="app_bar">裝置資訊</string>
+    <string name="bluetoothset">裝置設定</string>
     <string name="app_message">確定要離開此程式?</string>
     <string name="app_message_b1">離開</string>
     <string name="app_message_b2">取消</string>
@@ -53,7 +54,7 @@
     <string name="IL3">第三排 最小量程</string>
     <string name="IH">最大量程</string>
     <string name="IL">最小量程</string>
-    <string name="SPK">警報</string>
+    <string name="SPK">警報聲</string>
     <string name="DP1">小數點</string>
     <string name="DP2">小數點</string>
     <string name="DP3">小數點</string>
