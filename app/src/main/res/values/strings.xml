@@ -195,4 +195,5 @@
     <string name="RL1">Alarm1</string>
     <string name="RL2">Alarm2</string>
     <string name="RL3">Alarm3</string>
+    <string name="dpp">Decimal place</string>
 </resources>

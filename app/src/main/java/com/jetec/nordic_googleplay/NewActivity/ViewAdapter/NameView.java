@@ -5,9 +5,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-
 import com.jetec.nordic_googleplay.R;
-
 import java.util.List;
 
 public class NameView {

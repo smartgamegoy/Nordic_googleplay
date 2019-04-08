@@ -2,15 +2,19 @@ package com.jetec.nordic_googleplay.NewActivity.ViewAdapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-
 import com.jetec.nordic_googleplay.R;
-
+import java.util.Arrays;
 import java.util.List;
 
 public class SetViewPager {
+
+    private String TAG = "SetViewPager";
+    private byte[] b_dp = {0x00};
+    private int a = 0;
 
     public SetViewPager(){
         super();
@@ -18,6 +22,7 @@ public class SetViewPager {
 
     public View setView(Context context, String s, List<byte[]> list){
         LayoutInflater layoutInflater = LayoutInflater.from(context);
+        int point = 0;
         int count = list.size();
         @SuppressLint("InflateParams")
         View view = layoutInflater.inflate(R.layout.tablayoutview, null);
@@ -44,49 +49,141 @@ public class SetViewPager {
         b9.setVisibility(View.GONE);
         b10.setVisibility(View.GONE);
 
-        for(int i = 0; i < count; i++) {
-            if(i == 0){
-                b1.setVisibility(View.VISIBLE);
-                b1.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
+        byte[] getarr = list.get(0);
+        byte[] getdp = Arrays.copyOfRange(getarr, 2, 3);
+        if (Arrays.equals(getdp,b_dp)) {
+            point = byteArrayToInt(getdp);
+            Log.e(TAG,"point = " + point);
+        }
+        else {
+            point = byteArrayToInt(getdp);
+            Log.e(TAG,"point = " + point);
+        }
+
+        for(int i = 0; i <= count; i++) {
+            if(i != count) {
+                if (i == 0) {
+                    b1.setVisibility(View.VISIBLE);
+                    byte[] arr = list.get(i);
+                    byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                    byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                    byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                    double p = Math.pow(10, byteArrayToInt(dp));
+                    b1.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + (byteArrayToInt(value) * p));
+                    StringBuilder hex = new StringBuilder(str.length * 2);
+                    // the data appears to be there backwards
+                    for (byte aData : str) {
+                        hex.append(String.format("%02X", aData));
+                    }
+                    String gethex = hex.toString();
+                    StringBuilder hex2 = new StringBuilder(dp.length * 2);
+                    // the data appears to be there backwards
+                    for (byte aData : dp) {
+                        hex2.append(String.format("%02X", aData));
+                    }
+                    String gethex2 = hex2.toString();
+                    StringBuilder hex23 = new StringBuilder(value.length * 2);
+                    // the data appears to be there backwards
+                    for (byte aData : value) {
+                        hex23.append(String.format("%02X", aData));
+                    }
+                    String gethex23 = hex23.toString();
+                    int finalI = i;
+                    b1.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            b1.setText(setButtontext(context, s, get_String(list.get(finalI)[1], list.get(finalI)[0])) + "\n" + (a + byteArrayToInt(value) * p));
+                            Log.e(TAG, "str = " + gethex);
+                            Log.e(TAG, "dp = " + gethex2);
+                            Log.e(TAG, "value = " + gethex23);
+                            a++;
+                        }
+                    });
+                } else if (i == 1) {
+                    b2.setVisibility(View.VISIBLE);
+                    b2.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
+                } else if (i == 2) {
+                    b3.setVisibility(View.VISIBLE);
+                    b3.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
+                } else if (i == 3) {
+                    b4.setVisibility(View.VISIBLE);
+                    b4.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
+                } else if (i == 4) {
+                    b5.setVisibility(View.VISIBLE);
+                    b5.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
+                } else if (i == 5) {
+                    b6.setVisibility(View.VISIBLE);
+                    b6.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
+                } else if (i == 6) {
+                    b7.setVisibility(View.VISIBLE);
+                    b7.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
+                } else if (i == 7) {
+                    b8.setVisibility(View.VISIBLE);
+                    b8.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
+                } else if (i == 8) {
+                    b9.setVisibility(View.VISIBLE);
+                    b9.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
+                } else if (i == 9) {
+                    b10.setVisibility(View.VISIBLE);
+                    b10.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
+                }
             }
-            else if(i == 1){
-                b2.setVisibility(View.VISIBLE);
-                b2.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
-            }
-            else if(i == 2){
-                b3.setVisibility(View.VISIBLE);
-                b3.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
-            }
-            else if(i == 3){
-                b4.setVisibility(View.VISIBLE);
-                b4.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
-            }
-            else if(i == 4){
-                b5.setVisibility(View.VISIBLE);
-                b5.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
-            }
-            else if(i == 5){
-                b6.setVisibility(View.VISIBLE);
-                b6.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
-            }
-            else if(i == 6){
-                b7.setVisibility(View.VISIBLE);
-                b7.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
-            }
-            else if(i == 7){
-                b8.setVisibility(View.VISIBLE);
-                b8.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
-            }
-            else if(i == 8){
-                b9.setVisibility(View.VISIBLE);
-                b9.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
-            }
-            else if(i == 9){
-                b10.setVisibility(View.VISIBLE);
-                b10.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
+            else{
+                if(i == 0){
+                    b1.setVisibility(View.VISIBLE);
+                    b1.setText(context.getString(R.string.dpp));
+                    b1.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    });
+                }
+                else if(i == 1){
+                    b2.setVisibility(View.VISIBLE);
+                    b2.setText(context.getString(R.string.dpp));
+                }
+                else if(i == 2){
+                    b3.setVisibility(View.VISIBLE);
+                    b3.setText(context.getString(R.string.dpp));
+                }
+                else if(i == 3){
+                    b4.setVisibility(View.VISIBLE);
+                    b4.setText(context.getString(R.string.dpp));
+                }
+                else if(i == 4){
+                    b5.setVisibility(View.VISIBLE);
+                    b5.setText(context.getString(R.string.dpp));
+                }
+                else if(i == 5){
+                    b6.setVisibility(View.VISIBLE);
+                    b6.setText(context.getString(R.string.dpp));
+                }
+                else if(i == 6){
+                    b7.setVisibility(View.VISIBLE);
+                    b7.setText(context.getString(R.string.dpp));
+                }
+                else if(i == 7){
+                    b8.setVisibility(View.VISIBLE);
+                    b8.setText(context.getString(R.string.dpp));
+                }
+                else if(i == 8){
+                    b9.setVisibility(View.VISIBLE);
+                    b9.setText(context.getString(R.string.dpp));
+                }
+                else if(i == 9){
+                    b10.setVisibility(View.VISIBLE);
+                    b10.setText(context.getString(R.string.dpp));
+                }
             }
         }
+
+        Log.e(TAG,s + " = " + point);
         return view;
+    }
+
+    private void resetlist(int i, List<byte[]> list, byte[] era){
+
     }
 
     private String setButtontext(Context context, String s, String gets){
@@ -274,5 +371,16 @@ public class SetViewPager {
         }
 
         return str;
+    }
+
+    private int byteArrayToInt(byte[] b) {
+        if (b.length == 4)
+            return b[0] << 24 | (b[1] & 0xff) << 16 | (b[2] & 0xff) << 8
+                    | (b[3] & 0xff);
+        else if (b.length == 2)
+            return (b[0] & 0xff) << 8 | (b[1] & 0xff);
+        else if(b.length == 1)
+            return b[0] & 0xff;
+        return 0;
     }
 }

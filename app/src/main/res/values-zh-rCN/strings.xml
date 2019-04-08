@@ -195,4 +195,5 @@
     <string name="RL1">警报1</string>
     <string name="RL2">警报2</string>
     <string name="RL3">警报3</string>
+    <string name="dpp">小数点</string>
 </resources>
