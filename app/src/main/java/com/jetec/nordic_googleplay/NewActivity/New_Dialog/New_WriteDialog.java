@@ -57,11 +57,11 @@ public class New_WriteDialog {
         bn.setText(context.getString(R.string.butoon_no));
 
         if (dm.heightPixels > dm.widthPixels) { //需修改
-            progressDialog.setContentView(v,new LinearLayout.LayoutParams(dm.widthPixels / 4,
-                    dm.widthPixels / 4));
+            progressDialog.setContentView(v,new LinearLayout.LayoutParams(2 * dm.widthPixels / 3,
+                    dm.heightPixels / 3));
         } else {
-            progressDialog.setContentView(v, new LinearLayout.LayoutParams(dm.heightPixels / 4,
-                    dm.heightPixels / 4));
+            progressDialog.setContentView(v, new LinearLayout.LayoutParams(dm.widthPixels / 3,
+                    dm.heightPixels / 2));
         }
 
         return progressDialog;

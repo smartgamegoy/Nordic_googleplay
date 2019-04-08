@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+
+import com.jetec.nordic_googleplay.NewActivity.New_Dialog.New_WriteDialog;
 import com.jetec.nordic_googleplay.R;
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
 public class SetViewPager {
 
     private String TAG = "SetViewPager";
+    private New_WriteDialog new_writeDialog = new New_WriteDialog();
     private byte[] b_dp = {0x00};
     private int a = 0;
 
@@ -97,6 +100,8 @@ public class SetViewPager {
                             Log.e(TAG, "dp = " + gethex2);
                             Log.e(TAG, "value = " + gethex23);
                             a++;
+                            //Context context, int dp_flag, String str, List<byte[]> list, int i
+                            new_writeDialog.set_Dialog(context, byteArrayToInt(dp), setButtontext(context, s, get_String(list.get(finalI)[1], list.get(finalI)[0])), list, finalI);
                         }
                     });
                 } else if (i == 1) {
