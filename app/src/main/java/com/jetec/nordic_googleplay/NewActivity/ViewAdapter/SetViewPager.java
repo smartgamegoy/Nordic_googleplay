@@ -2,15 +2,17 @@ package com.jetec.nordic_googleplay.NewActivity.ViewAdapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-
 import com.jetec.nordic_googleplay.NewActivity.New_Dialog.New_WriteDialog;
 import com.jetec.nordic_googleplay.R;
 import java.util.Arrays;
 import java.util.List;
+
+import static android.content.Context.VIBRATOR_SERVICE;
 
 public class SetViewPager {
 
@@ -23,7 +25,7 @@ public class SetViewPager {
         super();
     }
 
-    public View setView(Context context, String s, List<byte[]> list){
+    public View setView(Context context, String s, List<byte[]> list, Vibrator vibrator){
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         int point = 0;
         int count = list.size();
@@ -72,65 +74,201 @@ public class SetViewPager {
                     byte[] dp = Arrays.copyOfRange(arr, 2, 3);
                     byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
                     double p = Math.pow(10, byteArrayToInt(dp));
-                    b1.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + (byteArrayToInt(value) * p));
-                    StringBuilder hex = new StringBuilder(str.length * 2);
-                    // the data appears to be there backwards
-                    for (byte aData : str) {
-                        hex.append(String.format("%02X", aData));
-                    }
-                    String gethex = hex.toString();
-                    StringBuilder hex2 = new StringBuilder(dp.length * 2);
-                    // the data appears to be there backwards
-                    for (byte aData : dp) {
-                        hex2.append(String.format("%02X", aData));
-                    }
-                    String gethex2 = hex2.toString();
-                    StringBuilder hex23 = new StringBuilder(value.length * 2);
-                    // the data appears to be there backwards
-                    for (byte aData : value) {
-                        hex23.append(String.format("%02X", aData));
-                    }
-                    String gethex23 = hex23.toString();
+                    if(byteArrayToInt(dp) == 0)
+                        b1.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + byteArrayToInt(value));
+                    else
+                        b1.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + (byteArrayToInt(value) / p));
                     int finalI = i;
                     b1.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            b1.setText(setButtontext(context, s, get_String(list.get(finalI)[1], list.get(finalI)[0])) + "\n" + (a + byteArrayToInt(value) * p));
-                            Log.e(TAG, "str = " + gethex);
-                            Log.e(TAG, "dp = " + gethex2);
-                            Log.e(TAG, "value = " + gethex23);
-                            a++;
-                            //Context context, int dp_flag, String str, List<byte[]> list, int i
-                            new_writeDialog.set_Dialog(context, byteArrayToInt(dp), setButtontext(context, s, get_String(list.get(finalI)[1], list.get(finalI)[0])), list, finalI);
+                            vibrator.vibrate(100);
+                            new_writeDialog.set_Dialog(context, byteArrayToInt(dp), setButtontext(context, s,
+                                    get_String(list.get(finalI)[1], list.get(finalI)[0])), list, finalI, str, b1, vibrator, s);
                         }
                     });
                 } else if (i == 1) {
                     b2.setVisibility(View.VISIBLE);
-                    b2.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
+                    byte[] arr = list.get(i);
+                    byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                    byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                    byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                    double p = Math.pow(10, byteArrayToInt(dp));
+                    if(byteArrayToInt(dp) == 0)
+                        b2.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + byteArrayToInt(value));
+                    else
+                        b2.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + (byteArrayToInt(value) / p));
+                    int finalI = i;
+                    b2.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            vibrator.vibrate(100);
+                            new_writeDialog.set_Dialog(context, byteArrayToInt(dp), setButtontext(context, s,
+                                    get_String(list.get(finalI)[1], list.get(finalI)[0])), list, finalI, str, b2, vibrator, s);
+                        }
+                    });
                 } else if (i == 2) {
                     b3.setVisibility(View.VISIBLE);
-                    b3.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
+                    byte[] arr = list.get(i);
+                    byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                    byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                    byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                    double p = Math.pow(10, byteArrayToInt(dp));
+                    if(byteArrayToInt(dp) == 0)
+                        b3.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + byteArrayToInt(value));
+                    else
+                        b3.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + (byteArrayToInt(value) / p));
+                    int finalI = i;
+                    b3.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            vibrator.vibrate(100);
+                            new_writeDialog.set_Dialog(context, byteArrayToInt(dp), setButtontext(context, s,
+                                    get_String(list.get(finalI)[1], list.get(finalI)[0])), list, finalI, str, b3, vibrator, s);
+                        }
+                    });
                 } else if (i == 3) {
                     b4.setVisibility(View.VISIBLE);
-                    b4.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
+                    byte[] arr = list.get(i);
+                    byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                    byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                    byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                    double p = Math.pow(10, byteArrayToInt(dp));
+                    if(byteArrayToInt(dp) == 0)
+                        b4.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + byteArrayToInt(value));
+                    else
+                        b4.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + (byteArrayToInt(value) / p));
+                    int finalI = i;
+                    b4.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            vibrator.vibrate(100);
+                            new_writeDialog.set_Dialog(context, byteArrayToInt(dp), setButtontext(context, s,
+                                    get_String(list.get(finalI)[1], list.get(finalI)[0])), list, finalI, str, b4, vibrator, s);
+                        }
+                    });
                 } else if (i == 4) {
                     b5.setVisibility(View.VISIBLE);
-                    b5.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
+                    byte[] arr = list.get(i);
+                    byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                    byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                    byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                    double p = Math.pow(10, byteArrayToInt(dp));
+                    if(byteArrayToInt(dp) == 0)
+                        b5.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + byteArrayToInt(value));
+                    else
+                        b5.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + (byteArrayToInt(value) / p));
+                    int finalI = i;
+                    b5.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            vibrator.vibrate(100);
+                            new_writeDialog.set_Dialog(context, byteArrayToInt(dp), setButtontext(context, s,
+                                    get_String(list.get(finalI)[1], list.get(finalI)[0])), list, finalI, str, b5, vibrator, s);
+                        }
+                    });
                 } else if (i == 5) {
                     b6.setVisibility(View.VISIBLE);
-                    b6.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
+                    byte[] arr = list.get(i);
+                    byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                    byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                    byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                    double p = Math.pow(10, byteArrayToInt(dp));
+                    if(byteArrayToInt(dp) == 0)
+                        b6.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + byteArrayToInt(value));
+                    else
+                        b6.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + (byteArrayToInt(value) / p));
+                    int finalI = i;
+                    b6.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            vibrator.vibrate(100);
+                            new_writeDialog.set_Dialog(context, byteArrayToInt(dp), setButtontext(context, s,
+                                    get_String(list.get(finalI)[1], list.get(finalI)[0])), list, finalI, str, b6, vibrator, s);
+                        }
+                    });
                 } else if (i == 6) {
                     b7.setVisibility(View.VISIBLE);
-                    b7.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
+                    byte[] arr = list.get(i);
+                    byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                    byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                    byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                    double p = Math.pow(10, byteArrayToInt(dp));
+                    if(byteArrayToInt(dp) == 0)
+                        b7.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + byteArrayToInt(value));
+                    else
+                        b7.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + (byteArrayToInt(value) / p));
+                    int finalI = i;
+                    b7.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            vibrator.vibrate(100);
+                            new_writeDialog.set_Dialog(context, byteArrayToInt(dp), setButtontext(context, s,
+                                    get_String(list.get(finalI)[1], list.get(finalI)[0])), list, finalI, str, b7, vibrator, s);
+                        }
+                    });
                 } else if (i == 7) {
                     b8.setVisibility(View.VISIBLE);
-                    b8.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
+                    byte[] arr = list.get(i);
+                    byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                    byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                    byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                    double p = Math.pow(10, byteArrayToInt(dp));
+                    if(byteArrayToInt(dp) == 0)
+                        b8.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + byteArrayToInt(value));
+                    else
+                        b8.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + (byteArrayToInt(value) / p));
+                    int finalI = i;
+                    b8.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            vibrator.vibrate(100);
+                            new_writeDialog.set_Dialog(context, byteArrayToInt(dp), setButtontext(context, s,
+                                    get_String(list.get(finalI)[1], list.get(finalI)[0])), list, finalI, str, b8, vibrator, s);
+                        }
+                    });
                 } else if (i == 8) {
                     b9.setVisibility(View.VISIBLE);
-                    b9.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
+                    byte[] arr = list.get(i);
+                    byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                    byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                    byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                    double p = Math.pow(10, byteArrayToInt(dp));
+                    if(byteArrayToInt(dp) == 0)
+                        b9.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + byteArrayToInt(value));
+                    else
+                        b9.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + (byteArrayToInt(value) / p));
+                    int finalI = i;
+                    b9.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            vibrator.vibrate(100);
+                            new_writeDialog.set_Dialog(context, byteArrayToInt(dp), setButtontext(context, s,
+                                    get_String(list.get(finalI)[1], list.get(finalI)[0])), list, finalI, str, b9, vibrator, s);
+                        }
+                    });
                 } else if (i == 9) {
                     b10.setVisibility(View.VISIBLE);
-                    b10.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])));
+                    byte[] arr = list.get(i);
+                    byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                    byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                    byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                    double p = Math.pow(10, byteArrayToInt(dp));
+                    if(byteArrayToInt(dp) == 0)
+                        b10.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]))
+                                + "\n" + byteArrayToInt(value));
+                    else
+                        b10.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]))
+                                + "\n" + (byteArrayToInt(value) / p));
+                    int finalI = i;
+                    b10.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            vibrator.vibrate(100);
+                            new_writeDialog.set_Dialog(context, byteArrayToInt(dp), setButtontext(context, s,
+                                    get_String(list.get(finalI)[1], list.get(finalI)[0])), list, finalI, str, b10, vibrator, s);
+                        }
+                    });
                 }
             }
             else{

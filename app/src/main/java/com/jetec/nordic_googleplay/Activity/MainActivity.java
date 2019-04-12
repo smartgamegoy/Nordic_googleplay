@@ -27,6 +27,7 @@ import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Value;
 import org.json.JSONArray;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -270,4 +271,9 @@ public class MainActivity extends AppCompatActivity {
             Log.e("test", "直向了");
         }
     }
+
+    /*private void testdata(){
+        List<byte[]> sub1, sub2, sub3, sub4, sub5, sub6, sub7;
+        byte[]
+    }*/
 }
