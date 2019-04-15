@@ -90,6 +90,7 @@ public class ErrActivity extends AppCompatActivity {
         Button bi = findViewById(R.id.button9);
         Button b_time = findViewById(R.id.button10);
         Button b_ztime = findViewById(R.id.button14);
+        Button b_pm = findViewById(R.id.button15);
         Button b_log = findViewById(R.id.button11);
         Button b_back = findViewById(R.id.button12);
         Button b_reset = findViewById(R.id.button13);
@@ -416,6 +417,43 @@ public class ErrActivity extends AppCompatActivity {
                         int count = str.length() - 1;
                         textView.setText(modelhead + count + dash + str + dash + newmodel);
                         allstr = modelhead + count + dash + str + dash + newmodel;
+                    }
+                }
+            }
+        });
+
+        b_pm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vibrator.vibrate(100);
+                getchar = "M";
+                if (!log) {
+                    if (str.length() < 6) {
+                        if (!log) {
+                            str = str + getchar;
+                            int count = str.length();
+                            textView.setText(modelhead + count + dash + str + dash + newmodel);
+                            allstr = modelhead + count + dash + str + dash + newmodel;
+                        } else {
+                            str = str.substring(0, str.length() - 1) + getchar + str.substring(str.length() - 1);
+                            int count = str.length() - 1;
+                            textView.setText(modelhead + count + dash + str + dash + newmodel);
+                            allstr = modelhead + count + dash + str + dash + newmodel;
+                        }
+                    }
+                } else {
+                    if (str.length() < 7) {
+                        if (!log) {
+                            str = str + getchar;
+                            int count = str.length();
+                            textView.setText(modelhead + count + dash + str + dash + newmodel);
+                            allstr = modelhead + count + dash + str + dash + newmodel;
+                        } else {
+                            str = str.substring(0, str.length() - 1) + getchar + str.substring(str.length() - 1);
+                            int count = str.length() - 1;
+                            textView.setText(modelhead + count + dash + str + dash + newmodel);
+                            allstr = modelhead + count + dash + str + dash + newmodel;
+                        }
                     }
                 }
             }

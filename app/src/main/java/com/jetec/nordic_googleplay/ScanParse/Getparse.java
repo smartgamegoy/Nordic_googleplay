@@ -50,6 +50,23 @@ public class Getparse {
         sb7.clear();
     }
 
+    public void clearList(){
+        s1.clear();
+        s2.clear();
+        s3.clear();
+        s4.clear();
+        s5.clear();
+        s6.clear();
+        s7.clear();
+        sb1.clear();
+        sb2.clear();
+        sb3.clear();
+        sb4.clear();
+        sb5.clear();
+        sb6.clear();
+        sb7.clear();
+    }
+
     public String parsebyte(byte[] btValue){
         String text = "", value = "";
         //Log.e(TAG, "btValue.length = " + btValue.length);

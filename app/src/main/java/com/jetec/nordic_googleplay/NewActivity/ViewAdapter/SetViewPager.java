@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+
+import com.jetec.nordic_googleplay.NewActivity.New_Dialog.DpDialog;
 import com.jetec.nordic_googleplay.NewActivity.New_Dialog.New_WriteDialog;
 import com.jetec.nordic_googleplay.R;
 import java.util.Arrays;
@@ -18,8 +20,10 @@ public class SetViewPager {
 
     private String TAG = "SetViewPager";
     private New_WriteDialog new_writeDialog = new New_WriteDialog();
+    private DpDialog dpDialog = new DpDialog();
     private byte[] b_dp = {0x00};
     private int a = 0;
+    private boolean dpflag = false;
 
     public SetViewPager(){
         super();
@@ -74,10 +78,14 @@ public class SetViewPager {
                     byte[] dp = Arrays.copyOfRange(arr, 2, 3);
                     byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
                     double p = Math.pow(10, byteArrayToInt(dp));
-                    if(byteArrayToInt(dp) == 0)
+                    if(byteArrayToInt(dp) == 0) {
+                        dpflag = false;
                         b1.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + byteArrayToInt(value));
-                    else
+                    }
+                    else {
+                        dpflag = true;
                         b1.setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) + "\n" + (byteArrayToInt(value) / p));
+                    }
                     int finalI = i;
                     b1.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -278,6 +286,7 @@ public class SetViewPager {
                     b1.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            vibrator.vibrate(100);
 
                         }
                     });
@@ -285,38 +294,101 @@ public class SetViewPager {
                 else if(i == 1){
                     b2.setVisibility(View.VISIBLE);
                     b2.setText(context.getString(R.string.dpp));
+                    b2.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            vibrator.vibrate(100);
+
+                        }
+                    });
                 }
                 else if(i == 2){
                     b3.setVisibility(View.VISIBLE);
                     b3.setText(context.getString(R.string.dpp));
+                    b3.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            vibrator.vibrate(100);
+
+                        }
+                    });
                 }
                 else if(i == 3){
                     b4.setVisibility(View.VISIBLE);
                     b4.setText(context.getString(R.string.dpp));
+                    b4.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            vibrator.vibrate(100);
+
+                        }
+                    });
                 }
                 else if(i == 4){
                     b5.setVisibility(View.VISIBLE);
                     b5.setText(context.getString(R.string.dpp));
+                    b5.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            vibrator.vibrate(100);
+
+                        }
+                    });
                 }
                 else if(i == 5){
                     b6.setVisibility(View.VISIBLE);
                     b6.setText(context.getString(R.string.dpp));
+                    b6.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            vibrator.vibrate(100);
+
+                        }
+                    });
                 }
                 else if(i == 6){
                     b7.setVisibility(View.VISIBLE);
                     b7.setText(context.getString(R.string.dpp));
+                    b7.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            vibrator.vibrate(100);
+
+                        }
+                    });
                 }
                 else if(i == 7){
                     b8.setVisibility(View.VISIBLE);
                     b8.setText(context.getString(R.string.dpp));
+                    b8.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            vibrator.vibrate(100);
+
+                        }
+                    });
                 }
                 else if(i == 8){
                     b9.setVisibility(View.VISIBLE);
                     b9.setText(context.getString(R.string.dpp));
+                    b9.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            vibrator.vibrate(100);
+
+                        }
+                    });
                 }
                 else if(i == 9){
                     b10.setVisibility(View.VISIBLE);
                     b10.setText(context.getString(R.string.dpp));
+                    b10.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            vibrator.vibrate(100);
+
+                        }
+                    });
                 }
             }
         }
@@ -325,9 +397,7 @@ public class SetViewPager {
         return view;
     }
 
-    private void resetlist(int i, List<byte[]> list, byte[] era){
 
-    }
 
     private String setButtontext(Context context, String s, String gets){
         String str = "";

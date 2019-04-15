@@ -169,6 +169,7 @@ public class CheckPassword extends AppCompatActivity {
             setTime.postDelayed(() -> {
                 if(!check) {
                     Toast.makeText(CheckPassword.this, getString(R.string.geterror), Toast.LENGTH_SHORT).show();
+                    getparse.clearList();
                     if (writeDialog.checkshowing()) {
                         writeDialog.closeDialog();
                     }

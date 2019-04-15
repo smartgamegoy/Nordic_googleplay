@@ -24,6 +24,7 @@ public class New_WriteDialog {
 
     private Dialog progressDialog = null;
     private SetEditTextStyle setEditTextStyle = new SetEditTextStyle();
+    private CheckEditHint checkEditHint = new CheckEditHint();
     private byte[] newArray = new byte[7];
     private String TAG = "New_WriteDialog";
 
@@ -36,6 +37,7 @@ public class New_WriteDialog {
         progressDialog.show();
         progressDialog.setCanceledOnTouchOutside(false);
     }
+
     private String getnewStr(int dp_flag){
         byte[] dp = Arrays.copyOfRange(newArray, 2, 3);
         byte[] value = Arrays.copyOfRange(newArray, 3, newArray.length);
@@ -51,7 +53,8 @@ public class New_WriteDialog {
         return str;
     }
 
-    private Dialog showDialog(Context context, int dp_flag, String str, List<byte[]> list, int i, byte[] ch, Button button, Vibrator vibrator, String s) {
+    private Dialog showDialog(Context context, int dp_flag, String str, List<byte[]> list, int i, byte[] ch,
+                              Button button, Vibrator vibrator, String s) {
         Screen screen = new Screen(context);
         DisplayMetrics dm = screen.size();
         Dialog progressDialog = new Dialog(context);
@@ -68,7 +71,7 @@ public class New_WriteDialog {
         by.setText(context.getString(R.string.butoon_yes));
         bn.setText(context.getString(R.string.butoon_no));
 
-
+        checkEditHint.setHint(editText, ch, s);
 
         by.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,6 +108,10 @@ public class New_WriteDialog {
         }
 
         return progressDialog;
+    }
+
+    private void resetlist(int i, List<byte[]> list, byte[] era){
+
     }
 
     private byte[] convertString(String str, byte[] ch, int dp_flag) {

@@ -172,6 +172,14 @@
                     android:layout_weight="1"
                     android:background="@drawable/button_time"
                     android:text="@string/bt_ztime" />
+
+                <Button
+                    android:id="@+id/button15"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_i"
+                    android:text="@string/bt_pm" />
             </LinearLayout>
 
         </LinearLayout>
