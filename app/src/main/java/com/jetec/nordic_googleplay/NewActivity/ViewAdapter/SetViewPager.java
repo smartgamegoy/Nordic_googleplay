@@ -280,6 +280,10 @@ public class SetViewPager {
                 }
             }
             else{
+                byte[] arr = list.get(0);
+                byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                int finalI = i;
                 if(i == 0){
                     b1.setVisibility(View.VISIBLE);
                     b1.setText(context.getString(R.string.dpp));
@@ -287,7 +291,8 @@ public class SetViewPager {
                         @Override
                         public void onClick(View v) {
                             vibrator.vibrate(100);
-
+                            dpDialog.set_Dialog(context, byteArrayToInt(dp), vibrator,
+                                    context.getString(R.string.dpp), list, finalI, s);
                         }
                     });
                 }
@@ -298,7 +303,8 @@ public class SetViewPager {
                         @Override
                         public void onClick(View v) {
                             vibrator.vibrate(100);
-
+                            dpDialog.set_Dialog(context, byteArrayToInt(dp), vibrator,
+                                    context.getString(R.string.dpp), list, finalI, s);
                         }
                     });
                 }
@@ -309,7 +315,8 @@ public class SetViewPager {
                         @Override
                         public void onClick(View v) {
                             vibrator.vibrate(100);
-
+                            dpDialog.set_Dialog(context, byteArrayToInt(dp), vibrator,
+                                    context.getString(R.string.dpp), list, finalI, s);
                         }
                     });
                 }
@@ -320,7 +327,8 @@ public class SetViewPager {
                         @Override
                         public void onClick(View v) {
                             vibrator.vibrate(100);
-
+                            dpDialog.set_Dialog(context, byteArrayToInt(dp), vibrator,
+                                    context.getString(R.string.dpp), list, finalI, s);
                         }
                     });
                 }
@@ -331,7 +339,8 @@ public class SetViewPager {
                         @Override
                         public void onClick(View v) {
                             vibrator.vibrate(100);
-
+                            dpDialog.set_Dialog(context, byteArrayToInt(dp), vibrator,
+                                    context.getString(R.string.dpp), list, finalI, s);
                         }
                     });
                 }
@@ -342,7 +351,8 @@ public class SetViewPager {
                         @Override
                         public void onClick(View v) {
                             vibrator.vibrate(100);
-
+                            dpDialog.set_Dialog(context, byteArrayToInt(dp), vibrator,
+                                    context.getString(R.string.dpp), list, finalI, s);
                         }
                     });
                 }
@@ -353,7 +363,8 @@ public class SetViewPager {
                         @Override
                         public void onClick(View v) {
                             vibrator.vibrate(100);
-
+                            dpDialog.set_Dialog(context, byteArrayToInt(dp), vibrator,
+                                    context.getString(R.string.dpp), list, finalI, s);
                         }
                     });
                 }
@@ -364,7 +375,8 @@ public class SetViewPager {
                         @Override
                         public void onClick(View v) {
                             vibrator.vibrate(100);
-
+                            dpDialog.set_Dialog(context, byteArrayToInt(dp), vibrator,
+                                    context.getString(R.string.dpp), list, finalI, s);
                         }
                     });
                 }
@@ -375,7 +387,8 @@ public class SetViewPager {
                         @Override
                         public void onClick(View v) {
                             vibrator.vibrate(100);
-
+                            dpDialog.set_Dialog(context, byteArrayToInt(dp), vibrator,
+                                    context.getString(R.string.dpp), list, finalI, s);
                         }
                     });
                 }
@@ -386,7 +399,8 @@ public class SetViewPager {
                         @Override
                         public void onClick(View v) {
                             vibrator.vibrate(100);
-
+                            dpDialog.set_Dialog(context, byteArrayToInt(dp), vibrator,
+                                    context.getString(R.string.dpp), list, finalI, s);
                         }
                     });
                 }
@@ -396,8 +410,6 @@ public class SetViewPager {
         Log.e(TAG,s + " = " + point);
         return view;
     }
-
-
 
     private String setButtontext(Context context, String s, String gets){
         String str = "";
