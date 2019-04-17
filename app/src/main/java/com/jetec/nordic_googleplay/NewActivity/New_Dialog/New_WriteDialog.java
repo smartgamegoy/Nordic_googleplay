@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Vibrator;
-import android.support.constraint.ConstraintLayout;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,16 +13,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.jetec.nordic_googleplay.NewActivity.Parase;
+import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Screen;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import static android.content.Context.VIBRATOR_SERVICE;
 
 public class New_WriteDialog {
 
     private Dialog progressDialog = null;
-    private SetEditTextStyle setEditTextStyle = new SetEditTextStyle();
+    private Parase parase = new Parase();
     private CheckEditHint checkEditHint = new CheckEditHint();
     private byte[] newArray = new byte[7];
     private String TAG = "New_WriteDialog";
@@ -32,8 +33,9 @@ public class New_WriteDialog {
         super();
     }
 
-    public void set_Dialog(Context context, int dp_flag, String str, List<byte[]> list, int i, byte[] ch, Button button, Vibrator vibrator, String s) {
-        progressDialog = showDialog(context, dp_flag, str, list, i , ch, button, vibrator, s);
+    public void set_Dialog(Context context, String str, int getlist_i, int i, byte[] ch,
+                           Button button, Vibrator vibrator, String s) {
+        progressDialog = showDialog(context, str, getlist_i, i , ch, button, vibrator, s);
         progressDialog.show();
         progressDialog.setCanceledOnTouchOutside(false);
     }
@@ -41,19 +43,19 @@ public class New_WriteDialog {
     private String getnewStr(int dp_flag){
         byte[] dp = Arrays.copyOfRange(newArray, 2, 3);
         byte[] value = Arrays.copyOfRange(newArray, 3, newArray.length);
-        double p = Math.pow(10, byteArrayToInt(dp));
-        String str = "";
+        double p = Math.pow(10, parase.byteArrayToInt(dp));
+        String str;
         if(dp_flag == 0) {
-            str = String.valueOf((byteArrayToInt(value) / p));
+            str = String.valueOf((parase.byteArrayToInt(value) / p));
             str = str.substring(0, str.indexOf("."));
         }
         else
-            str = String.valueOf((byteArrayToInt(value) / p));
-
+            str = String.valueOf((parase.byteArrayToInt(value) / p));
         return str;
     }
 
-    private Dialog showDialog(Context context, int dp_flag, String str, List<byte[]> list, int i, byte[] ch,
+    @SuppressLint("SetTextI18n")
+    private Dialog showDialog(Context context, String str, int getlist_i, int i, byte[] ch,
                               Button button, Vibrator vibrator, String s) {
         Screen screen = new Screen(context);
         DisplayMetrics dm = screen.size();
@@ -62,7 +64,6 @@ public class New_WriteDialog {
 
         LayoutInflater inflater = LayoutInflater.from(context);
         @SuppressLint("InflateParams") View v = inflater.inflate(R.layout.alterdialog, null);
-        ConstraintLayout layout = v.findViewById(R.id.input_dialog);
         TextView title = v.findViewById(R.id.textView1);
         Button by = v.findViewById(R.id.button2);
         Button bn = v.findViewById(R.id.button1);
@@ -72,31 +73,32 @@ public class New_WriteDialog {
         bn.setText(context.getString(R.string.butoon_no));
 
         checkEditHint.setHint(editText, ch, s);
+        List<byte[]> list = new ArrayList<>();
+        list.clear();
+        list = getList(getlist_i);
+        byte[] arr = list.get(0);
+        byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+        int dp_flag = parase.byteArrayToInt(dp);
 
-        by.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                vibrator.vibrate(100);
-                String gets = editText.getText().toString().trim();
-                byte[] getb = convertString(gets, ch, dp_flag);
-                newArray = getb;
-                StringBuilder hex = new StringBuilder(getb.length * 2);
-                for (byte aData : getb) {
-                    hex.append(String.format("%02X", aData));
-                }
-                String gethex = hex.toString();
-                Log.e(TAG, "gethex = " + gethex);
-                button.setText(str + "\n" + getnewStr(dp_flag));
-                progressDialog.dismiss();
+        by.setOnClickListener(v1 -> {
+            vibrator.vibrate(100);
+            String gets = editText.getText().toString().trim();
+            byte[] getb = convertString(gets, ch, dp_flag);
+            newArray = getb;
+            StringBuilder hex = new StringBuilder(getb.length * 2);
+            for (byte aData : getb) {
+                hex.append(String.format("%02X", aData));
             }
+            String gethex = hex.toString();
+            Log.e(TAG, "gethex = " + gethex);
+            button.setText(str + "\n" + getnewStr(dp_flag));
+            resetlist(getlist_i, i , getb);
+            progressDialog.dismiss();
         });
 
-        bn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                vibrator.vibrate(100);
-                progressDialog.dismiss();
-            }
+        bn.setOnClickListener(v12 -> {
+            vibrator.vibrate(100);
+            progressDialog.dismiss();
         });
 
         if (dm.heightPixels > dm.widthPixels) { //需修改
@@ -110,8 +112,12 @@ public class New_WriteDialog {
         return progressDialog;
     }
 
-    private void resetlist(int i, List<byte[]> list, byte[] era){
-
+    private void resetlist(int getlist_i, int i, byte[] value){
+        List<byte[]> list = new ArrayList<>();
+        list.clear();
+        list = NewModel.viewList.get(getlist_i);
+        list.set(i, value);
+        NewModel.viewList.set(getlist_i, list);
     }
 
     private byte[] convertString(String str, byte[] ch, int dp_flag) {
@@ -129,7 +135,7 @@ public class New_WriteDialog {
                 num = Integer.valueOf(str);
             }
             convert[2] = 0x00;
-            byte[] value = intToByteArray(num);
+            byte[] value = parase.intToByteArray(num);
             for (int j = 0; j < value.length; j++) {
                 convert[2 + (j + 1)] = value[j];
             }
@@ -139,8 +145,8 @@ public class New_WriteDialog {
                 int i = str.length() - str.indexOf(".") - 1;
                 str = str.replace(".", "");
                 int num = Integer.valueOf(str);
-                byte[] point = pointToByteArray(i);
-                byte[] value = intToByteArray(num);
+                byte[] point = parase.pointToByteArray(i);
+                byte[] value = parase.intToByteArray(num);
                 convert[2] = point[0];
                 for (int j = 0; j < value.length; j++) {
                     convert[2 + (j + 1)] = value[j];
@@ -148,7 +154,7 @@ public class New_WriteDialog {
             } else {
                 int num = Integer.valueOf(str);
                 convert[2] = 0x00;
-                byte[] value = intToByteArray(num);
+                byte[] value = parase.intToByteArray(num);
                 for (int j = 0; j < value.length; j++) {
                     convert[2 + (j + 1)] = value[j];
                 }
@@ -158,29 +164,12 @@ public class New_WriteDialog {
         return convert;
     }
 
-    private byte[] intToByteArray(int a) {
-        byte[] ret = new byte[4];
-        ret[3] = (byte) (a & 0xFF);
-        ret[2] = (byte) ((a >> 8) & 0xFF);
-        ret[1] = (byte) ((a >> 16) & 0xFF);
-        ret[0] = (byte) ((a >> 24) & 0xFF);
-        return ret;
-    }
+    private List<byte[]> getList(int i){
+        List<byte[]> list = new ArrayList<>();
+        list.clear();
 
-    private byte[] pointToByteArray(int a){
-        byte[] ret = new byte[1];
-        ret[0] = (byte) (a & 0xFF);
-        return ret;
-    }
+        list = NewModel.viewList.get(i);
 
-    private int byteArrayToInt(byte[] b) {
-        if (b.length == 4)
-            return b[0] << 24 | (b[1] & 0xff) << 16 | (b[2] & 0xff) << 8
-                    | (b[3] & 0xff);
-        else if (b.length == 2)
-            return (b[0] & 0xff) << 8 | (b[1] & 0xff);
-        else if(b.length == 1)
-            return b[0] & 0xff;
-        return 0;
+        return list;
     }
 }
