@@ -185,6 +185,7 @@
     <string name="bt_e">二氧化碳\n(0~5000ppm)</string>
     <string name="bt_co">一氧化碳\n(?~?ppm)</string>
     <string name="bt_pm">PM2.5\n(0~1000ppm)</string>
+    <string name="pm">PM2.5</string>
     <string name="bt_i">類比\n(4~20mA)</string>
     <string name="table_i">類比</string>
     <string name="bt_time">Y時間\n(年/月/日)</string>
@@ -197,4 +198,5 @@
     <string name="RL2">警報2</string>
     <string name="RL3">警報3</string>
     <string name="dpp">小數點</string>
+    <string name="chose">無</string>
 </resources>

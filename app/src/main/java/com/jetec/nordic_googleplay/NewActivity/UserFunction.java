@@ -221,41 +221,41 @@ public class UserFunction extends AppCompatActivity {
                 tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i + 1)).setText(getString(R.string.bt_t));
-                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator));
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator, ch));
                 //setPagerAdapter.setView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
             } else if (ch.get(i).toString().matches("H")) {
                 /*tab.setCustomView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
                 tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i + 1)).setText(getString(R.string.bt_h));
-                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator));
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator, ch));
                 //setPagerAdapter.setView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
             } else if (ch.get(i).toString().matches("C")) {
                 /*tab.setCustomView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
                 tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i + 1)).setText(getString(R.string.bt_c));
-                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator));
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator, ch));
                 //setPagerAdapter.setView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
             } else if (ch.get(i).toString().matches("D")) {
                 /*tab.setCustomView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
                 tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i + 1)).setText(getString(R.string.bt_d));
-                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator));
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator, ch));
                 //setPagerAdapter.setView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
             } else if (ch.get(i).toString().matches("E")) {
                 /*tab.setCustomView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
                 tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i + 1)).setText(getString(R.string.bt_e));
-                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator));
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator, ch));
             } else if (ch.get(i).toString().matches("I")) {
                 /*tab.setCustomView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
                 tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i + 1)).setText(getString(R.string.table_i) + count + "\n" + "(4~20mA)");
-                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator));
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator, ch));
                 //setPagerAdapter.setView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
                 count++;
             } else if (ch.get(i).toString().matches("S")) {
@@ -263,7 +263,7 @@ public class UserFunction extends AppCompatActivity {
                 tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i + 1)).setText(getString(R.string.bt_co));
-                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator));
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator, ch));
                 //setPagerAdapter.setView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
             }
         }

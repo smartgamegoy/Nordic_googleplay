@@ -185,6 +185,7 @@
     <string name="bt_e">CO2\n(0~5000ppm)</string>
     <string name="bt_co">CO\n(?~?ppm)</string>
     <string name="bt_pm">PM2.5\n(0~1000ppm)</string>
+    <string name="pm">PM2.5</string>
     <string name="bt_i">Analogy\n(4~20mA)</string>
     <string name="table_i">Analogy</string>
     <string name="bt_time">YTime\n(Year/Month/Day)</string>
@@ -197,4 +198,5 @@
     <string name="RL2">Alarm2</string>
     <string name="RL3">Alarm3</string>
     <string name="dpp">Decimal place</string>
+    <string name="chose">None</string>
 </resources>

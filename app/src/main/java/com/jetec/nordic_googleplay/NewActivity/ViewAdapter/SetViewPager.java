@@ -7,8 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import com.jetec.nordic_googleplay.NewActivity.New_Dialog.DpDialog;
-import com.jetec.nordic_googleplay.NewActivity.New_Dialog.New_WriteDialog;
+import com.jetec.nordic_googleplay.NewActivity.New_Dialog.*;
 import com.jetec.nordic_googleplay.NewActivity.Parase;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
@@ -20,6 +19,8 @@ public class SetViewPager {
 
     private String TAG = "SetViewPager";
     private New_WriteDialog new_writeDialog = new New_WriteDialog();
+    private AlertButton alertButton = new AlertButton();
+    //private ResetButton resetButton = new ResetButton();
     private DpDialog dpDialog = new DpDialog();
     private Parase parase = new Parase();
     private byte[] b_dp = {0x00};
@@ -29,7 +30,7 @@ public class SetViewPager {
     }
 
     @SuppressLint("SetTextI18n")
-    public View setView(Context context, String s, int getlist_i, Vibrator vibrator) {
+    public View setView(Context context, String s, int getlist_i, Vibrator vibrator, List<Character> nameList) {
         LayoutInflater layoutInflater = LayoutInflater.from(context);
 
         @SuppressLint("InflateParams")
@@ -87,176 +88,311 @@ public class SetViewPager {
 
         for (int i = 0; i <= count; i++) {
             if (i != count) {
-                if (i == 0) {
-                    b1.setVisibility(View.VISIBLE);
-                    String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
-                    byte[] arr = list.get(i);
-                    byte[] str = Arrays.copyOfRange(arr, 0, 2);
-                    byte[] dp = Arrays.copyOfRange(arr, 2, 3);
-                    byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
-                    double p = Math.pow(10, parase.byteArrayToInt(dp));
-                    if (parase.byteArrayToInt(dp) == 0)
-                        b1.setText(title + "\n" + parase.byteArrayToInt(value));
-                    else
-                        b1.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
+                if (!get_String(list.get(i)[1], list.get(i)[0]).startsWith("RL")) {
+                    if (i == 0) {
+                        b1.setVisibility(View.VISIBLE);
+                        String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
+                        byte[] arr = list.get(i);
+                        byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                        byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                        byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                        double p = Math.pow(10, parase.byteArrayToInt(dp));
+                        if (parase.byteArrayToInt(dp) == 0)
+                            b1.setText(title + "\n" + parase.byteArrayToInt(value));
+                        else
+                            b1.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
+                        int finalI = i;
+                        b1.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b1, vibrator, s);
+                        });
+                    } else if (i == 1) {
+                        b2.setVisibility(View.VISIBLE);
+                        String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
+                        byte[] arr = list.get(i);
+                        byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                        byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                        byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                        double p = Math.pow(10, parase.byteArrayToInt(dp));
+                        if (parase.byteArrayToInt(dp) == 0)
+                            b2.setText(title + "\n" + parase.byteArrayToInt(value));
+                        else
+                            b2.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
+                        int finalI = i;
+                        b2.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b2, vibrator, s);
+                        });
+                    } else if (i == 2) {
+                        b3.setVisibility(View.VISIBLE);
+                        String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
+                        byte[] arr = list.get(i);
+                        byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                        byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                        byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                        double p = Math.pow(10, parase.byteArrayToInt(dp));
+                        if (parase.byteArrayToInt(dp) == 0)
+                            b3.setText(title + "\n" + parase.byteArrayToInt(value));
+                        else
+                            b3.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
+                        int finalI = i;
+                        b3.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b3, vibrator, s);
+                        });
+                    } else if (i == 3) {
+                        b4.setVisibility(View.VISIBLE);
+                        String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
+                        byte[] arr = list.get(i);
+                        byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                        byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                        byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                        double p = Math.pow(10, parase.byteArrayToInt(dp));
+                        if (parase.byteArrayToInt(dp) == 0)
+                            b4.setText(title + "\n" + parase.byteArrayToInt(value));
+                        else
+                            b4.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
+                        int finalI = i;
+                        b4.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b4, vibrator, s);
+                        });
+                    } else if (i == 4) {
+                        b5.setVisibility(View.VISIBLE);
+                        String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
+                        byte[] arr = list.get(i);
+                        byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                        byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                        byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                        double p = Math.pow(10, parase.byteArrayToInt(dp));
+                        if (parase.byteArrayToInt(dp) == 0)
+                            b5.setText(title + "\n" + parase.byteArrayToInt(value));
+                        else
+                            b5.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
+                        int finalI = i;
+                        b5.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b5, vibrator, s);
+                        });
+                    } else if (i == 5) {
+                        b6.setVisibility(View.VISIBLE);
+                        String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
+                        byte[] arr = list.get(i);
+                        byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                        byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                        byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                        double p = Math.pow(10, parase.byteArrayToInt(dp));
+                        if (parase.byteArrayToInt(dp) == 0)
+                            b6.setText(title + "\n" + parase.byteArrayToInt(value));
+                        else
+                            b6.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
+                        int finalI = i;
+                        b6.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b6, vibrator, s);
+                        });
+                    } else if (i == 6) {
+                        b7.setVisibility(View.VISIBLE);
+                        String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
+                        byte[] arr = list.get(i);
+                        byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                        byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                        byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                        double p = Math.pow(10, parase.byteArrayToInt(dp));
+                        if (parase.byteArrayToInt(dp) == 0)
+                            b7.setText(title + "\n" + parase.byteArrayToInt(value));
+                        else
+                            b7.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
+                        int finalI = i;
+                        b7.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b7, vibrator, s);
+                        });
+                    } else if (i == 7) {
+                        b8.setVisibility(View.VISIBLE);
+                        String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
+                        byte[] arr = list.get(i);
+                        byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                        byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                        byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                        double p = Math.pow(10, parase.byteArrayToInt(dp));
+                        if (parase.byteArrayToInt(dp) == 0)
+                            b8.setText(title + "\n" + parase.byteArrayToInt(value));
+                        else
+                            b8.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
+                        int finalI = i;
+                        b8.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b8, vibrator, s);
+                        });
+                    } else if (i == 8) {
+                        b9.setVisibility(View.VISIBLE);
+                        String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
+                        byte[] arr = list.get(i);
+                        byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                        byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                        byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                        double p = Math.pow(10, parase.byteArrayToInt(dp));
+                        if (parase.byteArrayToInt(dp) == 0)
+                            b9.setText(title + "\n" + parase.byteArrayToInt(value));
+                        else
+                            b9.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
+                        int finalI = i;
+                        b9.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b9, vibrator, s);
+                        });
+                    } else if (i == 9) {
+                        b10.setVisibility(View.VISIBLE);
+                        String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
+                        byte[] arr = list.get(i);
+                        byte[] str = Arrays.copyOfRange(arr, 0, 2);
+                        byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+                        byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                        double p = Math.pow(10, parase.byteArrayToInt(dp));
+                        if (parase.byteArrayToInt(dp) == 0)
+                            b10.setText(title + "\n" + parase.byteArrayToInt(value));
+                        else
+                            b10.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
+                        int finalI = i;
+                        b10.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b10, vibrator, s);
+                        });
+                    }
+                } else {
                     int finalI = i;
-                    b1.setOnClickListener(v -> {
-                        vibrator.vibrate(100);
-                        new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b1, vibrator, s);
-                    });
-                } else if (i == 1) {
-                    b2.setVisibility(View.VISIBLE);
-                    String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
-                    byte[] arr = list.get(i);
-                    byte[] str = Arrays.copyOfRange(arr, 0, 2);
-                    byte[] dp = Arrays.copyOfRange(arr, 2, 3);
-                    byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
-                    double p = Math.pow(10, parase.byteArrayToInt(dp));
-                    if (parase.byteArrayToInt(dp) == 0)
-                        b2.setText(title + "\n" + parase.byteArrayToInt(value));
-                    else
-                        b2.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
-                    int finalI = i;
-                    b2.setOnClickListener(v -> {
-                        vibrator.vibrate(100);
-                        new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b2, vibrator, s);
-                    });
-                } else if (i == 2) {
-                    b3.setVisibility(View.VISIBLE);
-                    String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
-                    byte[] arr = list.get(i);
-                    byte[] str = Arrays.copyOfRange(arr, 0, 2);
-                    byte[] dp = Arrays.copyOfRange(arr, 2, 3);
-                    byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
-                    double p = Math.pow(10, parase.byteArrayToInt(dp));
-                    if (parase.byteArrayToInt(dp) == 0)
-                        b3.setText(title + "\n" + parase.byteArrayToInt(value));
-                    else
-                        b3.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
-                    int finalI = i;
-                    b3.setOnClickListener(v -> {
-                        vibrator.vibrate(100);
-                        new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b3, vibrator, s);
-                    });
-                } else if (i == 3) {
-                    b4.setVisibility(View.VISIBLE);
-                    String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
-                    byte[] arr = list.get(i);
-                    byte[] str = Arrays.copyOfRange(arr, 0, 2);
-                    byte[] dp = Arrays.copyOfRange(arr, 2, 3);
-                    byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
-                    double p = Math.pow(10, parase.byteArrayToInt(dp));
-                    if (parase.byteArrayToInt(dp) == 0)
-                        b4.setText(title + "\n" + parase.byteArrayToInt(value));
-                    else
-                        b4.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
-                    int finalI = i;
-                    b4.setOnClickListener(v -> {
-                        vibrator.vibrate(100);
-                        new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b4, vibrator, s);
-                    });
-                } else if (i == 4) {
-                    b5.setVisibility(View.VISIBLE);
-                    String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
-                    byte[] arr = list.get(i);
-                    byte[] str = Arrays.copyOfRange(arr, 0, 2);
-                    byte[] dp = Arrays.copyOfRange(arr, 2, 3);
-                    byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
-                    double p = Math.pow(10, parase.byteArrayToInt(dp));
-                    if (parase.byteArrayToInt(dp) == 0)
-                        b5.setText(title + "\n" + parase.byteArrayToInt(value));
-                    else
-                        b5.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
-                    int finalI = i;
-                    b5.setOnClickListener(v -> {
-                        vibrator.vibrate(100);
-                        new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b5, vibrator, s);
-                    });
-                } else if (i == 5) {
-                    b6.setVisibility(View.VISIBLE);
-                    String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
-                    byte[] arr = list.get(i);
-                    byte[] str = Arrays.copyOfRange(arr, 0, 2);
-                    byte[] dp = Arrays.copyOfRange(arr, 2, 3);
-                    byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
-                    double p = Math.pow(10, parase.byteArrayToInt(dp));
-                    if (parase.byteArrayToInt(dp) == 0)
-                        b6.setText(title + "\n" + parase.byteArrayToInt(value));
-                    else
-                        b6.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
-                    int finalI = i;
-                    b6.setOnClickListener(v -> {
-                        vibrator.vibrate(100);
-                        new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b6, vibrator, s);
-                    });
-                } else if (i == 6) {
-                    b7.setVisibility(View.VISIBLE);
-                    String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
-                    byte[] arr = list.get(i);
-                    byte[] str = Arrays.copyOfRange(arr, 0, 2);
-                    byte[] dp = Arrays.copyOfRange(arr, 2, 3);
-                    byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
-                    double p = Math.pow(10, parase.byteArrayToInt(dp));
-                    if (parase.byteArrayToInt(dp) == 0)
-                        b7.setText(title + "\n" + parase.byteArrayToInt(value));
-                    else
-                        b7.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
-                    int finalI = i;
-                    b7.setOnClickListener(v -> {
-                        vibrator.vibrate(100);
-                        new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b7, vibrator, s);
-                    });
-                } else if (i == 7) {
-                    b8.setVisibility(View.VISIBLE);
-                    String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
-                    byte[] arr = list.get(i);
-                    byte[] str = Arrays.copyOfRange(arr, 0, 2);
-                    byte[] dp = Arrays.copyOfRange(arr, 2, 3);
-                    byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
-                    double p = Math.pow(10, parase.byteArrayToInt(dp));
-                    if (parase.byteArrayToInt(dp) == 0)
-                        b8.setText(title + "\n" + parase.byteArrayToInt(value));
-                    else
-                        b8.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
-                    int finalI = i;
-                    b8.setOnClickListener(v -> {
-                        vibrator.vibrate(100);
-                        new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b8, vibrator, s);
-                    });
-                } else if (i == 8) {
-                    b9.setVisibility(View.VISIBLE);
-                    String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
-                    byte[] arr = list.get(i);
-                    byte[] str = Arrays.copyOfRange(arr, 0, 2);
-                    byte[] dp = Arrays.copyOfRange(arr, 2, 3);
-                    byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
-                    double p = Math.pow(10, parase.byteArrayToInt(dp));
-                    if (parase.byteArrayToInt(dp) == 0)
-                        b9.setText(title + "\n" + parase.byteArrayToInt(value));
-                    else
-                        b9.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
-                    int finalI = i;
-                    b9.setOnClickListener(v -> {
-                        vibrator.vibrate(100);
-                        new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b9, vibrator, s);
-                    });
-                } else if (i == 9) {
-                    b10.setVisibility(View.VISIBLE);
-                    String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
-                    byte[] arr = list.get(i);
-                    byte[] str = Arrays.copyOfRange(arr, 0, 2);
-                    byte[] dp = Arrays.copyOfRange(arr, 2, 3);
-                    byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
-                    double p = Math.pow(10, parase.byteArrayToInt(dp));
-                    if (parase.byteArrayToInt(dp) == 0)
-                        b10.setText(title + "\n" + parase.byteArrayToInt(value));
-                    else
-                        b10.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
-                    int finalI = i;
-                    b10.setOnClickListener(v -> {
-                        vibrator.vibrate(100);
-                        new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b10, vibrator, s);
-                    });
+                    if (i == 0) {
+                        b1.setVisibility(View.VISIBLE);
+                        String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
+                        byte[] arr = list.get(i);
+                        byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                        int chose = parase.byteArrayToInt(value);
+                        String buttontext = getText(nameList, chose, context);
+                        b1.setText(title + "\n" + buttontext);
+                        b1.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
+                            //resetButton.set_Dialog(context, b1, vibrator, nameList, title, getlist_i, finalI);
+                        });
+                    } else if (i == 1) {
+                        b2.setVisibility(View.VISIBLE);
+                        String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
+                        byte[] arr = list.get(i);
+                        byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                        int chose = parase.byteArrayToInt(value);
+                        String buttontext = getText(nameList, chose, context);
+                        b2.setText(title + "\n" + buttontext);
+                        b2.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
+                            //resetButton.set_Dialog(context, b2, vibrator, nameList, title, getlist_i, finalI);
+                        });
+                    } else if (i == 2) {
+                        b3.setVisibility(View.VISIBLE);
+                        String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
+                        byte[] arr = list.get(i);
+                        byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                        int chose = parase.byteArrayToInt(value);
+                        String buttontext = getText(nameList, chose, context);
+                        b3.setText(title + "\n" + buttontext);
+                        b3.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
+                            //resetButton.set_Dialog(context, b3, vibrator, nameList, title, getlist_i, finalI);
+                        });
+                    } else if (i == 3) {
+                        b4.setVisibility(View.VISIBLE);
+                        String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
+                        byte[] arr = list.get(i);
+                        byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                        int chose = parase.byteArrayToInt(value);
+                        String buttontext = getText(nameList, chose, context);
+                        b4.setText(title + "\n" + buttontext);
+                        b4.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
+                            //resetButton.set_Dialog(context, b4, vibrator, nameList, title, getlist_i, finalI);
+                        });
+                    } else if (i == 4) {
+                        b5.setVisibility(View.VISIBLE);
+                        String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
+                        byte[] arr = list.get(i);
+                        byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                        int chose = parase.byteArrayToInt(value);
+                        String buttontext = getText(nameList, chose, context);
+                        b5.setText(title + "\n" + buttontext);
+                        b5.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
+                            //resetButton.set_Dialog(context, b5, vibrator, nameList, title, getlist_i, finalI);
+                        });
+                    } else if (i == 5) {
+                        b6.setVisibility(View.VISIBLE);
+                        String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
+                        byte[] arr = list.get(i);
+                        byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                        int chose = parase.byteArrayToInt(value);
+                        String buttontext = getText(nameList, chose, context);
+                        b6.setText(title + "\n" + buttontext);
+                        b6.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
+                            //resetButton.set_Dialog(context, b6, vibrator, nameList, title, getlist_i, finalI);
+                        });
+                    } else if (i == 6) {
+                        b7.setVisibility(View.VISIBLE);
+                        String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
+                        byte[] arr = list.get(i);
+                        byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                        int chose = parase.byteArrayToInt(value);
+                        String buttontext = getText(nameList, chose, context);
+                        b7.setText(title + "\n" + buttontext);
+                        b7.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
+                            //resetButton.set_Dialog(context, b7, vibrator, nameList, title, getlist_i, finalI);
+                        });
+                    } else if (i == 7) {
+                        b8.setVisibility(View.VISIBLE);
+                        String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
+                        byte[] arr = list.get(i);
+                        byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                        int chose = parase.byteArrayToInt(value);
+                        String buttontext = getText(nameList, chose, context);
+                        b8.setText(title + "\n" + buttontext);
+                        b8.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
+                            //resetButton.set_Dialog(context, b8, vibrator, nameList, title, getlist_i, finalI);
+                        });
+                    } else if (i == 8) {
+                        b9.setVisibility(View.VISIBLE);
+                        String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
+                        byte[] arr = list.get(i);
+                        byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                        int chose = parase.byteArrayToInt(value);
+                        String buttontext = getText(nameList, chose, context);
+                        b9.setText(title + "\n" + buttontext);
+                        b9.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
+                            //resetButton.set_Dialog(context, b9, vibrator, nameList, title, getlist_i, finalI);
+                        });
+                    } else if (i == 9) {
+                        b10.setVisibility(View.VISIBLE);
+                        String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
+                        byte[] arr = list.get(i);
+                        byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+                        int chose = parase.byteArrayToInt(value);
+                        String buttontext = getText(nameList, chose, context);
+                        b10.setText(title + "\n" + buttontext);
+                        b10.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
+                            //resetButton.set_Dialog(context, b10, vibrator, nameList, title, getlist_i, finalI);
+                        });
+                    }
                 }
             } else {
                 int finalI = i;
@@ -338,6 +474,42 @@ public class SetViewPager {
 
         Log.e(TAG, s + " = " + point);
         return view;
+    }
+
+    private String getText(List<Character> nameList, int chose, Context context){
+        String str = "";
+        if(chose == 0){
+            str = context.getString(R.string.chose);
+        }
+        else {
+            if(nameList.get((chose - 1)).toString().matches("T")){
+                str = context.getString(R.string.T);
+            }else if(nameList.get((chose - 1)).toString().matches("H")){
+                str = context.getString(R.string.H);
+            }else if(nameList.get((chose - 1)).toString().matches("C")){
+                str = context.getString(R.string.C);
+            }else if(nameList.get((chose - 1)).toString().matches("D")){
+                str = context.getString(R.string.C);
+            }else if(nameList.get((chose - 1)).toString().matches("E")){
+                str = context.getString(R.string.C);
+            }else if(nameList.get((chose - 1)).toString().matches("M")){
+                str = context.getString(R.string.pm);
+            }else if(nameList.get((chose - 1)).toString().matches("I")){
+                List<Integer> ilist = new ArrayList<>();
+                ilist.clear();
+                for(int i  = 0; i < nameList.size(); i++){
+                    if(nameList.get(i).toString().matches("I")){
+                        ilist.add((i + 1));
+                    }
+                }
+                for(int i = 0; i < ilist.size(); i++){
+                    if((ilist.get(i) + 1) == chose){
+                        str = context.getString(R.string.table_i) + i;
+                    }
+                }
+            }
+        }
+        return str;
     }
 
     private String setButtontext(Context context, String s, String gets) {
@@ -481,11 +653,10 @@ public class SetViewPager {
         } else if (a == 0x0F) {
             str = "OT3";
         }
-
         return str;
     }
 
-    private List<byte[]> getList(int i){
+    private List<byte[]> getList(int i) {
         List<byte[]> list = new ArrayList<>();
         list.clear();
 
