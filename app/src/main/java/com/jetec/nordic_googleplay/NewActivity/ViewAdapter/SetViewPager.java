@@ -18,8 +18,8 @@ import java.util.List;
 public class SetViewPager {
 
     private String TAG = "SetViewPager";
-    private New_WriteDialog new_writeDialog = new New_WriteDialog();
-    private AlertButton alertButton = new AlertButton();
+    //private New_WriteDialog new_writeDialog = new New_WriteDialog();
+    //private AlertButton alertButton = new AlertButton();
     //private ResetButton resetButton = new ResetButton();
     private DpDialog dpDialog = new DpDialog();
     private Parase parase = new Parase();
@@ -104,6 +104,7 @@ public class SetViewPager {
                         int finalI = i;
                         b1.setOnClickListener(v -> {
                             vibrator.vibrate(100);
+                            New_WriteDialog new_writeDialog = new New_WriteDialog();
                             new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b1, vibrator, s);
                         });
                     } else if (i == 1) {
@@ -121,6 +122,7 @@ public class SetViewPager {
                         int finalI = i;
                         b2.setOnClickListener(v -> {
                             vibrator.vibrate(100);
+                            New_WriteDialog new_writeDialog = new New_WriteDialog();
                             new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b2, vibrator, s);
                         });
                     } else if (i == 2) {
@@ -138,6 +140,7 @@ public class SetViewPager {
                         int finalI = i;
                         b3.setOnClickListener(v -> {
                             vibrator.vibrate(100);
+                            New_WriteDialog new_writeDialog = new New_WriteDialog();
                             new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b3, vibrator, s);
                         });
                     } else if (i == 3) {
@@ -155,6 +158,7 @@ public class SetViewPager {
                         int finalI = i;
                         b4.setOnClickListener(v -> {
                             vibrator.vibrate(100);
+                            New_WriteDialog new_writeDialog = new New_WriteDialog();
                             new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b4, vibrator, s);
                         });
                     } else if (i == 4) {
@@ -172,6 +176,7 @@ public class SetViewPager {
                         int finalI = i;
                         b5.setOnClickListener(v -> {
                             vibrator.vibrate(100);
+                            New_WriteDialog new_writeDialog = new New_WriteDialog();
                             new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b5, vibrator, s);
                         });
                     } else if (i == 5) {
@@ -189,6 +194,7 @@ public class SetViewPager {
                         int finalI = i;
                         b6.setOnClickListener(v -> {
                             vibrator.vibrate(100);
+                            New_WriteDialog new_writeDialog = new New_WriteDialog();
                             new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b6, vibrator, s);
                         });
                     } else if (i == 6) {
@@ -206,6 +212,7 @@ public class SetViewPager {
                         int finalI = i;
                         b7.setOnClickListener(v -> {
                             vibrator.vibrate(100);
+                            New_WriteDialog new_writeDialog = new New_WriteDialog();
                             new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b7, vibrator, s);
                         });
                     } else if (i == 7) {
@@ -223,6 +230,7 @@ public class SetViewPager {
                         int finalI = i;
                         b8.setOnClickListener(v -> {
                             vibrator.vibrate(100);
+                            New_WriteDialog new_writeDialog = new New_WriteDialog();
                             new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b8, vibrator, s);
                         });
                     } else if (i == 8) {
@@ -240,6 +248,7 @@ public class SetViewPager {
                         int finalI = i;
                         b9.setOnClickListener(v -> {
                             vibrator.vibrate(100);
+                            New_WriteDialog new_writeDialog = new New_WriteDialog();
                             new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b9, vibrator, s);
                         });
                     } else if (i == 9) {
@@ -257,6 +266,7 @@ public class SetViewPager {
                         int finalI = i;
                         b10.setOnClickListener(v -> {
                             vibrator.vibrate(100);
+                            New_WriteDialog new_writeDialog = new New_WriteDialog();
                             new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b10, vibrator, s);
                         });
                     }
@@ -272,6 +282,7 @@ public class SetViewPager {
                         b1.setText(title + "\n" + buttontext);
                         b1.setOnClickListener(v -> {
                             vibrator.vibrate(100);
+                            AlertButton alertButton = new AlertButton();
                             alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
                             //resetButton.set_Dialog(context, b1, vibrator, nameList, title, getlist_i, finalI);
                         });
@@ -285,7 +296,8 @@ public class SetViewPager {
                         b2.setText(title + "\n" + buttontext);
                         b2.setOnClickListener(v -> {
                             vibrator.vibrate(100);
-                            alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
+                            AlertButton alertButton = new AlertButton();
+                            alertButton.set_Dialog(context, b2, vibrator, title, getlist_i, finalI);
                             //resetButton.set_Dialog(context, b2, vibrator, nameList, title, getlist_i, finalI);
                         });
                     } else if (i == 2) {
@@ -298,7 +310,8 @@ public class SetViewPager {
                         b3.setText(title + "\n" + buttontext);
                         b3.setOnClickListener(v -> {
                             vibrator.vibrate(100);
-                            alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
+                            AlertButton alertButton = new AlertButton();
+                            alertButton.set_Dialog(context, b3, vibrator, title, getlist_i, finalI);
                             //resetButton.set_Dialog(context, b3, vibrator, nameList, title, getlist_i, finalI);
                         });
                     } else if (i == 3) {
@@ -311,7 +324,8 @@ public class SetViewPager {
                         b4.setText(title + "\n" + buttontext);
                         b4.setOnClickListener(v -> {
                             vibrator.vibrate(100);
-                            alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
+                            AlertButton alertButton = new AlertButton();
+                            alertButton.set_Dialog(context, b4, vibrator, title, getlist_i, finalI);
                             //resetButton.set_Dialog(context, b4, vibrator, nameList, title, getlist_i, finalI);
                         });
                     } else if (i == 4) {
@@ -324,7 +338,8 @@ public class SetViewPager {
                         b5.setText(title + "\n" + buttontext);
                         b5.setOnClickListener(v -> {
                             vibrator.vibrate(100);
-                            alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
+                            AlertButton alertButton = new AlertButton();
+                            alertButton.set_Dialog(context, b5, vibrator, title, getlist_i, finalI);
                             //resetButton.set_Dialog(context, b5, vibrator, nameList, title, getlist_i, finalI);
                         });
                     } else if (i == 5) {
@@ -337,7 +352,8 @@ public class SetViewPager {
                         b6.setText(title + "\n" + buttontext);
                         b6.setOnClickListener(v -> {
                             vibrator.vibrate(100);
-                            alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
+                            AlertButton alertButton = new AlertButton();
+                            alertButton.set_Dialog(context, b6, vibrator, title, getlist_i, finalI);
                             //resetButton.set_Dialog(context, b6, vibrator, nameList, title, getlist_i, finalI);
                         });
                     } else if (i == 6) {
@@ -350,7 +366,8 @@ public class SetViewPager {
                         b7.setText(title + "\n" + buttontext);
                         b7.setOnClickListener(v -> {
                             vibrator.vibrate(100);
-                            alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
+                            AlertButton alertButton = new AlertButton();
+                            alertButton.set_Dialog(context, b7, vibrator, title, getlist_i, finalI);
                             //resetButton.set_Dialog(context, b7, vibrator, nameList, title, getlist_i, finalI);
                         });
                     } else if (i == 7) {
@@ -363,7 +380,8 @@ public class SetViewPager {
                         b8.setText(title + "\n" + buttontext);
                         b8.setOnClickListener(v -> {
                             vibrator.vibrate(100);
-                            alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
+                            AlertButton alertButton = new AlertButton();
+                            alertButton.set_Dialog(context, b8, vibrator, title, getlist_i, finalI);
                             //resetButton.set_Dialog(context, b8, vibrator, nameList, title, getlist_i, finalI);
                         });
                     } else if (i == 8) {
@@ -376,7 +394,8 @@ public class SetViewPager {
                         b9.setText(title + "\n" + buttontext);
                         b9.setOnClickListener(v -> {
                             vibrator.vibrate(100);
-                            alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
+                            AlertButton alertButton = new AlertButton();
+                            alertButton.set_Dialog(context, b9, vibrator, title, getlist_i, finalI);
                             //resetButton.set_Dialog(context, b9, vibrator, nameList, title, getlist_i, finalI);
                         });
                     } else if (i == 9) {
@@ -389,7 +408,8 @@ public class SetViewPager {
                         b10.setText(title + "\n" + buttontext);
                         b10.setOnClickListener(v -> {
                             vibrator.vibrate(100);
-                            alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
+                            AlertButton alertButton = new AlertButton();
+                            alertButton.set_Dialog(context, b10, vibrator, title, getlist_i, finalI);
                             //resetButton.set_Dialog(context, b10, vibrator, nameList, title, getlist_i, finalI);
                         });
                     }
@@ -479,10 +499,11 @@ public class SetViewPager {
     private String getText(List<Character> nameList, int chose, Context context){
         String str = "";
         if(chose == 0){
-            str = context.getString(R.string.chose);
+            str = context.getString(R.string.off);
         }
         else {
-            if(nameList.get((chose - 1)).toString().matches("T")){
+            str = context.getString(R.string.on);
+            /*if(nameList.get((chose - 1)).toString().matches("T")){
                 str = context.getString(R.string.T);
             }else if(nameList.get((chose - 1)).toString().matches("H")){
                 str = context.getString(R.string.H);
@@ -507,7 +528,7 @@ public class SetViewPager {
                         str = context.getString(R.string.table_i) + i;
                     }
                 }
-            }
+            }*/
         }
         return str;
     }

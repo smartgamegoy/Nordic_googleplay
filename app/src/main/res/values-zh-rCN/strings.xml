@@ -199,4 +199,6 @@
     <string name="RL3">警报3</string>
     <string name="dpp">小数点</string>
     <string name="chose">无</string>
+    <string name="on">开</string>
+    <string name="off">关</string>
 </resources>

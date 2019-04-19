@@ -147,131 +147,91 @@ public class DpDialog {
 
     @SuppressLint("SetTextI18n")
     private void resetButtonView(Context context, List<byte[]> list, String s, List<Button> buttonList, int getlist_i) {
-        int point;
+        //int point;
         int count = list.size();
-        NewModel.viewList.set(getlist_i, list);
-        byte[] getarr = list.get(0);
-        byte[] getdp = Arrays.copyOfRange(getarr, 2, 3);
-        if (Arrays.equals(getdp, b_dp)) {
-            point = parase.byteArrayToInt(getdp);
-            Log.e(TAG, "point = " + point);
-        } else {
-            point = parase.byteArrayToInt(getdp);
-            Log.e(TAG, "point = " + point);
-        }
+        //NewModel.viewList.set(getlist_i, list);
+        //byte[] getarr = list.get(0);
+        //byte[] getdp = Arrays.copyOfRange(getarr, 2, 3);
 
         for (int i = 0; i < count; i++) {
-            if (i == 0) {
-                byte[] arr = list.get(i);
-                byte[] dp = Arrays.copyOfRange(arr, 2, 3);
-                byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
-                double p = Math.pow(10, parase.byteArrayToInt(dp));
-                if (parase.byteArrayToInt(dp) == 0) {
-                    buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
-                            "\n" + parase.byteArrayToInt(value));
-                } else {
-                    buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
-                            "\n" + (parase.byteArrayToInt(value) / p));
+            byte[] arr = list.get(i);
+            byte[] str = Arrays.copyOfRange(arr, 0, 2);
+            byte[] dp = Arrays.copyOfRange(arr, 2, 3);
+            byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+            double p = Math.pow(10, parase.byteArrayToInt(dp));
+            if(!get_String(str[1], str[0]).startsWith("RL")) {
+                if (i == 0) {
+                    if (parase.byteArrayToInt(dp) == 0) {
+                        buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
+                                "\n" + parase.byteArrayToInt(value));
+                    } else {
+                        buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
+                                "\n" + (parase.byteArrayToInt(value) / p));
+                    }
+                } else if (i == 1) {
+                    if (parase.byteArrayToInt(dp) == 0)
+                        buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
+                                "\n" + parase.byteArrayToInt(value));
+                    else
+                        buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
+                                "\n" + (parase.byteArrayToInt(value) / p));
+                } else if (i == 2) {
+                    if (parase.byteArrayToInt(dp) == 0)
+                        buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
+                                "\n" + parase.byteArrayToInt(value));
+                    else
+                        buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
+                                "\n" + (parase.byteArrayToInt(value) / p));
+                } else if (i == 3) {
+                    if (parase.byteArrayToInt(dp) == 0)
+                        buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
+                                "\n" + parase.byteArrayToInt(value));
+                    else
+                        buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
+                                "\n" + (parase.byteArrayToInt(value) / p));
+                } else if (i == 4) {
+                    if (parase.byteArrayToInt(dp) == 0)
+                        buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
+                                "\n" + parase.byteArrayToInt(value));
+                    else
+                        buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
+                                "\n" + (parase.byteArrayToInt(value) / p));
+                } else if (i == 5) {
+                    if (parase.byteArrayToInt(dp) == 0)
+                        buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
+                                "\n" + parase.byteArrayToInt(value));
+                    else
+                        buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
+                                "\n" + (parase.byteArrayToInt(value) / p));
+                } else if (i == 6) {
+                    if (parase.byteArrayToInt(dp) == 0)
+                        buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
+                                "\n" + parase.byteArrayToInt(value));
+                    else
+                        buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
+                                "\n" + (parase.byteArrayToInt(value) / p));
+                } else if (i == 7) {
+                    if (parase.byteArrayToInt(dp) == 0)
+                        buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
+                                "\n" + parase.byteArrayToInt(value));
+                    else
+                        buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
+                                "\n" + (parase.byteArrayToInt(value) / p));
+                } else if (i == 8) {
+                    if (parase.byteArrayToInt(dp) == 0)
+                        buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
+                                "\n" + parase.byteArrayToInt(value));
+                    else
+                        buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
+                                "\n" + (parase.byteArrayToInt(value) / p));
+                } else if (i == 9) {
+                    if (parase.byteArrayToInt(dp) == 0)
+                        buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]))
+                                + "\n" + parase.byteArrayToInt(value));
+                    else
+                        buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]))
+                                + "\n" + (parase.byteArrayToInt(value) / p));
                 }
-            } else if (i == 1) {
-                byte[] arr = list.get(i);
-                byte[] dp = Arrays.copyOfRange(arr, 2, 3);
-                byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
-                double p = Math.pow(10, parase.byteArrayToInt(dp));
-                if (parase.byteArrayToInt(dp) == 0)
-                    buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
-                            "\n" + parase.byteArrayToInt(value));
-                else
-                    buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
-                            "\n" + (parase.byteArrayToInt(value) / p));
-            } else if (i == 2) {
-                byte[] arr = list.get(i);
-                byte[] dp = Arrays.copyOfRange(arr, 2, 3);
-                byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
-                double p = Math.pow(10, parase.byteArrayToInt(dp));
-                if (parase.byteArrayToInt(dp) == 0)
-                    buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
-                            "\n" + parase.byteArrayToInt(value));
-                else
-                    buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
-                            "\n" + (parase.byteArrayToInt(value) / p));
-            } else if (i == 3) {
-                byte[] arr = list.get(i);
-                byte[] dp = Arrays.copyOfRange(arr, 2, 3);
-                byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
-                double p = Math.pow(10, parase.byteArrayToInt(dp));
-                if (parase.byteArrayToInt(dp) == 0)
-                    buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
-                            "\n" + parase.byteArrayToInt(value));
-                else
-                    buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
-                            "\n" + (parase.byteArrayToInt(value) / p));
-            } else if (i == 4) {
-                byte[] arr = list.get(i);
-                byte[] dp = Arrays.copyOfRange(arr, 2, 3);
-                byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
-                double p = Math.pow(10, parase.byteArrayToInt(dp));
-                if (parase.byteArrayToInt(dp) == 0)
-                    buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
-                            "\n" + parase.byteArrayToInt(value));
-                else
-                    buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
-                            "\n" + (parase.byteArrayToInt(value) / p));
-            } else if (i == 5) {
-                byte[] arr = list.get(i);
-                byte[] dp = Arrays.copyOfRange(arr, 2, 3);
-                byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
-                double p = Math.pow(10, parase.byteArrayToInt(dp));
-                if (parase.byteArrayToInt(dp) == 0)
-                    buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
-                            "\n" + parase.byteArrayToInt(value));
-                else
-                    buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
-                            "\n" + (parase.byteArrayToInt(value) / p));
-            } else if (i == 6) {
-                byte[] arr = list.get(i);
-                byte[] dp = Arrays.copyOfRange(arr, 2, 3);
-                byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
-                double p = Math.pow(10, parase.byteArrayToInt(dp));
-                if (parase.byteArrayToInt(dp) == 0)
-                    buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
-                            "\n" + parase.byteArrayToInt(value));
-                else
-                    buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
-                            "\n" + (parase.byteArrayToInt(value) / p));
-            } else if (i == 7) {
-                byte[] arr = list.get(i);
-                byte[] dp = Arrays.copyOfRange(arr, 2, 3);
-                byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
-                double p = Math.pow(10, parase.byteArrayToInt(dp));
-                if (parase.byteArrayToInt(dp) == 0)
-                    buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
-                            "\n" + parase.byteArrayToInt(value));
-                else
-                    buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
-                            "\n" + (parase.byteArrayToInt(value) / p));
-            } else if (i == 8) {
-                byte[] arr = list.get(i);
-                byte[] dp = Arrays.copyOfRange(arr, 2, 3);
-                byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
-                double p = Math.pow(10, parase.byteArrayToInt(dp));
-                if (parase.byteArrayToInt(dp) == 0)
-                    buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
-                            "\n" + parase.byteArrayToInt(value));
-                else
-                    buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0])) +
-                            "\n" + (parase.byteArrayToInt(value) / p));
-            } else if (i == 9) {
-                byte[] arr = list.get(i);
-                byte[] dp = Arrays.copyOfRange(arr, 2, 3);
-                byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
-                double p = Math.pow(10, parase.byteArrayToInt(dp));
-                if (parase.byteArrayToInt(dp) == 0)
-                    buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]))
-                            + "\n" + parase.byteArrayToInt(value));
-                else
-                    buttonList.get(i).setText(setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]))
-                            + "\n" + (parase.byteArrayToInt(value) / p));
             }
         }
     }

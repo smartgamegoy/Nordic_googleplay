@@ -31,6 +31,7 @@ public class AlertButton {
     private Dialog progressDialog = null;
     private Parase parase = new Parase();
     private ByteToHex byteToHex = new ByteToHex();
+    private int setSwitch;
     private byte[] newArray = new byte[7];
     private String sp_str;
 
@@ -40,17 +41,15 @@ public class AlertButton {
 
     public void set_Dialog(Context context, Button button, Vibrator vibrator,
                            String title, int getlist_i, int i) {
-        /*List<String> spinnerList = new ArrayList<>();
-        spinnerList.clear();
-        spinnerList = getspinner(context, nameList);*/
+        byte[] getbyte = getbyte(getlist_i, i);
         //Log.e(TAG, "spinnerList = " + spinnerList);
-        progressDialog = showDialog(context, button, vibrator, title, getlist_i, i);
+        progressDialog = showDialog(context, button, vibrator, getbyte, title, getlist_i, i);
         progressDialog.show();
         progressDialog.setCanceledOnTouchOutside(false);
     }
 
     @SuppressLint("SetTextI18n")
-    private Dialog showDialog(Context context, Button button, Vibrator vibrator,
+    private Dialog showDialog(Context context, Button button, Vibrator vibrator, byte[] getbyte,
                               String str, int getlist_i, int i){
         Screen screen = new Screen(context);
         DisplayMetrics dm = screen.size();
@@ -66,10 +65,37 @@ public class AlertButton {
         title.setText(str);
         by.setText(context.getString(R.string.butoon_yes));
         bn.setText(context.getString(R.string.butoon_no));
-        
-        by.setOnClickListener(v12 -> {
+
+        byte[] data = Arrays.copyOfRange(getbyte, 3, getbyte.length);
+        int value = parase.byteArrayToInt(data);
+        setSwitch = value;
+        if (value != 0)
+            sw.setChecked(true);
+        else
+            sw.setChecked(false);
+
+        sw.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            // TODO Auto-generated method stub
             vibrator.vibrate(100);
-            button.setText(str + "\n" + sp_str);
+            if (isChecked) {
+                setSwitch = 1;
+                Log.e(TAG, "ON");
+            } else {
+                setSwitch = 0;
+                Log.e(TAG, "OFF");
+            }
+        });
+
+        by.setOnClickListener(v12 -> {
+            Log.e(TAG, "setSwitch = " + setSwitch);
+            vibrator.vibrate(100);
+            if(setSwitch == 0) {
+                button.setText(str + "\n" + context.getString(R.string.off));
+            }
+            else {
+                button.setText(str + "\n" + context.getString(R.string.on));
+            }
+            setNewbyte(getlist_i, i, setSwitch);
             //setNewbyte(getlist_i, i, spinnerList);
             progressDialog.dismiss();
         });
@@ -90,12 +116,11 @@ public class AlertButton {
         return progressDialog;
     }
 
-    private void setNewbyte(int getlist_i, int finalI, List<String> spinnerList){
+    private void setNewbyte(int getlist_i, int finalI, int chose){
         List<byte[]> list = new ArrayList<>();
         list.clear();
         list = NewModel.viewList.get(getlist_i);
         byte[] original = list.get(finalI);
-        int chose = spinnerList.indexOf(sp_str);
         byte[] calcu = Arrays.copyOfRange(original, 0, 3);
         byte[] value = parase.intToByteArray(chose);
         System.arraycopy(calcu, 0, newArray, 0, calcu.length);
@@ -115,29 +140,9 @@ public class AlertButton {
         }
     }
 
-    private List<String> getspinner(Context context, List<Character> nameList) {
-        List<String> spinnerList = new ArrayList<>();
-        spinnerList.clear();
-        spinnerList.add(context.getString(R.string.chose));
-        for (int i = 0; i < nameList.size(); i++) {
-            if (nameList.get(i).toString().matches("T")) {
-                spinnerList.add(context.getString(R.string.T));
-            } else if (nameList.get(i).toString().matches("H")) {
-                spinnerList.add(context.getString(R.string.H));
-            } else if (nameList.get(i).toString().matches("C")) {
-                spinnerList.add(context.getString(R.string.C));
-            } else if (nameList.get(i).toString().matches("D")) {
-                spinnerList.add(context.getString(R.string.C));
-            } else if (nameList.get(i).toString().matches("E")) {
-                spinnerList.add(context.getString(R.string.C));
-            } else if (nameList.get(i).toString().matches("M")) {
-                spinnerList.add(context.getString(R.string.pm));
-            } else if (nameList.get(i).toString().matches("I")) {
-                spinnerList.add((context.getString(R.string.table_i) + (i + 1)));
-            }
-        }
-        return spinnerList;
+    private byte[] getbyte(int getlist_i, int i) {
+        List<List<byte[]>> list = NewModel.viewList;
+        List<byte[]> listbyte = list.get(getlist_i);
+        return listbyte.get(i);
     }
-
-
 }
