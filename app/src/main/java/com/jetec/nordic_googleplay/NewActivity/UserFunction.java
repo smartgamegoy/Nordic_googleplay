@@ -54,6 +54,8 @@ public class UserFunction extends AppCompatActivity {
     private ByteToHex byteToHex = new ByteToHex();
     private Getparse getparse = new Getparse();
     private SetViewPager setViewPager = new SetViewPager();
+    private NewModel newModel = new NewModel();
+    private LastViewPager lastViewPager = new LastViewPager();
     private SetPagerAdapter setPagerAdapter = new SetPagerAdapter();
     private NameView nameView = new NameView();
 
@@ -121,6 +123,7 @@ public class UserFunction extends AppCompatActivity {
         if(list7.size() != 0)
             savelist.add(list7);
 
+        newModel.setString(this);
         NewModel.viewList = savelist;
 
         showlist();
@@ -184,6 +187,7 @@ public class UserFunction extends AppCompatActivity {
     private void showlist() {
         setContentView(R.layout.userlist);
 
+        int count = 0;
         String model = Value.deviceModel;
         String[] arr = model.split("-");
         String name = arr[2];
@@ -192,10 +196,11 @@ public class UserFunction extends AppCompatActivity {
         nameList.add("NAME");
         if(name.contains("Y") || name.contains("Z")){
             nameList.add("TIME");
+            count++;
         }
-        if(name.contains("L")){
+        /*if(name.contains("L")){
             nameList.add("INTER");
-        }
+        }*/
         nameList.add("SPK");
         name = name.replace("Y", "");
         name = name.replace("L", "");
@@ -213,7 +218,6 @@ public class UserFunction extends AppCompatActivity {
         Objects.requireNonNull(tabLayout.getTabAt(0)).setText(getString(R.string.bluetoothset));
         listview.add(nameView.setView(this, nameList));
 
-        int count = 1;
         for (int i = 0; i < ch.size(); i++) {
             //TabLayout.Tab tab = tabLayout.newTab();
             if (ch.get(i).toString().matches("T")) {
@@ -254,10 +258,9 @@ public class UserFunction extends AppCompatActivity {
                 /*tab.setCustomView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
                 tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
-                Objects.requireNonNull(tabLayout.getTabAt(i + 1)).setText(getString(R.string.table_i) + count + "\n" + "(4~20mA)");
+                Objects.requireNonNull(tabLayout.getTabAt(i + 1)).setText(getString(R.string.table_i) + (i + 1 + count) + "\n" + "(4~20mA)");
                 listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator, ch));
                 //setPagerAdapter.setView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
-                count++;
             } else if (ch.get(i).toString().matches("S")) {
                 /*tab.setCustomView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
                 tabLayout.addTab(tab);*/
@@ -267,6 +270,10 @@ public class UserFunction extends AppCompatActivity {
                 //setPagerAdapter.setView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
             }
         }
+
+        tabLayout.addTab(tabLayout.newTab());
+        Objects.requireNonNull(tabLayout.getTabAt(ch.size() + 1)).setText(getString(R.string.out));
+        listview.add(lastViewPager.setView(this, vibrator, ch, ch.size()));
 
         setPagerAdapter.setView(listview);
         viewPager.setAdapter(setPagerAdapter);

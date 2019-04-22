@@ -72,13 +72,13 @@ public class New_WriteDialog {
         by.setText(context.getString(R.string.butoon_yes));
         bn.setText(context.getString(R.string.butoon_no));
 
-        checkEditHint.setHint(editText, ch, s);
         List<byte[]> list = new ArrayList<>();
         list.clear();
         list = getList(getlist_i);
         byte[] arr = list.get(0);
         byte[] dp = Arrays.copyOfRange(arr, 2, 3);
         int dp_flag = parase.byteArrayToInt(dp);
+        checkEditHint.setHint(editText, ch, s, dp_flag);
 
         by.setOnClickListener(v1 -> {
             vibrator.vibrate(100);

@@ -20,6 +20,8 @@ import com.jetec.nordic_googleplay.NewActivity.Parase;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Screen;
+import com.jetec.nordic_googleplay.Value;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,20 +39,19 @@ public class ResetButton {
         super();
     }
 
-    public void set_Dialog(Context context, Button button, Vibrator vibrator, List<Character> nameList,
-                           String title, int getlist_i, int i) {
+    public void set_Dialog(Context context, Button button, Vibrator vibrator, String title, int i, int locate) {
         List<String> spinnerList = new ArrayList<>();
         spinnerList.clear();
-        spinnerList = getspinner(context, nameList);
+        spinnerList = getspinner(context, i);
         Log.e(TAG, "spinnerList = " + spinnerList);
-        progressDialog = showDialog(context, button, vibrator, spinnerList, title, getlist_i, i);
+        progressDialog = showDialog(context, button, vibrator, spinnerList, title, i, locate);
         progressDialog.show();
         progressDialog.setCanceledOnTouchOutside(false);
     }
 
     @SuppressLint("SetTextI18n")
     private Dialog showDialog(Context context, Button button, Vibrator vibrator, List<String> spinnerList,
-                              String str, int getlist_i, int i){
+                              String str, int i, int locate){
         Screen screen = new Screen(context);
         DisplayMetrics dm = screen.size();
         Dialog progressDialog = new Dialog(context);
@@ -94,8 +95,10 @@ public class ResetButton {
 
         by.setOnClickListener(v12 -> {
             vibrator.vibrate(100);
+            List<String> list = NewModel.spinList;
             button.setText(str + "\n" + sp_str);
-            setNewbyte(getlist_i, i, spinnerList);
+            setNewbyte(i, spinnerList, locate);
+            list.set(i, sp_str);
             progressDialog.dismiss();
         });
 
@@ -115,10 +118,10 @@ public class ResetButton {
         return progressDialog;
     }
 
-    private void setNewbyte(int getlist_i, int finalI, List<String> spinnerList){
+    private void setNewbyte(int finalI, List<String> spinnerList, int locate){
         List<byte[]> list = new ArrayList<>();
         list.clear();
-        list = NewModel.viewList.get(getlist_i);
+        list = NewModel.viewList.get(locate);
         byte[] original = list.get(finalI);
         int chose = spinnerList.indexOf(sp_str);
         byte[] calcu = Arrays.copyOfRange(original, 0, 3);
@@ -126,11 +129,11 @@ public class ResetButton {
         System.arraycopy(calcu, 0, newArray, 0, calcu.length);
         System.arraycopy(value, 0, newArray, 3, value.length);
         list.set(finalI, newArray);
-        NewModel.viewList.set(getlist_i, list);
+        NewModel.viewList.set(locate, list);
 
         for(int i = 0; i < list.size(); i++){
-            byte[] data = Arrays.copyOfRange(NewModel.viewList.get(getlist_i).get(i), 0,
-                    NewModel.viewList.get(getlist_i).get(i).length);
+            byte[] data = Arrays.copyOfRange(NewModel.viewList.get(locate).get(i), 0,
+                    NewModel.viewList.get(locate).get(i).length);
             String[] arr = byteToHex.hexstring(data);
             StringBuilder gstr = new StringBuilder();
             for (String arrs : arr) {
@@ -140,7 +143,22 @@ public class ResetButton {
         }
     }
 
-    private List<String> getspinner(Context context, List<Character> nameList) {
+    private List<String> getspinner(Context context, int list_i) {
+        int count = 0;
+        String model = Value.deviceModel;
+        String[] arr = model.split("-");
+        String name = arr[2];
+        if(name.contains("Y") || name.contains("Z")){
+            count++;
+        }
+        name = name.replace("Y", "");
+        name = name.replace("L", "");
+        name = name.replace("Z", "");
+        List<Character> nameList = new ArrayList<>();
+        nameList.clear();
+        for (int i = 0; i < name.length(); i++) {
+            nameList.add(name.charAt(i));
+        }
         List<String> spinnerList = new ArrayList<>();
         spinnerList.clear();
         spinnerList.add(context.getString(R.string.chose));
@@ -158,11 +176,23 @@ public class ResetButton {
             } else if (nameList.get(i).toString().matches("M")) {
                 spinnerList.add(context.getString(R.string.pm));
             } else if (nameList.get(i).toString().matches("I")) {
-                spinnerList.add((context.getString(R.string.table_i) + (i + 1)));
+                spinnerList.add((context.getString(R.string.table_i) + (i + 1 + count)));
             }
         }
+
+        List<String> list = NewModel.spinList;
+        int here = -1;
+        for(int j = 0; j < list.size(); j ++){
+            if(!list.get(j).matches(context.getString(R.string.chose))){
+                here = spinnerList.indexOf(list.get(j));
+                if(here != -1) {
+                    spinnerList.remove(list.get(j));
+                }
+            }
+        }
+
+        Log.e(TAG, "list_i = " + list_i);
+        Log.e(TAG, "spinnerList = " + spinnerList.size());
         return spinnerList;
     }
-
-
 }

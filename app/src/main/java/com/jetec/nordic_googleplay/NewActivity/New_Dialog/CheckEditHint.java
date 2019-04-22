@@ -11,7 +11,7 @@ public class CheckEditHint {
         super();
     }
 
-    public void setHint(EditText editText, byte[] ch, String s){
+    public void setHint(EditText editText, byte[] ch, String s, int dp){
         if(get_String(ch[1],ch[0]).startsWith("PV")){
             if(s.matches("T")){
                 editText.setHint(" -5 ~ 5");
@@ -35,21 +35,30 @@ public class CheckEditHint {
                 editText.setHint(" -500 ~ 500");
                 editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                         InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                editText.addTextChangedListener(new EditChangeListener_D(editText, get_String(ch[1],ch[0])));
             }
             else if(s.matches("E")){
                 editText.setHint(" -500 ~ 500");
                 editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                         InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                editText.addTextChangedListener(new EditChangeListener_E(editText, get_String(ch[1],ch[0])));
             }
             else if(s.matches("M")){
 
             }
             else if(s.matches("I")){
-
+                if(dp == 0)
+                    editText.setHint(" 999 ~ -999");
+                else
+                    editText.setHint(" 99.9 ~ -99.9");
+                editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                        InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                editText.addTextChangedListener(new EditChangeListener_I(editText, get_String(ch[1],ch[0]), dp));
             }
         }
         else if(get_String(ch[1],ch[0]).startsWith("EH") || get_String(ch[1],ch[0]).startsWith("EL")
-                || get_String(ch[1],ch[0]).startsWith("CR")){
+                || get_String(ch[1],ch[0]).startsWith("CR") || get_String(ch[1],ch[0]).startsWith("IH") ||
+                get_String(ch[1],ch[0]).startsWith("IL")){
             if(s.matches("T")){
                 editText.setHint(" -10 ~ 65");
                 editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |

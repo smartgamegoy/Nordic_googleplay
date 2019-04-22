@@ -18,9 +18,6 @@ import java.util.List;
 public class SetViewPager {
 
     private String TAG = "SetViewPager";
-    //private New_WriteDialog new_writeDialog = new New_WriteDialog();
-    //private AlertButton alertButton = new AlertButton();
-    //private ResetButton resetButton = new ResetButton();
     private DpDialog dpDialog = new DpDialog();
     private Parase parase = new Parase();
     private byte[] b_dp = {0x00};
