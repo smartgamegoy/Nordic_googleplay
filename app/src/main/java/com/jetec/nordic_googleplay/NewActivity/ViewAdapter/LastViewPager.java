@@ -12,6 +12,8 @@ import com.jetec.nordic_googleplay.NewActivity.New_Dialog.ResetButton;
 import com.jetec.nordic_googleplay.NewActivity.Parase;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
+import com.jetec.nordic_googleplay.Value;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +28,7 @@ public class LastViewPager {
     }
 
     @SuppressLint("SetTextI18n")
-    public View setView(Context context, Vibrator vibrator, List<Character> nameList, int locate){
+    public View setView(Context context, Vibrator vibrator, int locate){
         LayoutInflater layoutInflater = LayoutInflater.from(context);
 
         @SuppressLint("InflateParams")
@@ -65,7 +67,7 @@ public class LastViewPager {
                 byte[] arr = list.get(i);
                 byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
                 int chose = parase.byteArrayToInt(value);
-                String buttontext = getText(nameList, chose, context);
+                String buttontext = getText(chose, context);
                 String title = setButtontext(context, get_String(list.get(i)[1], list.get(i)[0]));
                 b1.setText(title + "\n" + buttontext);
                 int finalI = i;
@@ -80,7 +82,7 @@ public class LastViewPager {
                 byte[] arr = list.get(i);
                 byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
                 int chose = parase.byteArrayToInt(value);
-                String buttontext = getText(nameList, chose, context);
+                String buttontext = getText(chose, context);
                 String title = setButtontext(context, get_String(list.get(i)[1], list.get(i)[0]));
                 b2.setText(title + "\n" + buttontext);
                 int finalI = i;
@@ -95,7 +97,7 @@ public class LastViewPager {
                 byte[] arr = list.get(i);
                 byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
                 int chose = parase.byteArrayToInt(value);
-                String buttontext = getText(nameList, chose, context);
+                String buttontext = getText(chose, context);
                 String title = setButtontext(context, get_String(list.get(i)[1], list.get(i)[0]));
                 b3.setText(title + "\n" + buttontext);
                 int finalI = i;
@@ -110,8 +112,17 @@ public class LastViewPager {
         return view;
     }
 
-    private String getText(List<Character> nameList, int chose, Context context){
+    private String getText(int chose, Context context){
         String str = "";
+        String model = Value.deviceModel;
+        String[] arr = model.split("-");
+        String name = arr[2];
+        List<Character> nameList = new ArrayList<>();
+        for (int i = 0; i < name.length(); i++) {
+            nameList.add(name.charAt(i));
+        }
+        Log.e(TAG, "nameList = " + nameList);
+        Log.e(TAG, "chose = " + chose);
         if(chose == 0){
             str = context.getString(R.string.chose);
         }

@@ -3,7 +3,6 @@ package com.jetec.nordic_googleplay.NewActivity.SendByte;
 import android.util.Log;
 
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 

@@ -1,12 +1,20 @@
 package com.jetec.nordic_googleplay;
 
 import android.content.Context;
+import android.util.Log;
+
+import com.jetec.nordic_googleplay.NewActivity.Parase;
+import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class NewModel {
 
+    private Parase parase = new Parase();
+    private String TAG = "NewModel";
+    public static BluetoothLeService mBluetoothLeService;
     public static boolean checkmodel = false;
     public static boolean checkbyte = false;
     public static List<byte[]> sub1, sub2, sub3, sub4, sub5, sub6, sub7;
@@ -19,7 +27,58 @@ public class NewModel {
 
     public void setString(Context context){
         spinList = new ArrayList<>();
-        for(int i = 0; i < 3; i ++)
-            spinList.add(context.getString(R.string.chose));
+        String model = Value.deviceModel;
+        String[] namearr = model.split("-");
+        String name = namearr[2];
+        List<Character> nameList = new ArrayList<>();
+        nameList.clear();
+        for (int i = 0; i < name.length(); i++) {
+            nameList.add(name.charAt(i));
+        }
+        for(int i = 0; i < sub7.size(); i ++){
+            byte[] arr = sub7.get(i);
+            byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
+            int chose = parase.byteArrayToInt(value);
+            String text = getText(nameList, chose, context);
+            Log.e(TAG, "text = " + text);
+            spinList.add(text);
+        }
     }
+
+    private String getText(List<Character> nameList, int chose, Context context){
+        String str = "";
+        if(chose == 0){
+            str = context.getString(R.string.chose);
+        }
+        else {
+            if(nameList.get((chose - 1)).toString().matches("T")){
+                str = context.getString(R.string.T);
+            }else if(nameList.get((chose - 1)).toString().matches("H")){
+                str = context.getString(R.string.H);
+            }else if(nameList.get((chose - 1)).toString().matches("C")){
+                str = context.getString(R.string.C);
+            }else if(nameList.get((chose - 1)).toString().matches("D")){
+                str = context.getString(R.string.C);
+            }else if(nameList.get((chose - 1)).toString().matches("E")){
+                str = context.getString(R.string.C);
+            }else if(nameList.get((chose - 1)).toString().matches("M")){
+                str = context.getString(R.string.pm);
+            }else if(nameList.get((chose - 1)).toString().matches("I")){
+                List<Integer> ilist = new ArrayList<>();
+                ilist.clear();
+                for(int i  = 0; i < nameList.size(); i++){
+                    if(nameList.get(i).toString().matches("I")){
+                        ilist.add((i + 1));
+                    }
+                }
+                for(int i = 0; i < ilist.size(); i++){
+                    if((ilist.get(i) + 1) == chose){
+                        str = context.getString(R.string.table_i) + i;
+                    }
+                }
+            }
+        }
+        return str;
+    }
+
 }

@@ -21,7 +21,6 @@ import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Screen;
 import com.jetec.nordic_googleplay.Value;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +30,7 @@ public class ResetButton {
     private String TAG = "ResetButton";
     private Dialog progressDialog = null;
     private Parase parase = new Parase();
+    private List<Character> nameList;
     private ByteToHex byteToHex = new ByteToHex();
     private byte[] newArray = new byte[7];
     private String sp_str;
@@ -43,6 +43,7 @@ public class ResetButton {
         List<String> spinnerList = new ArrayList<>();
         spinnerList.clear();
         spinnerList = getspinner(context, i);
+        getList();
         Log.e(TAG, "spinnerList = " + spinnerList);
         progressDialog = showDialog(context, button, vibrator, spinnerList, title, i, locate);
         progressDialog.show();
@@ -97,7 +98,7 @@ public class ResetButton {
             vibrator.vibrate(100);
             List<String> list = NewModel.spinList;
             button.setText(str + "\n" + sp_str);
-            setNewbyte(i, spinnerList, locate);
+            setNewbyte(context, i, locate);
             list.set(i, sp_str);
             progressDialog.dismiss();
         });
@@ -118,12 +119,36 @@ public class ResetButton {
         return progressDialog;
     }
 
-    private void setNewbyte(int finalI, List<String> spinnerList, int locate){
+    private void setNewbyte(Context context, int finalI, int locate){
+        int chose = 0;
         List<byte[]> list = new ArrayList<>();
         list.clear();
         list = NewModel.viewList.get(locate);
         byte[] original = list.get(finalI);
-        int chose = spinnerList.indexOf(sp_str);
+        if(sp_str.matches(context.getString(R.string.chose))){
+            //chose = 0;
+        }
+        else if(sp_str.matches(context.getString(R.string.T))){
+            chose = nameList.indexOf('T') + 1;
+        }
+        else if(sp_str.matches(context.getString(R.string.H))){
+            chose = nameList.indexOf('H') + 1;
+        }
+        else if(sp_str.matches(context.getString(R.string.C))){
+            if(nameList.indexOf('C') != -1)
+                chose = nameList.indexOf('C') + 1;
+            else if(nameList.indexOf('D') != -1)
+                chose = nameList.indexOf('D') + 1;
+            else if(nameList.indexOf('E') != -1)
+                chose = nameList.indexOf('E') + 1;
+        }
+        else if(sp_str.matches(context.getString(R.string.pm))){
+            chose = nameList.indexOf('M') + 1;
+        }
+        else if(sp_str.matches(context.getString(R.string.table_i))){
+            chose = nameList.indexOf('I') + 1;
+        }
+        Log.e(TAG, "index chose = " + chose);
         byte[] calcu = Arrays.copyOfRange(original, 0, 3);
         byte[] value = parase.intToByteArray(chose);
         System.arraycopy(calcu, 0, newArray, 0, calcu.length);
@@ -181,7 +206,7 @@ public class ResetButton {
         }
 
         List<String> list = NewModel.spinList;
-        int here = -1;
+        int here;
         for(int j = 0; j < list.size(); j ++){
             if(!list.get(j).matches(context.getString(R.string.chose))){
                 here = spinnerList.indexOf(list.get(j));
@@ -194,5 +219,16 @@ public class ResetButton {
         Log.e(TAG, "list_i = " + list_i);
         Log.e(TAG, "spinnerList = " + spinnerList.size());
         return spinnerList;
+    }
+
+    private void getList(){
+        String model = Value.deviceModel;
+        String[] arr = model.split("-");
+        String name = arr[2];
+        nameList = new ArrayList<>();
+        nameList.clear();
+        for (int i = 0; i < name.length(); i++) {
+            nameList.add(name.charAt(i));
+        }
     }
 }

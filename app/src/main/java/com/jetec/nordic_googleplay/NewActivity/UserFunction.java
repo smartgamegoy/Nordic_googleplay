@@ -68,8 +68,9 @@ public class UserFunction extends AppCompatActivity {
         if (mBluetoothLeService == null) {
             Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
             s_connect = bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
-            if (s_connect)
+            if (s_connect) {
                 registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+            }
             else
                 Log.e(TAG, "連線失敗");
         }
@@ -137,6 +138,7 @@ public class UserFunction extends AppCompatActivity {
                 Log.e(TAG, "初始化失敗");
             }
             mBluetoothLeService.connect(Value.BID);
+            Value.mBluetoothLeService = mBluetoothLeService;
             Log.e(TAG, "進入連線");
         }
 
@@ -168,14 +170,15 @@ public class UserFunction extends AppCompatActivity {
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 // Show all the supported services and characteristics on the user interface.
                 //displayGattServices(mBluetoothLeService.getSupportedGattServices());
-                Log.e(TAG, "連線狀態改變");
                 mBluetoothLeService.enableTXNotification();
+                Log.e(TAG, "連線狀態改變");
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 runOnUiThread(() -> {
                     try {
                         String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                         byte[] txValue = intents.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
                         String text = new String(txValue, "UTF-8");
+                        Log.e(TAG, "[" + currentDateTimeString + "] send: " + text);
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
@@ -209,14 +212,15 @@ public class UserFunction extends AppCompatActivity {
         for (int i = 0; i < name.length(); i++) {
             ch.add(name.charAt(i));
         }
-        Log.e(TAG, "name = " + name);
+        Log.e(TAG, "name = " + model);
+        Log.e(TAG, "ch = " + ch);
 
         TabLayout tabLayout = findViewById(R.id.tablayout);
         ViewPager viewPager = findViewById(R.id.viewpager);
 
         tabLayout.addTab(tabLayout.newTab());
         Objects.requireNonNull(tabLayout.getTabAt(0)).setText(getString(R.string.bluetoothset));
-        listview.add(nameView.setView(this, nameList));
+        listview.add(nameView.setView(this, nameList, vibrator));
 
         for (int i = 0; i < ch.size(); i++) {
             //TabLayout.Tab tab = tabLayout.newTab();
@@ -273,7 +277,7 @@ public class UserFunction extends AppCompatActivity {
 
         tabLayout.addTab(tabLayout.newTab());
         Objects.requireNonNull(tabLayout.getTabAt(ch.size() + 1)).setText(getString(R.string.out));
-        listview.add(lastViewPager.setView(this, vibrator, ch, ch.size()));
+        listview.add(lastViewPager.setView(this, vibrator, ch.size()));
 
         setPagerAdapter.setView(listview);
         viewPager.setAdapter(setPagerAdapter);
@@ -332,6 +336,7 @@ public class UserFunction extends AppCompatActivity {
             registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
             if (mBluetoothLeService != null) {
                 final boolean result = mBluetoothLeService.connect(Value.BID);
+                NewModel.mBluetoothLeService = mBluetoothLeService;
                 Log.d(TAG, "Connect request result=" + result);
             }
         }

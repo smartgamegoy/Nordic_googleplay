@@ -1,5 +1,7 @@
 package com.jetec.nordic_googleplay;
 
+import com.jetec.nordic_googleplay.Service.BluetoothLeService;
+
 import java.util.ArrayList;
 
 public class Value {
@@ -34,4 +36,5 @@ public class Value {
     public static ArrayList<Character> name;
     public static ArrayList<String> charttime, timelist, Firstlist, Secondlist, Thirdlist, List_d_num;
     public static String phonename;
+    public static BluetoothLeService mBluetoothLeService;
 }
