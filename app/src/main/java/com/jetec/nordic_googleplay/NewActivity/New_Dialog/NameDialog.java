@@ -12,16 +12,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
+import com.jetec.nordic_googleplay.EditManagert.EditChangeName;
 import com.jetec.nordic_googleplay.NewActivity.SendByte.SendString;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Screen;
-import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 
 public class NameDialog {
 
     private String TAG = "NameDialog";
-    private Dialog progressDialog = null;
     private SendString sendString = new SendString();
 
     public NameDialog(){
@@ -29,7 +27,7 @@ public class NameDialog {
     }
 
     public void setDialog(Context context, Button button, String str, Vibrator vibrator){
-        progressDialog = showDialog(context, button, vibrator, str);
+        Dialog progressDialog = showDialog(context, button, vibrator, str);
         progressDialog.show();
         progressDialog.setCanceledOnTouchOutside(false);
     }
@@ -52,6 +50,7 @@ public class NameDialog {
         bn.setText(context.getString(R.string.butoon_no));
 
         editText.setHint(context.getString(R.string.changename));
+        editText.addTextChangedListener(new EditChangeName(editText));
         button.setAllCaps(false);
 
         by.setOnClickListener(v12 -> {

@@ -3,12 +3,15 @@ package com.jetec.nordic_googleplay.EditManagert;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.EditText;
 
 public class EditChangeName implements TextWatcher {
 
     private EditText editText;
-    private boolean last = false;
+    private boolean last;
+    private String TAG = "EditChangeName";
 
     public EditChangeName(EditText editText) {
         this.editText = editText;
@@ -28,21 +31,20 @@ public class EditChangeName implements TextWatcher {
     public void afterTextChanged(Editable editable) {
         int len = 15;
         byte[] bytes = String.valueOf(editable).getBytes();
+
         if(last){
             last = false;
             int selEndIndex = editText.getText().length();
+            Log.e(TAG, "selEndIndex = " + selEndIndex);
             Selection.setSelection(editable, selEndIndex);
+            //editText.setSelection(selEndIndex);
+            Log.e(TAG, "重設光標");
         }
+        Log.e(TAG, "bytes.length" + bytes.length);
         if (bytes.length > len) {
             last = true;
-            byte[] newBytes = new byte[len];
-            System.arraycopy(bytes, 0, newBytes, 0, len);
-            String newStr = new String(newBytes);
-            editText.setText(newStr);
-        }
-        else {
-            int index = editText.getSelectionStart();
-            Selection.setSelection(editable, index);
+            editText.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
+            editText.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DEL));
         }
     }
 }

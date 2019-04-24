@@ -1,9 +1,6 @@
 package com.jetec.nordic_googleplay.NewActivity.SendByte;
 
-import android.util.Log;
-
 import com.jetec.nordic_googleplay.NewModel;
-import com.jetec.nordic_googleplay.Value;
 import java.nio.charset.StandardCharsets;
 
 public class SendString {
