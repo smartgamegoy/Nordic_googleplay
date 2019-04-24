@@ -131,14 +131,13 @@ public class NameView {
     private void setviewdialog(Context context, Button button, String str, Vibrator vibrator, String title){
         button.setOnClickListener(v -> {
             vibrator.vibrate(100);
-            Log.e(TAG, "str = " + str);
             if(str.matches("NAME")){
                 NameDialog nameDialog = new NameDialog();
                 nameDialog.setDialog(context, button, title, vibrator);
             }
             else if(str.matches("TIME")){
                 TimeDialog timeDialog = new TimeDialog();
-                timeDialog.setDialog(context, button, title, vibrator);
+                timeDialog.setDialog(context, title, vibrator);
             }
             else if(str.matches("INTER")){
 

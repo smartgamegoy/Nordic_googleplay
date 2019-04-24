@@ -17,8 +17,6 @@ public class SendString {
     public void sendstr(String str){
         byte[] sends;
         sends = str.getBytes(StandardCharsets.UTF_8);
-        Log.e(TAG, "sends = " + str);
-        Log.e(TAG, "sendstr = " + Value.mBluetoothLeService);
         NewModel.mBluetoothLeService.writeRXCharacteristic(sends);
     }
 

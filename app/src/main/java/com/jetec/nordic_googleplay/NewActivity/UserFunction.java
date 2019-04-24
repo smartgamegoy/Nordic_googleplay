@@ -138,7 +138,7 @@ public class UserFunction extends AppCompatActivity {
                 Log.e(TAG, "初始化失敗");
             }
             mBluetoothLeService.connect(Value.BID);
-            Value.mBluetoothLeService = mBluetoothLeService;
+            NewModel.mBluetoothLeService = mBluetoothLeService;
             Log.e(TAG, "進入連線");
         }
 
