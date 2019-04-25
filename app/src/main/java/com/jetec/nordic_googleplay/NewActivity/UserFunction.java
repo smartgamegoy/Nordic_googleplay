@@ -1,5 +1,6 @@
 package com.jetec.nordic_googleplay.NewActivity;
 
+import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
@@ -30,21 +31,19 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
 import com.jetec.nordic_googleplay.Activity.MainActivity;
-import com.jetec.nordic_googleplay.Dialog.WriteDialog;
+import com.jetec.nordic_googleplay.Dialog.ModifyPassword;
 import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToHex;
-import com.jetec.nordic_googleplay.NewActivity.SendByte.Send;
+import com.jetec.nordic_googleplay.NewActivity.UserSQL.ConvertList;
 import com.jetec.nordic_googleplay.NewActivity.ViewAdapter.*;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
-import com.jetec.nordic_googleplay.ScanParse.Getparse;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Value;
-
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -53,25 +52,19 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
 
     private String TAG = "UserFunction";
     private Vibrator vibrator;
-    private String[] default_model;
     private BluetoothLeService mBluetoothLeService;
     private BluetoothAdapter mBluetoothAdapter;
     private boolean s_connect = false;
-    private Send send;
+    private String[] default_model;
     private Intent intents;
-    private List<byte[]> list1, list2, list3, list4, list5, list6, list7;
     private List<View> listview;
-    private List<List<byte[]>> savelist;
     private byte[] getbyte = {0x42, 0x59, 0x54, 0x45}, getover = {0x4F, 0x56, 0x45, 0x52};
-    private ByteToHex byteToHex = new ByteToHex();
-    private Getparse getparse = new Getparse();
     private SetViewPager setViewPager = new SetViewPager();
     private NewModel newModel = new NewModel();
     private LastViewPager lastViewPager = new LastViewPager();
     private SetPagerAdapter setPagerAdapter = new SetPagerAdapter();
     private NameView nameView = new NameView();
     private NavigationView navigationView;
-    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,14 +88,14 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         default_model = intent.getStringArrayExtra("default_model");
 
         listview = new ArrayList<>();
-        savelist = new ArrayList<>();
-        list1 = new ArrayList<>();
-        list2 = new ArrayList<>();
-        list3 = new ArrayList<>();
-        list4 = new ArrayList<>();
-        list5 = new ArrayList<>();
-        list6 = new ArrayList<>();
-        list7 = new ArrayList<>();
+        List<List<byte[]>> savelist = new ArrayList<>();
+        List<byte[]> list1 = new ArrayList<>();
+        List<byte[]> list2 = new ArrayList<>();
+        List<byte[]> list3 = new ArrayList<>();
+        List<byte[]> list4 = new ArrayList<>();
+        List<byte[]> list5 = new ArrayList<>();
+        List<byte[]> list6 = new ArrayList<>();
+        List<byte[]> list7 = new ArrayList<>();
 
         listview.clear();
         savelist.clear();
@@ -187,14 +180,10 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                 Log.e(TAG, "連線狀態改變");
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 runOnUiThread(() -> {
-                    try {
-                        String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
-                        byte[] txValue = intents.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
-                        String text = new String(txValue, "UTF-8");
-                        Log.e(TAG, "[" + currentDateTimeString + "] send: " + text);
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
+                    String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
+                    byte[] txValue = intents.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
+                    String text = new String(txValue, StandardCharsets.UTF_8);
+                    Log.e(TAG, "[" + currentDateTimeString + "] send: " + text);
                 });
             }
         }
@@ -235,7 +224,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         Log.e(TAG, "ch = " + ch);
 
         TabLayout tabLayout = findViewById(R.id.tablayout);
-        viewPager = findViewById(R.id.viewpager); //viewPager.getCurrentItem()
+        ViewPager viewPager = findViewById(R.id.viewpager);
 
         tabLayout.addTab(tabLayout.newTab());
         Objects.requireNonNull(tabLayout.getTabAt(0)).setText(getString(R.string.bluetoothset));
@@ -371,6 +360,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
     public void onDestroy() {
         super.onDestroy();
         Log.e(TAG, "onDestroy()");
+        Value.passwordFlag = 0;
         if (mBluetoothLeService != null) {
             if (s_connect) {
                 unbindService(mServiceConnection);
@@ -457,27 +447,71 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
 
         int id = item.getItemId();
-        vibrator.vibrate(100);
 
         if (id == R.id.savedialog) {
             vibrator.vibrate(100);
-            Value.downlog = false;
+            if (Value.passwordFlag != 4) {
+                ConvertList convertList = new ConvertList();
+                convertList.bytetoString();
+                /*String a = "03010000000005";
+                ByteToHex byteToHex = new ByteToHex();
+                byte[] b = byteToHex.hex2Byte(a);
+                StringBuilder hex = new StringBuilder(b.length * 2);
+                for (byte aData : b) {
+                    hex.append(String.format("%02X", aData));
+                }
+                String gethex = hex.toString();
+                Log.e(TAG, "b = " + gethex);
+                byte[] c = NewModel.viewList.get(0).get(0);
+                StringBuilder hex2 = new StringBuilder(c.length * 2);
+                for (byte aData : c) {
+                    hex2.append(String.format("%02X", aData));
+                }
+                String gethex2 = hex2.toString();
+                Log.e(TAG, "c = " + gethex2);
+                Log.e(TAG, "b?c = " + Arrays.equals(b, c));*/
+            }
         } else if (id == R.id.loadbar) {
             vibrator.vibrate(100);
+            if (Value.passwordFlag != 4) {
+
+            }
         } else if (id == R.id.datadownload) {
             vibrator.vibrate(100);
+            if (Value.passwordFlag != 4) {
+
+            }
         } else if (id == R.id.showdialog) {
             vibrator.vibrate(100);
+            if (Value.passwordFlag != 4) {
+
+            }
         } else if (id == R.id.modifypassword) {
             vibrator.vibrate(100);
+            if (Value.passwordFlag != 4) {
+                String gettoast1 = getString(R.string.samepassword);
+                String gettoast2 = getString(R.string.samepassword2);
+                String gettoast3 = getString(R.string.samepassword3);
+                String gettoast4 = getString(R.string.success);
+                String gettoast5 = getString(R.string.originalpassworderror);
+                String gettoast6 = getString(R.string.inputerror);
+                ModifyPassword modifyPassword = new ModifyPassword(this, Value.P_word,
+                        Value.G_word, Value.E_word, Value.I_word, gettoast1,
+                        gettoast2, gettoast3, gettoast4, gettoast5,
+                        gettoast6, mBluetoothLeService);
+                Dialog modify = modifyPassword.modifyDialog(vibrator);
+                modify.show();
+            }
         } else if (id == R.id.nav_share) {
             vibrator.vibrate(100);
-            if (!Value.downlog) {
-                Value.downlog = true;
-                navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.end) + getString(R.string.LOG));
-            } else {
-                Value.downlog = false;
-                navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.start) + getString(R.string.LOG));
+            if (Value.passwordFlag != 4) {
+                if (!Value.downlog) {
+                    Value.downlog = true;
+                    navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.end) + getString(R.string.LOG));
+                } else {
+                    Value.downlog = false;
+                    navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.start) + getString(R.string.LOG));
+                }
             }
         }
 
@@ -505,12 +539,14 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            vibrator.vibrate(100);
-            //NewModel.checkbyte
-            NewModel.menu.getItem(0).setTitle("");
-            NewModel.menu.getItem(0).setEnabled(false);
-            newModel.checkList(this);
-            return true;
+            if (Value.passwordFlag != 4) {
+                vibrator.vibrate(100);
+                //NewModel.checkbyte
+                NewModel.menu.getItem(0).setTitle("");
+                NewModel.menu.getItem(0).setEnabled(false);
+                newModel.checkList(this);
+                return true;
+            }
         }
 
         return true;

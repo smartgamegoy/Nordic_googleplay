@@ -17,4 +17,11 @@ public class ByteToHex {
         }
         return hex;
     }
+
+    public byte[] hex2Byte(String hexString) {
+        byte[] bytes = new byte[hexString.length() / 2];
+        for (int i=0 ; i < bytes.length ; i++)
+            bytes[i] = (byte) Integer.parseInt(hexString.substring(2 * i, 2 * i + 2), 16);
+        return bytes;
+    }
 }

@@ -23,12 +23,12 @@ public class LastViewPager {
     private String TAG = "LastViewPager";
     private Parase parase = new Parase();
 
-    public LastViewPager(){
+    public LastViewPager() {
         super();
     }
 
     @SuppressLint("SetTextI18n")
-    public View setView(Context context, Vibrator vibrator, int locate){
+    public View setView(Context context, Vibrator vibrator, int locate) {
         LayoutInflater layoutInflater = LayoutInflater.from(context);
 
         @SuppressLint("InflateParams")
@@ -57,12 +57,24 @@ public class LastViewPager {
         b10.setVisibility(View.GONE);
 
         List<byte[]> list = new ArrayList<>();
+        List<Button> buttonList = new ArrayList<>();
         list.clear();
         list = getlist(locate);
         int count = list.size();
+        buttonList.clear();
+        buttonList.add(b1);
+        buttonList.add(b2);
+        buttonList.add(b3);
+        buttonList.add(b4);
+        buttonList.add(b5);
+        buttonList.add(b6);
+        buttonList.add(b7);
+        buttonList.add(b8);
+        buttonList.add(b9);
+        buttonList.add(b10);
 
-        for(int i = 0; i < count; i++){
-            if(i == 0){
+        for (int i = 0; i < count; i++) {
+            if (i == 0) {
                 b1.setVisibility(View.VISIBLE);
                 byte[] arr = list.get(i);
                 byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
@@ -71,13 +83,17 @@ public class LastViewPager {
                 String title = setButtontext(context, get_String(list.get(i)[1], list.get(i)[0]));
                 b1.setText(title + "\n" + buttontext);
                 int finalI = i;
-                b1.setOnClickListener(v -> {
-                    vibrator.vibrate(100);
-                    ResetButton resetButton = new ResetButton();
-                    resetButton.set_Dialog(context, b1, vibrator, title, finalI, locate);
-                });
-            }
-            else if(i == 1){
+                if (Value.passwordFlag != 4) {
+                    b1.setOnClickListener(v -> {
+                        vibrator.vibrate(100);
+                        ResetButton resetButton = new ResetButton();
+                        resetButton.set_Dialog(context, b1, vibrator, title, finalI, locate);
+                    });
+                }
+                else {
+                    b1.setClickable(false);
+                }
+            } else if (i == 1) {
                 b2.setVisibility(View.VISIBLE);
                 byte[] arr = list.get(i);
                 byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
@@ -86,13 +102,17 @@ public class LastViewPager {
                 String title = setButtontext(context, get_String(list.get(i)[1], list.get(i)[0]));
                 b2.setText(title + "\n" + buttontext);
                 int finalI = i;
-                b2.setOnClickListener(v -> {
-                    vibrator.vibrate(100);
-                    ResetButton resetButton = new ResetButton();
-                    resetButton.set_Dialog(context, b2, vibrator, title, finalI, locate);
-                });
-            }
-            else if(i == 2){
+                if (Value.passwordFlag != 4) {
+                    b2.setOnClickListener(v -> {
+                        vibrator.vibrate(100);
+                        ResetButton resetButton = new ResetButton();
+                        resetButton.set_Dialog(context, b2, vibrator, title, finalI, locate);
+                    });
+                }
+                else {
+                    b2.setClickable(false);
+                }
+            } else if (i == 2) {
                 b3.setVisibility(View.VISIBLE);
                 byte[] arr = list.get(i);
                 byte[] value = Arrays.copyOfRange(arr, 3, arr.length);
@@ -101,18 +121,22 @@ public class LastViewPager {
                 String title = setButtontext(context, get_String(list.get(i)[1], list.get(i)[0]));
                 b3.setText(title + "\n" + buttontext);
                 int finalI = i;
-                b3.setOnClickListener(v -> {
-                    vibrator.vibrate(100);
-                    ResetButton resetButton = new ResetButton();
-                    resetButton.set_Dialog(context, b3, vibrator, title, finalI, locate);
-                });
+                if (Value.passwordFlag != 4) {
+                    b3.setOnClickListener(v -> {
+                        vibrator.vibrate(100);
+                        ResetButton resetButton = new ResetButton();
+                        resetButton.set_Dialog(context, b3, vibrator, title, finalI, locate);
+                    });
+                }
+                else {
+                    b3.setClickable(false);
+                }
             }
         }
-
         return view;
     }
 
-    private String getText(int chose, Context context){
+    private String getText(int chose, Context context) {
         String str = "";
         String model = Value.deviceModel;
         String[] arr = model.split("-");
@@ -123,32 +147,31 @@ public class LastViewPager {
         }
         Log.e(TAG, "nameList = " + nameList);
         Log.e(TAG, "chose = " + chose);
-        if(chose == 0){
+        if (chose == 0) {
             str = context.getString(R.string.chose);
-        }
-        else {
-            if(nameList.get((chose - 1)).toString().matches("T")){
+        } else {
+            if (nameList.get((chose - 1)).toString().matches("T")) {
                 str = context.getString(R.string.T);
-            }else if(nameList.get((chose - 1)).toString().matches("H")){
+            } else if (nameList.get((chose - 1)).toString().matches("H")) {
                 str = context.getString(R.string.H);
-            }else if(nameList.get((chose - 1)).toString().matches("C")){
+            } else if (nameList.get((chose - 1)).toString().matches("C")) {
                 str = context.getString(R.string.C);
-            }else if(nameList.get((chose - 1)).toString().matches("D")){
+            } else if (nameList.get((chose - 1)).toString().matches("D")) {
                 str = context.getString(R.string.C);
-            }else if(nameList.get((chose - 1)).toString().matches("E")){
+            } else if (nameList.get((chose - 1)).toString().matches("E")) {
                 str = context.getString(R.string.C);
-            }else if(nameList.get((chose - 1)).toString().matches("M")){
+            } else if (nameList.get((chose - 1)).toString().matches("M")) {
                 str = context.getString(R.string.pm);
-            }else if(nameList.get((chose - 1)).toString().matches("I")){
+            } else if (nameList.get((chose - 1)).toString().matches("I")) {
                 List<Integer> ilist = new ArrayList<>();
                 ilist.clear();
-                for(int i  = 0; i < nameList.size(); i++){
-                    if(nameList.get(i).toString().matches("I")){
+                for (int i = 0; i < nameList.size(); i++) {
+                    if (nameList.get(i).toString().matches("I")) {
                         ilist.add((i + 1));
                     }
                 }
-                for(int i = 0; i < ilist.size(); i++){
-                    if((ilist.get(i) + 1) == chose){
+                for (int i = 0; i < ilist.size(); i++) {
+                    if ((ilist.get(i) + 1) == chose) {
                         str = context.getString(R.string.table_i) + i;
                     }
                 }
@@ -208,7 +231,7 @@ public class LastViewPager {
         return str;
     }
 
-    private List<byte[]> getlist(int locate){
+    private List<byte[]> getlist(int locate) {
         List<byte[]> list = new ArrayList<>();
         list.clear();
 

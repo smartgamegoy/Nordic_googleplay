@@ -451,10 +451,10 @@ public class DeviceEngineer extends AppCompatActivity implements NavigationView.
         b_re.setOnClickListener(v -> {
             send = 5;
             vibrator.vibrate(100);
-            modifyPassword = new ModifyPassword(DeviceEngineer.this, Value.all_Width,
-                    Value.all_Height, Value.P_word,
-                    Value.G_word, Value.E_word, Value.I_word, gettoast1, gettoast2, gettoast3, gettoast4,
-                    gettoast5, gettoast6, mBluetoothLeService);
+            modifyPassword = new ModifyPassword(DeviceEngineer.this, Value.P_word,
+                    Value.G_word, Value.E_word, Value.I_word, gettoast1,
+                    gettoast2, gettoast3, gettoast4, gettoast5,
+                    gettoast6, mBluetoothLeService);
             modify = modifyPassword.modifyDialog(vibrator);
             modify.show();
         });
@@ -3527,10 +3527,10 @@ public class DeviceEngineer extends AppCompatActivity implements NavigationView.
             }
         } else if (id == R.id.modifypassword) {
             vibrator.vibrate(100);
-            modifyPassword = new ModifyPassword(DeviceEngineer.this, Value.all_Width,
-                    Value.all_Height, Value.P_word,
-                    Value.G_word, Value.E_word, Value.I_word, gettoast1, gettoast2, gettoast3, gettoast4,
-                    gettoast5, gettoast6, mBluetoothLeService);
+            modifyPassword = new ModifyPassword(DeviceEngineer.this, Value.P_word,
+                    Value.G_word, Value.E_word, Value.I_word, gettoast1,
+                    gettoast2, gettoast3, gettoast4, gettoast5,
+                    gettoast6, mBluetoothLeService);
             modify = modifyPassword.modifyDialog(vibrator);
             modify.show();
         } else if (id == R.id.nav_share) {

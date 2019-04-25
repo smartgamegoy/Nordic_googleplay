@@ -7,10 +7,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+
 import com.jetec.nordic_googleplay.NewActivity.New_Dialog.*;
 import com.jetec.nordic_googleplay.NewActivity.Parase;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
+import com.jetec.nordic_googleplay.Value;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -99,11 +102,15 @@ public class SetViewPager {
                         else
                             b1.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
                         int finalI = i;
-                        b1.setOnClickListener(v -> {
-                            vibrator.vibrate(100);
-                            New_WriteDialog new_writeDialog = new New_WriteDialog();
-                            new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b1, vibrator, s);
-                        });
+                        if (Value.passwordFlag != 4) {
+                            b1.setOnClickListener(v -> {
+                                vibrator.vibrate(100);
+                                New_WriteDialog new_writeDialog = new New_WriteDialog();
+                                new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b1, vibrator, s);
+                            });
+                        } else {
+                            b1.setClickable(false);
+                        }
                     } else if (i == 1) {
                         b2.setVisibility(View.VISIBLE);
                         String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
@@ -117,11 +124,15 @@ public class SetViewPager {
                         else
                             b2.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
                         int finalI = i;
-                        b2.setOnClickListener(v -> {
-                            vibrator.vibrate(100);
-                            New_WriteDialog new_writeDialog = new New_WriteDialog();
-                            new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b2, vibrator, s);
-                        });
+                        if (Value.passwordFlag != 4) {
+                            b2.setOnClickListener(v -> {
+                                vibrator.vibrate(100);
+                                New_WriteDialog new_writeDialog = new New_WriteDialog();
+                                new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b2, vibrator, s);
+                            });
+                        } else {
+                            b2.setClickable(false);
+                        }
                     } else if (i == 2) {
                         b3.setVisibility(View.VISIBLE);
                         String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
@@ -135,11 +146,15 @@ public class SetViewPager {
                         else
                             b3.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
                         int finalI = i;
-                        b3.setOnClickListener(v -> {
-                            vibrator.vibrate(100);
-                            New_WriteDialog new_writeDialog = new New_WriteDialog();
-                            new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b3, vibrator, s);
-                        });
+                        if (Value.passwordFlag != 4) {
+                            b3.setOnClickListener(v -> {
+                                vibrator.vibrate(100);
+                                New_WriteDialog new_writeDialog = new New_WriteDialog();
+                                new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b3, vibrator, s);
+                            });
+                        } else {
+                            b3.setClickable(false);
+                        }
                     } else if (i == 3) {
                         b4.setVisibility(View.VISIBLE);
                         String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
@@ -153,11 +168,15 @@ public class SetViewPager {
                         else
                             b4.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
                         int finalI = i;
-                        b4.setOnClickListener(v -> {
-                            vibrator.vibrate(100);
-                            New_WriteDialog new_writeDialog = new New_WriteDialog();
-                            new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b4, vibrator, s);
-                        });
+                        if (Value.passwordFlag != 4) {
+                            b4.setOnClickListener(v -> {
+                                vibrator.vibrate(100);
+                                New_WriteDialog new_writeDialog = new New_WriteDialog();
+                                new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b4, vibrator, s);
+                            });
+                        } else {
+                            b4.setClickable(false);
+                        }
                     } else if (i == 4) {
                         b5.setVisibility(View.VISIBLE);
                         String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
@@ -171,11 +190,15 @@ public class SetViewPager {
                         else
                             b5.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
                         int finalI = i;
-                        b5.setOnClickListener(v -> {
-                            vibrator.vibrate(100);
-                            New_WriteDialog new_writeDialog = new New_WriteDialog();
-                            new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b5, vibrator, s);
-                        });
+                        if (Value.passwordFlag != 4) {
+                            b5.setOnClickListener(v -> {
+                                vibrator.vibrate(100);
+                                New_WriteDialog new_writeDialog = new New_WriteDialog();
+                                new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b5, vibrator, s);
+                            });
+                        } else {
+                            b5.setClickable(false);
+                        }
                     } else if (i == 5) {
                         b6.setVisibility(View.VISIBLE);
                         String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
@@ -189,11 +212,15 @@ public class SetViewPager {
                         else
                             b6.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
                         int finalI = i;
-                        b6.setOnClickListener(v -> {
-                            vibrator.vibrate(100);
-                            New_WriteDialog new_writeDialog = new New_WriteDialog();
-                            new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b6, vibrator, s);
-                        });
+                        if (Value.passwordFlag != 4) {
+                            b6.setOnClickListener(v -> {
+                                vibrator.vibrate(100);
+                                New_WriteDialog new_writeDialog = new New_WriteDialog();
+                                new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b6, vibrator, s);
+                            });
+                        } else {
+                            b6.setClickable(false);
+                        }
                     } else if (i == 6) {
                         b7.setVisibility(View.VISIBLE);
                         String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
@@ -207,11 +234,15 @@ public class SetViewPager {
                         else
                             b7.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
                         int finalI = i;
-                        b7.setOnClickListener(v -> {
-                            vibrator.vibrate(100);
-                            New_WriteDialog new_writeDialog = new New_WriteDialog();
-                            new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b7, vibrator, s);
-                        });
+                        if (Value.passwordFlag != 4) {
+                            b7.setOnClickListener(v -> {
+                                vibrator.vibrate(100);
+                                New_WriteDialog new_writeDialog = new New_WriteDialog();
+                                new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b7, vibrator, s);
+                            });
+                        } else {
+                            b7.setClickable(false);
+                        }
                     } else if (i == 7) {
                         b8.setVisibility(View.VISIBLE);
                         String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
@@ -225,11 +256,15 @@ public class SetViewPager {
                         else
                             b8.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
                         int finalI = i;
-                        b8.setOnClickListener(v -> {
-                            vibrator.vibrate(100);
-                            New_WriteDialog new_writeDialog = new New_WriteDialog();
-                            new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b8, vibrator, s);
-                        });
+                        if (Value.passwordFlag != 4) {
+                            b8.setOnClickListener(v -> {
+                                vibrator.vibrate(100);
+                                New_WriteDialog new_writeDialog = new New_WriteDialog();
+                                new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b8, vibrator, s);
+                            });
+                        } else {
+                            b8.setClickable(false);
+                        }
                     } else if (i == 8) {
                         b9.setVisibility(View.VISIBLE);
                         String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
@@ -243,11 +278,15 @@ public class SetViewPager {
                         else
                             b9.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
                         int finalI = i;
-                        b9.setOnClickListener(v -> {
-                            vibrator.vibrate(100);
-                            New_WriteDialog new_writeDialog = new New_WriteDialog();
-                            new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b9, vibrator, s);
-                        });
+                        if (Value.passwordFlag != 4) {
+                            b9.setOnClickListener(v -> {
+                                vibrator.vibrate(100);
+                                New_WriteDialog new_writeDialog = new New_WriteDialog();
+                                new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b9, vibrator, s);
+                            });
+                        } else {
+                            b9.setClickable(false);
+                        }
                     } else if (i == 9) {
                         b10.setVisibility(View.VISIBLE);
                         String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
@@ -261,11 +300,15 @@ public class SetViewPager {
                         else
                             b10.setText(title + "\n" + (parase.byteArrayToInt(value) / p));
                         int finalI = i;
-                        b10.setOnClickListener(v -> {
-                            vibrator.vibrate(100);
-                            New_WriteDialog new_writeDialog = new New_WriteDialog();
-                            new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b10, vibrator, s);
-                        });
+                        if (Value.passwordFlag != 4) {
+                            b10.setOnClickListener(v -> {
+                                vibrator.vibrate(100);
+                                New_WriteDialog new_writeDialog = new New_WriteDialog();
+                                new_writeDialog.set_Dialog(context, title, getlist_i, finalI, str, b10, vibrator, s);
+                            });
+                        } else {
+                            b10.setClickable(false);
+                        }
                     }
                 } else {
                     int finalI = i;
@@ -277,12 +320,16 @@ public class SetViewPager {
                         int chose = parase.byteArrayToInt(value);
                         String buttontext = getText(nameList, chose, context);
                         b1.setText(title + "\n" + buttontext);
-                        b1.setOnClickListener(v -> {
-                            vibrator.vibrate(100);
-                            AlertButton alertButton = new AlertButton();
-                            alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
-                            //resetButton.set_Dialog(context, b1, vibrator, nameList, title, getlist_i, finalI);
-                        });
+                        if (Value.passwordFlag != 4) {
+                            b1.setOnClickListener(v -> {
+                                vibrator.vibrate(100);
+                                AlertButton alertButton = new AlertButton();
+                                alertButton.set_Dialog(context, b1, vibrator, title, getlist_i, finalI);
+                                //resetButton.set_Dialog(context, b1, vibrator, nameList, title, getlist_i, finalI);
+                            });
+                        } else {
+                            b1.setClickable(false);
+                        }
                     } else if (i == 1) {
                         b2.setVisibility(View.VISIBLE);
                         String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
@@ -291,12 +338,16 @@ public class SetViewPager {
                         int chose = parase.byteArrayToInt(value);
                         String buttontext = getText(nameList, chose, context);
                         b2.setText(title + "\n" + buttontext);
-                        b2.setOnClickListener(v -> {
-                            vibrator.vibrate(100);
-                            AlertButton alertButton = new AlertButton();
-                            alertButton.set_Dialog(context, b2, vibrator, title, getlist_i, finalI);
-                            //resetButton.set_Dialog(context, b2, vibrator, nameList, title, getlist_i, finalI);
-                        });
+                        if (Value.passwordFlag != 4) {
+                            b2.setOnClickListener(v -> {
+                                vibrator.vibrate(100);
+                                AlertButton alertButton = new AlertButton();
+                                alertButton.set_Dialog(context, b2, vibrator, title, getlist_i, finalI);
+                                //resetButton.set_Dialog(context, b2, vibrator, nameList, title, getlist_i, finalI);
+                            });
+                        } else {
+                            b2.setClickable(false);
+                        }
                     } else if (i == 2) {
                         b3.setVisibility(View.VISIBLE);
                         String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
@@ -305,12 +356,16 @@ public class SetViewPager {
                         int chose = parase.byteArrayToInt(value);
                         String buttontext = getText(nameList, chose, context);
                         b3.setText(title + "\n" + buttontext);
-                        b3.setOnClickListener(v -> {
-                            vibrator.vibrate(100);
-                            AlertButton alertButton = new AlertButton();
-                            alertButton.set_Dialog(context, b3, vibrator, title, getlist_i, finalI);
-                            //resetButton.set_Dialog(context, b3, vibrator, nameList, title, getlist_i, finalI);
-                        });
+                        if (Value.passwordFlag != 4) {
+                            b3.setOnClickListener(v -> {
+                                vibrator.vibrate(100);
+                                AlertButton alertButton = new AlertButton();
+                                alertButton.set_Dialog(context, b3, vibrator, title, getlist_i, finalI);
+                                //resetButton.set_Dialog(context, b3, vibrator, nameList, title, getlist_i, finalI);
+                            });
+                        } else {
+                            b3.setClickable(false);
+                        }
                     } else if (i == 3) {
                         b4.setVisibility(View.VISIBLE);
                         String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
@@ -319,12 +374,16 @@ public class SetViewPager {
                         int chose = parase.byteArrayToInt(value);
                         String buttontext = getText(nameList, chose, context);
                         b4.setText(title + "\n" + buttontext);
-                        b4.setOnClickListener(v -> {
-                            vibrator.vibrate(100);
-                            AlertButton alertButton = new AlertButton();
-                            alertButton.set_Dialog(context, b4, vibrator, title, getlist_i, finalI);
-                            //resetButton.set_Dialog(context, b4, vibrator, nameList, title, getlist_i, finalI);
-                        });
+                        if (Value.passwordFlag != 4) {
+                            b4.setOnClickListener(v -> {
+                                vibrator.vibrate(100);
+                                AlertButton alertButton = new AlertButton();
+                                alertButton.set_Dialog(context, b4, vibrator, title, getlist_i, finalI);
+                                //resetButton.set_Dialog(context, b4, vibrator, nameList, title, getlist_i, finalI);
+                            });
+                        } else {
+                            b4.setClickable(false);
+                        }
                     } else if (i == 4) {
                         b5.setVisibility(View.VISIBLE);
                         String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
@@ -333,12 +392,16 @@ public class SetViewPager {
                         int chose = parase.byteArrayToInt(value);
                         String buttontext = getText(nameList, chose, context);
                         b5.setText(title + "\n" + buttontext);
-                        b5.setOnClickListener(v -> {
-                            vibrator.vibrate(100);
-                            AlertButton alertButton = new AlertButton();
-                            alertButton.set_Dialog(context, b5, vibrator, title, getlist_i, finalI);
-                            //resetButton.set_Dialog(context, b5, vibrator, nameList, title, getlist_i, finalI);
-                        });
+                        if (Value.passwordFlag != 4) {
+                            b5.setOnClickListener(v -> {
+                                vibrator.vibrate(100);
+                                AlertButton alertButton = new AlertButton();
+                                alertButton.set_Dialog(context, b5, vibrator, title, getlist_i, finalI);
+                                //resetButton.set_Dialog(context, b5, vibrator, nameList, title, getlist_i, finalI);
+                            });
+                        } else {
+                            b5.setClickable(false);
+                        }
                     } else if (i == 5) {
                         b6.setVisibility(View.VISIBLE);
                         String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
@@ -347,12 +410,16 @@ public class SetViewPager {
                         int chose = parase.byteArrayToInt(value);
                         String buttontext = getText(nameList, chose, context);
                         b6.setText(title + "\n" + buttontext);
-                        b6.setOnClickListener(v -> {
-                            vibrator.vibrate(100);
-                            AlertButton alertButton = new AlertButton();
-                            alertButton.set_Dialog(context, b6, vibrator, title, getlist_i, finalI);
-                            //resetButton.set_Dialog(context, b6, vibrator, nameList, title, getlist_i, finalI);
-                        });
+                        if (Value.passwordFlag != 4) {
+                            b6.setOnClickListener(v -> {
+                                vibrator.vibrate(100);
+                                AlertButton alertButton = new AlertButton();
+                                alertButton.set_Dialog(context, b6, vibrator, title, getlist_i, finalI);
+                                //resetButton.set_Dialog(context, b6, vibrator, nameList, title, getlist_i, finalI);
+                            });
+                        } else {
+                            b6.setClickable(false);
+                        }
                     } else if (i == 6) {
                         b7.setVisibility(View.VISIBLE);
                         String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
@@ -361,12 +428,16 @@ public class SetViewPager {
                         int chose = parase.byteArrayToInt(value);
                         String buttontext = getText(nameList, chose, context);
                         b7.setText(title + "\n" + buttontext);
-                        b7.setOnClickListener(v -> {
-                            vibrator.vibrate(100);
-                            AlertButton alertButton = new AlertButton();
-                            alertButton.set_Dialog(context, b7, vibrator, title, getlist_i, finalI);
-                            //resetButton.set_Dialog(context, b7, vibrator, nameList, title, getlist_i, finalI);
-                        });
+                        if (Value.passwordFlag != 4) {
+                            b7.setOnClickListener(v -> {
+                                vibrator.vibrate(100);
+                                AlertButton alertButton = new AlertButton();
+                                alertButton.set_Dialog(context, b7, vibrator, title, getlist_i, finalI);
+                                //resetButton.set_Dialog(context, b7, vibrator, nameList, title, getlist_i, finalI);
+                            });
+                        } else {
+                            b7.setClickable(false);
+                        }
                     } else if (i == 7) {
                         b8.setVisibility(View.VISIBLE);
                         String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
@@ -375,12 +446,16 @@ public class SetViewPager {
                         int chose = parase.byteArrayToInt(value);
                         String buttontext = getText(nameList, chose, context);
                         b8.setText(title + "\n" + buttontext);
-                        b8.setOnClickListener(v -> {
-                            vibrator.vibrate(100);
-                            AlertButton alertButton = new AlertButton();
-                            alertButton.set_Dialog(context, b8, vibrator, title, getlist_i, finalI);
-                            //resetButton.set_Dialog(context, b8, vibrator, nameList, title, getlist_i, finalI);
-                        });
+                        if (Value.passwordFlag != 4) {
+                            b8.setOnClickListener(v -> {
+                                vibrator.vibrate(100);
+                                AlertButton alertButton = new AlertButton();
+                                alertButton.set_Dialog(context, b8, vibrator, title, getlist_i, finalI);
+                                //resetButton.set_Dialog(context, b8, vibrator, nameList, title, getlist_i, finalI);
+                            });
+                        } else {
+                            b8.setClickable(false);
+                        }
                     } else if (i == 8) {
                         b9.setVisibility(View.VISIBLE);
                         String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
@@ -389,12 +464,16 @@ public class SetViewPager {
                         int chose = parase.byteArrayToInt(value);
                         String buttontext = getText(nameList, chose, context);
                         b9.setText(title + "\n" + buttontext);
-                        b9.setOnClickListener(v -> {
-                            vibrator.vibrate(100);
-                            AlertButton alertButton = new AlertButton();
-                            alertButton.set_Dialog(context, b9, vibrator, title, getlist_i, finalI);
-                            //resetButton.set_Dialog(context, b9, vibrator, nameList, title, getlist_i, finalI);
-                        });
+                        if (Value.passwordFlag != 4) {
+                            b9.setOnClickListener(v -> {
+                                vibrator.vibrate(100);
+                                AlertButton alertButton = new AlertButton();
+                                alertButton.set_Dialog(context, b9, vibrator, title, getlist_i, finalI);
+                                //resetButton.set_Dialog(context, b9, vibrator, nameList, title, getlist_i, finalI);
+                            });
+                        } else {
+                            b9.setClickable(false);
+                        }
                     } else if (i == 9) {
                         b10.setVisibility(View.VISIBLE);
                         String title = setButtontext(context, s, get_String(list.get(i)[1], list.get(i)[0]));
@@ -403,12 +482,16 @@ public class SetViewPager {
                         int chose = parase.byteArrayToInt(value);
                         String buttontext = getText(nameList, chose, context);
                         b10.setText(title + "\n" + buttontext);
-                        b10.setOnClickListener(v -> {
-                            vibrator.vibrate(100);
-                            AlertButton alertButton = new AlertButton();
-                            alertButton.set_Dialog(context, b10, vibrator, title, getlist_i, finalI);
-                            //resetButton.set_Dialog(context, b10, vibrator, nameList, title, getlist_i, finalI);
-                        });
+                        if (Value.passwordFlag != 4) {
+                            b10.setOnClickListener(v -> {
+                                vibrator.vibrate(100);
+                                AlertButton alertButton = new AlertButton();
+                                alertButton.set_Dialog(context, b10, vibrator, title, getlist_i, finalI);
+                                //resetButton.set_Dialog(context, b10, vibrator, nameList, title, getlist_i, finalI);
+                            });
+                        } else {
+                            b10.setClickable(false);
+                        }
                     }
                 }
             } else {
@@ -416,75 +499,111 @@ public class SetViewPager {
                 if (i == 1) {
                     b2.setVisibility(View.VISIBLE);
                     b2.setText(context.getString(R.string.dpp));
-                    b2.setOnClickListener(v -> {
-                        vibrator.vibrate(100);
-                        dpDialog.set_Dialog(context, vibrator, context.getString(R.string.dpp),
-                                getlist_i, finalI, s, buttonList);
-                    });
+                    if (Value.passwordFlag != 4) {
+                        b2.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            dpDialog.set_Dialog(context, vibrator, context.getString(R.string.dpp),
+                                    getlist_i, finalI, s, buttonList);
+                        });
+                    } else {
+                        b2.setClickable(false);
+                    }
                 } else if (i == 2) {
                     b3.setVisibility(View.VISIBLE);
                     b3.setText(context.getString(R.string.dpp));
-                    b3.setOnClickListener(v -> {
-                        vibrator.vibrate(100);
-                        dpDialog.set_Dialog(context, vibrator, context.getString(R.string.dpp),
-                                getlist_i, finalI, s, buttonList);
-                    });
+                    if (Value.passwordFlag != 4) {
+                        b3.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            dpDialog.set_Dialog(context, vibrator, context.getString(R.string.dpp),
+                                    getlist_i, finalI, s, buttonList);
+                        });
+                    } else {
+                        b3.setClickable(false);
+                    }
                 } else if (i == 3) {
                     b4.setVisibility(View.VISIBLE);
                     b4.setText(context.getString(R.string.dpp));
-                    b4.setOnClickListener(v -> {
-                        vibrator.vibrate(100);
-                        dpDialog.set_Dialog(context, vibrator, context.getString(R.string.dpp),
-                                getlist_i, finalI, s, buttonList);
-                    });
+                    if (Value.passwordFlag != 4) {
+                        b4.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            dpDialog.set_Dialog(context, vibrator, context.getString(R.string.dpp),
+                                    getlist_i, finalI, s, buttonList);
+                        });
+                    } else {
+                        b4.setClickable(false);
+                    }
                 } else if (i == 4) {
                     b5.setVisibility(View.VISIBLE);
                     b5.setText(context.getString(R.string.dpp));
-                    b5.setOnClickListener(v -> {
-                        vibrator.vibrate(100);
-                        dpDialog.set_Dialog(context, vibrator, context.getString(R.string.dpp),
-                                getlist_i, finalI, s, buttonList);
-                    });
+                    if (Value.passwordFlag != 4) {
+                        b5.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            dpDialog.set_Dialog(context, vibrator, context.getString(R.string.dpp),
+                                    getlist_i, finalI, s, buttonList);
+                        });
+                    } else {
+                        b5.setClickable(false);
+                    }
                 } else if (i == 5) {
                     b6.setVisibility(View.VISIBLE);
                     b6.setText(context.getString(R.string.dpp));
-                    b6.setOnClickListener(v -> {
-                        vibrator.vibrate(100);
-                        dpDialog.set_Dialog(context, vibrator, context.getString(R.string.dpp),
-                                getlist_i, finalI, s, buttonList);
-                    });
+                    if (Value.passwordFlag != 4) {
+                        b6.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            dpDialog.set_Dialog(context, vibrator, context.getString(R.string.dpp),
+                                    getlist_i, finalI, s, buttonList);
+                        });
+                    } else {
+                        b6.setClickable(false);
+                    }
                 } else if (i == 6) {
                     b7.setVisibility(View.VISIBLE);
                     b7.setText(context.getString(R.string.dpp));
-                    b7.setOnClickListener(v -> {
-                        vibrator.vibrate(100);
-                        dpDialog.set_Dialog(context, vibrator, context.getString(R.string.dpp),
-                                getlist_i, finalI, s, buttonList);
-                    });
+                    if (Value.passwordFlag != 4) {
+                        b7.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            dpDialog.set_Dialog(context, vibrator, context.getString(R.string.dpp),
+                                    getlist_i, finalI, s, buttonList);
+                        });
+                    } else {
+                        b7.setClickable(false);
+                    }
                 } else if (i == 7) {
                     b8.setVisibility(View.VISIBLE);
                     b8.setText(context.getString(R.string.dpp));
-                    b8.setOnClickListener(v -> {
-                        vibrator.vibrate(100);
-                        dpDialog.set_Dialog(context, vibrator, context.getString(R.string.dpp),
-                                getlist_i, finalI, s, buttonList);
-                    });
+                    if (Value.passwordFlag != 4) {
+                        b8.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            dpDialog.set_Dialog(context, vibrator, context.getString(R.string.dpp),
+                                    getlist_i, finalI, s, buttonList);
+                        });
+                    } else {
+                        b8.setClickable(false);
+                    }
                 } else if (i == 8) {
                     b9.setVisibility(View.VISIBLE);
                     b9.setText(context.getString(R.string.dpp));
-                    b9.setOnClickListener(v -> {
-                        vibrator.vibrate(100);
-                        dpDialog.set_Dialog(context, vibrator, context.getString(R.string.dpp),
-                                getlist_i, finalI, s, buttonList);
-                    });
+                    if (Value.passwordFlag != 4) {
+                        b9.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            dpDialog.set_Dialog(context, vibrator, context.getString(R.string.dpp),
+                                    getlist_i, finalI, s, buttonList);
+                        });
+                    } else {
+                        b9.setClickable(false);
+                    }
                 } else if (i == 9) {
                     b10.setVisibility(View.VISIBLE);
                     b10.setText(context.getString(R.string.dpp));
-                    b10.setOnClickListener(v -> {
-                        vibrator.vibrate(100);
-                        dpDialog.set_Dialog(context, vibrator, context.getString(R.string.dpp),
-                                getlist_i, finalI, s, buttonList);
-                    });
+                    if (Value.passwordFlag != 4) {
+                        b10.setOnClickListener(v -> {
+                            vibrator.vibrate(100);
+                            dpDialog.set_Dialog(context, vibrator, context.getString(R.string.dpp),
+                                    getlist_i, finalI, s, buttonList);
+                        });
+                    } else {
+                        b10.setClickable(false);
+                    }
                 }
             }
         }
@@ -493,12 +612,11 @@ public class SetViewPager {
         return view;
     }
 
-    private String getText(List<Character> nameList, int chose, Context context){
+    private String getText(List<Character> nameList, int chose, Context context) {
         String str = "";
-        if(chose == 0){
+        if (chose == 0) {
             str = context.getString(R.string.off);
-        }
-        else {
+        } else {
             str = context.getString(R.string.on);
             /*if(nameList.get((chose - 1)).toString().matches("T")){
                 str = context.getString(R.string.T);
