@@ -100,7 +100,6 @@ public class New_WriteDialog {
                 Log.e(TAG, "gethex = " + gethex);
                 button.setText(str + "\n" + getnewStr(dp_flag));
                 resetlist(getlist_i, i, getb);
-                NewModel.checkbyte = true;
                 NewModel.menu.getItem(0).setTitle(context.getString(R.string.send));
                 NewModel.menu.getItem(0).setEnabled(true);
                 progressDialog.dismiss();

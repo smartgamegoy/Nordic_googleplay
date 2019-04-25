@@ -39,8 +39,9 @@ public class WriteDialog {
 
     public void closeDialog(){
         if(progressDialog != null) {
-            if (progressDialog.isShowing())
+            if (progressDialog.isShowing()) {
                 progressDialog.dismiss();
+            }
         }
     }
 

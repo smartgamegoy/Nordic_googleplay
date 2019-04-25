@@ -32,7 +32,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.jetec.nordic_googleplay.Activity.MainActivity;
-import com.jetec.nordic_googleplay.Dialog.SetTime;
+import com.jetec.nordic_googleplay.Dialog.WriteDialog;
 import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToHex;
 import com.jetec.nordic_googleplay.NewActivity.SendByte.Send;
 import com.jetec.nordic_googleplay.NewActivity.ViewAdapter.*;
@@ -41,13 +41,13 @@ import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.ScanParse.Getparse;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Value;
+
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import static com.jetec.nordic_googleplay.Activity.DeviceList.getManager;
 
 public class UserFunction extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -84,8 +84,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
             s_connect = bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
             if (s_connect) {
                 registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
-            }
-            else
+            } else
                 Log.e(TAG, "連線失敗");
         }
         get_intent();
@@ -123,23 +122,23 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         list6 = NewModel.sub6;
         list7 = NewModel.sub7;
 
-        if(list1.size() != 0)
+        if (list1.size() != 0)
             savelist.add(list1);
-        if(list2.size() != 0)
+        if (list2.size() != 0)
             savelist.add(list2);
-        if(list3.size() != 0)
+        if (list3.size() != 0)
             savelist.add(list3);
-        if(list4.size() != 0)
+        if (list4.size() != 0)
             savelist.add(list4);
-        if(list5.size() != 0)
+        if (list5.size() != 0)
             savelist.add(list5);
-        if(list6.size() != 0)
+        if (list6.size() != 0)
             savelist.add(list6);
-        if(list7.size() != 0)
+        if (list7.size() != 0)
             savelist.add(list7);
 
-        newModel.setString(this);
         NewModel.viewList = savelist;
+        newModel.setString(this);
 
         showlist();
     }
@@ -217,7 +216,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         List<String> nameList = new ArrayList<>();
         nameList.clear();
         nameList.add("NAME");
-        if(name.contains("Y") || name.contains("Z")){
+        if (name.contains("Y") || name.contains("Z")) {
             nameList.add("TIME");
             count++;
         }
@@ -249,48 +248,48 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                 tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i + 1)).setText(getString(R.string.bt_t));
-                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator, ch));
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), i, vibrator, ch));
                 //setPagerAdapter.setView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
             } else if (ch.get(i).toString().matches("H")) {
                 /*tab.setCustomView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
                 tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i + 1)).setText(getString(R.string.bt_h));
-                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator, ch));
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), i, vibrator, ch));
                 //setPagerAdapter.setView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
             } else if (ch.get(i).toString().matches("C")) {
                 /*tab.setCustomView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
                 tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i + 1)).setText(getString(R.string.bt_c));
-                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator, ch));
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), i, vibrator, ch));
                 //setPagerAdapter.setView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
             } else if (ch.get(i).toString().matches("D")) {
                 /*tab.setCustomView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
                 tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i + 1)).setText(getString(R.string.bt_d));
-                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator, ch));
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), i, vibrator, ch));
                 //setPagerAdapter.setView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
             } else if (ch.get(i).toString().matches("E")) {
                 /*tab.setCustomView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
                 tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i + 1)).setText(getString(R.string.bt_e));
-                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator, ch));
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), i, vibrator, ch));
             } else if (ch.get(i).toString().matches("I")) {
                 /*tab.setCustomView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
                 tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i + 1)).setText(getString(R.string.table_i) + (i + 1 + count) + "\n" + "(4~20mA)");
-                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator, ch));
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), i, vibrator, ch));
                 //setPagerAdapter.setView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
             } else if (ch.get(i).toString().matches("S")) {
                 /*tab.setCustomView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
                 tabLayout.addTab(tab);*/
                 tabLayout.addTab(tabLayout.newTab());
                 Objects.requireNonNull(tabLayout.getTabAt(i + 1)).setText(getString(R.string.bt_co));
-                listview.add(setViewPager.setView(this, ch.get(i).toString(), i , vibrator, ch));
+                listview.add(setViewPager.setView(this, ch.get(i).toString(), i, vibrator, ch));
                 //setPagerAdapter.setView(setViewPager.setView(this, ch.get(i).toString(), savelist.get(i)));
             }
         }
@@ -347,6 +346,10 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
             (device, rssi, scanRecord) -> runOnUiThread(() -> runOnUiThread(this::addDevice));
 
     private void addDevice() {
+    }
+
+    public static BluetoothManager getManager(Context context) {    //獲取此設備默認藍芽適配器
+        return (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
     }
 
     public void Service_close() {
@@ -453,33 +456,21 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
 
-        // setContentView(R.layout.device_function);
         int id = item.getItemId();
         vibrator.vibrate(100);
-
-        /*if (!Value.downlog) {
-            navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.start) + getString(R.string.LOG));
-        } else {
-            navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.end) + getString(R.string.LOG));
-        }*/
 
         if (id == R.id.savedialog) {
             vibrator.vibrate(100);
             Value.downlog = false;
-        }
-        else if (id == R.id.loadbar) {
+        } else if (id == R.id.loadbar) {
             vibrator.vibrate(100);
-        }
-        else if (id == R.id.datadownload) {
+        } else if (id == R.id.datadownload) {
             vibrator.vibrate(100);
-        }
-        else if (id == R.id.showdialog) {
+        } else if (id == R.id.showdialog) {
             vibrator.vibrate(100);
-        }
-        else if (id == R.id.modifypassword) {
+        } else if (id == R.id.modifypassword) {
             vibrator.vibrate(100);
-        }
-        else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_share) {
             vibrator.vibrate(100);
             if (!Value.downlog) {
                 Value.downlog = true;
@@ -515,19 +506,12 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             vibrator.vibrate(100);
+            //NewModel.checkbyte
             NewModel.menu.getItem(0).setTitle("");
             NewModel.menu.getItem(0).setEnabled(false);
-            Log.e(TAG, "viewPager.getCurrentItem() = " + viewPager.getCurrentItem());
+            newModel.checkList(this);
             return true;
         }
-        NewModel.menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                vibrator.vibrate(100);
-                NewModel.menu.getItem(0).getActionView().setBackgroundResource(0);
-                return false;
-            }
-        });
 
         return true;
     }

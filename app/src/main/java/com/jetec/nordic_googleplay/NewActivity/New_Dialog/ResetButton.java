@@ -103,7 +103,6 @@ public class ResetButton {
             button.setText(str + "\n" + sp_str);
             setNewbyte(context, i, locate);
             list.set(i, sp_str);
-            NewModel.checkbyte = true;
             NewModel.menu.getItem(0).setTitle(context.getString(R.string.send));
             NewModel.menu.getItem(0).setEnabled(true);
             progressDialog.dismiss();

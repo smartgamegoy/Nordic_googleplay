@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
@@ -43,6 +44,7 @@ public class ErrActivity extends AppCompatActivity {
     private BluetoothLeService mBluetoothLeService;
     private BluetoothAdapter mBluetoothAdapter;
     private boolean s_connect = false, log = false;
+    private Handler mHandler;
     private SendValue sendValue;
     private WriteDialog writeDialog = new WriteDialog();
     private Initialization initialization = new Initialization();
@@ -71,6 +73,7 @@ public class ErrActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         default_model = intent.getStringArrayExtra("default_model");
+        mHandler = new Handler();
 
         setmodel();
     }
@@ -102,17 +105,16 @@ public class ErrActivity extends AppCompatActivity {
         });
 
         by.setOnClickListener(v -> {
-            try {
-                vibrator.vibrate(100);
-                if(!str.matches("")) {
-                    sendValue.send(allstr);
+            vibrator.vibrate(100);
+            if(!str.matches("")) {
+                writeDialog.set_Dialog(this, false);
+                sendValue.send(allstr);
+                mHandler.postDelayed(() -> {
                     initialization.setinitial(str, mBluetoothLeService);
-                    sleep(2000);
                     initialization.startinitial();
                     devicelist();
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                    mHandler.removeCallbacksAndMessages(null);
+                }, 2000);
             }
         });
 
@@ -508,6 +510,9 @@ public class ErrActivity extends AppCompatActivity {
     private void devicelist() {
 
         Intent intent = new Intent(this, DeviceList.class);
+        if(writeDialog.checkshowing()){
+            writeDialog.closeDialog();
+        }
         NewModel.checkmodel = false;
         intent.putExtra("default_model", default_model);
         startActivity(intent);
