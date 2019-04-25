@@ -9,18 +9,30 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Vibrator;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.jetec.nordic_googleplay.Activity.MainActivity;
+import com.jetec.nordic_googleplay.Dialog.SetTime;
 import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToHex;
 import com.jetec.nordic_googleplay.NewActivity.SendByte.Send;
 import com.jetec.nordic_googleplay.NewActivity.ViewAdapter.*;
@@ -37,7 +49,7 @@ import java.util.List;
 import java.util.Objects;
 import static com.jetec.nordic_googleplay.Activity.DeviceList.getManager;
 
-public class UserFunction extends AppCompatActivity {
+public class UserFunction extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private String TAG = "UserFunction";
     private Vibrator vibrator;
@@ -58,6 +70,8 @@ public class UserFunction extends AppCompatActivity {
     private LastViewPager lastViewPager = new LastViewPager();
     private SetPagerAdapter setPagerAdapter = new SetPagerAdapter();
     private NameView nameView = new NameView();
+    private NavigationView navigationView;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,7 +202,13 @@ public class UserFunction extends AppCompatActivity {
     };
 
     private void showlist() {
-        setContentView(R.layout.userlist);
+        setContentView(R.layout.user_function);
+
+        Value.btn = Value.deviceModel.indexOf('L') != -1;  //check is this device has L?
+        Toolbar myToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
+        DrawerLayout(myToolbar);
 
         int count = 0;
         String model = Value.deviceModel;
@@ -216,7 +236,7 @@ public class UserFunction extends AppCompatActivity {
         Log.e(TAG, "ch = " + ch);
 
         TabLayout tabLayout = findViewById(R.id.tablayout);
-        ViewPager viewPager = findViewById(R.id.viewpager);
+        viewPager = findViewById(R.id.viewpager); //viewPager.getCurrentItem()
 
         tabLayout.addTab(tabLayout.newTab());
         Objects.requireNonNull(tabLayout.getTabAt(0)).setText(getString(R.string.bluetoothset));
@@ -285,6 +305,42 @@ public class UserFunction extends AppCompatActivity {
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
+    }
+
+    private void DrawerLayout(Toolbar myToolbar) {
+        DrawerLayout drawer = findViewById(R.id.user_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, myToolbar, R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        if (!Value.downlog) {
+            navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.start) + getString(R.string.LOG));
+        } else {
+            navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.end) + getString(R.string.LOG));
+        }
+
+        if (!Value.btn) {
+            navigationView.getMenu().findItem(R.id.datadownload).setEnabled(false);
+            SpannableString spanString1 = new SpannableString(navigationView.getMenu().
+                    findItem(R.id.datadownload).getTitle().toString());
+            spanString1.setSpan(new ForegroundColorSpan(Color.GRAY), 0, spanString1.length(), 0);
+            navigationView.getMenu().findItem(R.id.datadownload).setTitle(spanString1);
+            navigationView.getMenu().findItem(R.id.showdialog).setEnabled(false);
+            SpannableString spanString2 = new SpannableString(navigationView.getMenu().
+                    findItem(R.id.showdialog).getTitle().toString());
+            spanString2.setSpan(new ForegroundColorSpan(Color.GRAY), 0, spanString2.length(), 0);
+            navigationView.getMenu().findItem(R.id.showdialog).setTitle(spanString2);
+            navigationView.getMenu().findItem(R.id.nav_share).setEnabled(false);
+            SpannableString spanString3 = new SpannableString(navigationView.getMenu().
+                    findItem(R.id.nav_share).getTitle().toString());
+            spanString3.setSpan(new ForegroundColorSpan(Color.GRAY), 0, spanString3.length(), 0);
+            navigationView.getMenu().findItem(R.id.nav_share).setTitle(spanString3);
+        }
     }
 
     private BluetoothAdapter.LeScanCallback mLeScanCallback =
@@ -391,5 +447,97 @@ public class UserFunction extends AppCompatActivity {
         } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             // port do nothing is ok
         }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // Handle navigation view item clicks here.
+
+        // setContentView(R.layout.device_function);
+        int id = item.getItemId();
+        vibrator.vibrate(100);
+
+        /*if (!Value.downlog) {
+            navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.start) + getString(R.string.LOG));
+        } else {
+            navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.end) + getString(R.string.LOG));
+        }*/
+
+        if (id == R.id.savedialog) {
+            vibrator.vibrate(100);
+            Value.downlog = false;
+        }
+        else if (id == R.id.loadbar) {
+            vibrator.vibrate(100);
+        }
+        else if (id == R.id.datadownload) {
+            vibrator.vibrate(100);
+        }
+        else if (id == R.id.showdialog) {
+            vibrator.vibrate(100);
+        }
+        else if (id == R.id.modifypassword) {
+            vibrator.vibrate(100);
+        }
+        else if (id == R.id.nav_share) {
+            vibrator.vibrate(100);
+            if (!Value.downlog) {
+                Value.downlog = true;
+                navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.end) + getString(R.string.LOG));
+            } else {
+                Value.downlog = false;
+                navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.start) + getString(R.string.LOG));
+            }
+        }
+
+        DrawerLayout drawer = findViewById(R.id.user_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.user_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {   //toolbar menu item
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            vibrator.vibrate(100);
+            NewModel.menu.getItem(0).setTitle("");
+            NewModel.menu.getItem(0).setEnabled(false);
+            Log.e(TAG, "viewPager.getCurrentItem() = " + viewPager.getCurrentItem());
+            return true;
+        }
+        NewModel.menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                vibrator.vibrate(100);
+                NewModel.menu.getItem(0).getActionView().setBackgroundResource(0);
+                return false;
+            }
+        });
+
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.user, menu);
+        menu.getItem(0).setEnabled(false);
+        NewModel.menu = menu;
+        return true;
     }
 }

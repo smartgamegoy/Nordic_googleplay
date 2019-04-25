@@ -226,6 +226,14 @@ public class CheckPassword extends AppCompatActivity {
                 runOnUiThread(() -> {
                     byte[] txValue = intents.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
                     String text = new String(txValue, StandardCharsets.UTF_8);
+                    if(text.startsWith("LOG")){
+                        if(text.matches("LOGON")){
+                            Value.downlog = true;
+                        }
+                        else {
+                            Value.downlog = false;
+                        }
+                    }
                     if (Arrays.equals(getbyte, txValue)) {
                         getlist = true;
                     } else if (Arrays.equals(getover, txValue)) {

@@ -203,4 +203,5 @@
     <string name="off">Off</string>
     <string name="out">4~20mA\nOutput</string>
     <string name="output">Output</string>
+    <string name="send">Send</string>
 </resources>

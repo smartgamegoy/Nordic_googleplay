@@ -6,11 +6,15 @@ import android.content.Context;
 import android.os.Vibrator;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.jetec.nordic_googleplay.NewActivity.Parase;
@@ -26,6 +30,7 @@ public class New_WriteDialog {
     private Dialog progressDialog = null;
     private Parase parase = new Parase();
     private CheckEditHint checkEditHint = new CheckEditHint();
+    private Animation animation;
     private byte[] newArray = new byte[7];
     private String TAG = "New_WriteDialog";
 
@@ -35,6 +40,7 @@ public class New_WriteDialog {
 
     public void set_Dialog(Context context, String str, int getlist_i, int i, byte[] ch,
                            Button button, Vibrator vibrator, String s) {
+        animation = AnimationUtils.loadAnimation(context, R.anim.animate);
         progressDialog = showDialog(context, str, getlist_i, i , ch, button, vibrator, s);
         progressDialog.show();
         progressDialog.setCanceledOnTouchOutside(false);
@@ -83,17 +89,22 @@ public class New_WriteDialog {
         by.setOnClickListener(v1 -> {
             vibrator.vibrate(100);
             String gets = editText.getText().toString().trim();
-            byte[] getb = convertString(gets, ch, dp_flag);
-            newArray = getb;
-            StringBuilder hex = new StringBuilder(getb.length * 2);
-            for (byte aData : getb) {
-                hex.append(String.format("%02X", aData));
+            if(!gets.matches("")) {
+                byte[] getb = convertString(gets, ch, dp_flag);
+                newArray = getb;
+                StringBuilder hex = new StringBuilder(getb.length * 2);
+                for (byte aData : getb) {
+                    hex.append(String.format("%02X", aData));
+                }
+                String gethex = hex.toString();
+                Log.e(TAG, "gethex = " + gethex);
+                button.setText(str + "\n" + getnewStr(dp_flag));
+                resetlist(getlist_i, i, getb);
+                NewModel.checkbyte = true;
+                NewModel.menu.getItem(0).setTitle(context.getString(R.string.send));
+                NewModel.menu.getItem(0).setEnabled(true);
+                progressDialog.dismiss();
             }
-            String gethex = hex.toString();
-            Log.e(TAG, "gethex = " + gethex);
-            button.setText(str + "\n" + getnewStr(dp_flag));
-            resetlist(getlist_i, i , getb);
-            progressDialog.dismiss();
         });
 
         bn.setOnClickListener(v12 -> {

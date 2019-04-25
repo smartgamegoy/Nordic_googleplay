@@ -2,10 +2,9 @@ package com.jetec.nordic_googleplay;
 
 import android.content.Context;
 import android.util.Log;
-
+import android.view.Menu;
 import com.jetec.nordic_googleplay.NewActivity.Parase;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +19,7 @@ public class NewModel {
     public static List<byte[]> sub1, sub2, sub3, sub4, sub5, sub6, sub7;
     public static List<List<byte[]>> viewList;
     public static List<String> spinList;
+    public static Menu menu;
 
     public NewModel(){
         super();
@@ -80,5 +80,4 @@ public class NewModel {
         }
         return str;
     }
-
 }

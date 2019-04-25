@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/colortoolbar" />
+    <stroke android:width="3dp"
+        android:color="@color/menu_frame" />
+    <corners android:topLeftRadius="2dp"
+        android:topRightRadius="2dp"
+        android:bottomRightRadius="2dp"
+        android:bottomLeftRadius="2dp"/>
+    <padding android:left="1dp" android:top="1dp" android:right="1dp" android:bottom="1dp"/>
+
+    <selector xmlns:android="http://schemas.android.com/apk/res/android">
+        <item android:drawable="@drawable/normal_btn" android:state_pressed="false"/>
+        <item android:drawable="@drawable/press_btn" android:state_pressed="true"/>
+    </selector>
+</shape>
