@@ -13,7 +13,7 @@ import java.util.List;
 public class ConvertList {
 
     private String TAG = "ConvertList";
-    private JSONArray SQLjson;
+    private JSONArray SQLjson, Reordjson;
 
     public ConvertList() {
         super();
@@ -45,6 +45,27 @@ public class ConvertList {
         Log.e(TAG, "setSQLlist = " + setSQLlist);
         SQLjson = new JSONArray(setSQLlist);
         Log.e(TAG, "SQLjson = " + SQLjson);
+
+        List<String> checkList = new ArrayList<>();
+        checkList.clear();
+        if(NewModel.sub1.size() != 0){
+            checkList.add("1");
+        }if(NewModel.sub2.size() != 0){
+            checkList.add("2");
+        }if(NewModel.sub3.size() != 0){
+            checkList.add("3");
+        }if(NewModel.sub4.size() != 0){
+            checkList.add("4");
+        }if(NewModel.sub5.size() != 0){
+            checkList.add("5");
+        }if(NewModel.sub6.size() != 0){
+            checkList.add("6");
+        }if(NewModel.sub7.size() != 0){
+            checkList.add("7");
+        }
+
+        Reordjson = new JSONArray(checkList);
+        Log.e(TAG, "Reordjson = " + Reordjson);
         /*try {
             List<String> getjson = new ArrayList<>();
             getjson.clear();

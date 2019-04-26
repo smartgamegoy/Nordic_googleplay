@@ -4,12 +4,15 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class SaveSQL extends SQLiteOpenHelper {
 
+    private String TAG = "SaveSQL";
     private final static String table_name = "newdata"; //資料表名
     private final static String db_name = "datasql.db";    //資料庫名
     private static final int VERSION = 2;
+
     public SaveSQL(Context context) {
         super(context, db_name, null, VERSION);
     }
@@ -25,9 +28,9 @@ public class SaveSQL extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {   //ok
         String DATABASE_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + table_name + "(" +
                 "_id INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL," +
-                "num" + " TEXT, " +
+                "model" + " TEXT, " +
                 "savelist" + " TEXT," +
-                "model" + " TEXT" + ")";
+                "numlist" + " TEXT" + ")";
         db.execSQL(DATABASE_CREATE_TABLE);
     }
 
@@ -47,5 +50,22 @@ public class SaveSQL extends SQLiteOpenHelper {
     @Override
     public synchronized void close() {
         super.close();
+    }
+
+    public int getCount(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + table_name, null);
+        return cursor.getCount();
+    }
+
+    public int modelsearch(String model){
+        int count;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor=db.rawQuery("SELECT * FROM " + table_name + " WHERE model=?", new String[]{model});
+
+        count = cursor.getCount();
+        Log.e("myLog","count =" + count);
+        return count;
     }
 }
