@@ -34,7 +34,6 @@ public class SaveDialog {
     private SaveSQL saveSQL;
     private int select_item;
     private DataListView dataListView;
-    private UpdateDialog updateDialog = new UpdateDialog();
     private Vibrator vibrator;
     private View view1;
     private ArrayList<String> SQLdata;
@@ -94,6 +93,7 @@ public class SaveDialog {
 
         close.setOnClickListener(v14 -> {
             vibrator.vibrate(100);
+            saveSQL.close();
             progressDialog.dismiss();
         });
 
@@ -101,6 +101,7 @@ public class SaveDialog {
             vibrator.vibrate(100);
             if (saveSQL.getCount() != 0) {
                 if (select_item != -1) {
+                    UpdateDialog updateDialog = new UpdateDialog();
                     updateDialog.setDialog(context, vibrator, select_item, SQLdata, list);
                 }
             }

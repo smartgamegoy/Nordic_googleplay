@@ -54,6 +54,7 @@ public class UpdateDialog {
 
         bn.setOnClickListener(v12 -> {
             vibrator.vibrate(100);
+            saveSQL.close();
             progressDialog.dismiss();
         });
 
@@ -70,6 +71,7 @@ public class UpdateDialog {
                     listData = saveSQL.fillList(Value.deviceModel);
                     dataListView = new DataListView(context, listData);
                     list.setAdapter(dataListView);
+                    saveSQL.close();
                     progressDialog.dismiss();
                 } else {
                     Toast.makeText(context, context.getString(R.string.same), Toast.LENGTH_SHORT).show();

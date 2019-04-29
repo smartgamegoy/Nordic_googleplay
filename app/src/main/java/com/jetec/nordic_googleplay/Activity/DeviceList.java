@@ -24,6 +24,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
 import com.jetec.nordic_googleplay.Dialog.WriteDialog;
 import com.jetec.nordic_googleplay.NewActivity.CheckPassword;
 import com.jetec.nordic_googleplay.NewActivity.ErrActivity;
@@ -35,8 +36,10 @@ import com.jetec.nordic_googleplay.ViewAdapter.DeviceAdapter;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.SendValue;
 import com.jetec.nordic_googleplay.Value;
+
 import org.json.JSONArray;
 import org.json.JSONException;
+
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,6 +76,7 @@ public class DeviceList extends AppCompatActivity {
     private final String[] C = {"PV", "EH", "EL", "CR"};
     private final String[] D = {"PV", "EH", "EL", "CR"};
     private final String[] E = {"PV", "EH", "EL", "CR"};
+    private final String[] M = {"PV", "EH", "EL", "CR"};
     private final String[] I = {"IH", "IL", "PV", "EH", "EL", "CR", "DP"};
     private final String[] L = {"COUNT", "INTER", "DATE", "TIME", "LOG"};
     private final String[] SP = {"SPK"};
@@ -294,7 +298,7 @@ public class DeviceList extends AppCompatActivity {
                 // Show all the supported services and characteristics on the user interface.
                 //displayGattServices(mBluetoothLeService.getSupportedGattServices());
                 Log.d(TAG, "連線狀態改變");
-                Log.d(TAG,"Value.connected = " + Value.connected);
+                Log.d(TAG, "Value.connected = " + Value.connected);
                 mBluetoothLeService.enableTXNotification();
                 if (!Value.connected)   //測試裝置是否有回傳值
                     new Thread(sendcheck).start();
@@ -316,7 +320,7 @@ public class DeviceList extends AppCompatActivity {
                                 Jsonlist.clear();
                                 Value.model = true;
                                 Value.deviceModel = text;
-                                if(text.contains("Y") || text.contains("Z"))
+                                if (text.contains("Y") || text.contains("Z"))
                                     Value.YMD = true;
                                 String[] arr = text.split("-");
                                 if (arr.length == 3) {  //若型號為舊型，則進入此
@@ -354,6 +358,11 @@ public class DeviceList extends AppCompatActivity {
                                                 String str = aE + (i + 1);
                                                 newList.add(str);
                                             }
+                                        } else if (num2.charAt(i) == 'M') {
+                                            for (String aM : M) {
+                                                String str = aM + (i + 1);
+                                                newList.add(str);
+                                            }
                                         } else if (num2.charAt(i) == 'I') {
                                             for (String aI : I) {
                                                 String str = aI + (i + 1);
@@ -387,7 +396,7 @@ public class DeviceList extends AppCompatActivity {
                                 Log.d(TAG, "訪客密碼 = " + Value.G_word);
                                 Value.connected = true;
                                 check();
-                            }else if(text.matches("ERR")){
+                            } else if (text.matches("ERR")) {
                                 resetmodel();
                             }
                         } else {    //新式型號區域
@@ -472,7 +481,7 @@ public class DeviceList extends AppCompatActivity {
         }
     };
 
-    private void resetmodel(){
+    private void resetmodel() {
         Intent intent = new Intent(this, ErrActivity.class);
         String[] default_model = new String[modelJSON.length()];
         for (int i = 0; i < modelJSON.length(); i++) {

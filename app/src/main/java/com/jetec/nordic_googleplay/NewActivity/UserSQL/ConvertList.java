@@ -46,64 +46,31 @@ public class ConvertList {
         SQLjson = new JSONArray(setSQLlist);
         Log.e(TAG, "SQLjson = " + SQLjson);
 
-        return  SQLjson;
-
-        /*List<String> checkList = new ArrayList<>();
-        checkList.clear();
-        if(NewModel.sub1.size() != 0){
-            checkList.add("1");
-        }if(NewModel.sub2.size() != 0){
-            checkList.add("2");
-        }if(NewModel.sub3.size() != 0){
-            checkList.add("3");
-        }if(NewModel.sub4.size() != 0){
-            checkList.add("4");
-        }if(NewModel.sub5.size() != 0){
-            checkList.add("5");
-        }if(NewModel.sub6.size() != 0){
-            checkList.add("6");
-        }if(NewModel.sub7.size() != 0){
-            checkList.add("7");
-        }
-
-        Reordjson = new JSONArray(checkList);
-        Log.e(TAG, "Reordjson = " + Reordjson);*/
-
-
-        /*try {
-            List<String> getjson = new ArrayList<>();
-            getjson.clear();
-            List<List<String>> testlist = new ArrayList<>();
-            testlist.clear();
-            for (int i = 0; i < SQLjson.length(); i++) {
-                JSONArray newjson = (JSONArray) SQLjson.get(i);
-                for(int j = 0; j < newjson.length(); j++){
-                    getjson.add(newjson.get(j).toString());
-                }
-                testlist.add(getjson);
-            }
-            Log.e(TAG, "testlist = " + testlist);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
+        return SQLjson;
     }
 
-    public JSONArray getnumList(){
+    public JSONArray getnumList() {
         List<String> checkList = new ArrayList<>();
         checkList.clear();
-        if(NewModel.sub1.size() != 0){
+        if (NewModel.sub1.size() != 0) {
             checkList.add("1");
-        }if(NewModel.sub2.size() != 0){
+        }
+        if (NewModel.sub2.size() != 0) {
             checkList.add("2");
-        }if(NewModel.sub3.size() != 0){
+        }
+        if (NewModel.sub3.size() != 0) {
             checkList.add("3");
-        }if(NewModel.sub4.size() != 0){
+        }
+        if (NewModel.sub4.size() != 0) {
             checkList.add("4");
-        }if(NewModel.sub5.size() != 0){
+        }
+        if (NewModel.sub5.size() != 0) {
             checkList.add("5");
-        }if(NewModel.sub6.size() != 0){
+        }
+        if (NewModel.sub6.size() != 0) {
             checkList.add("6");
-        }if(NewModel.sub7.size() != 0){
+        }
+        if (NewModel.sub7.size() != 0) {
             checkList.add("7");
         }
 
@@ -111,5 +78,40 @@ public class ConvertList {
         Log.e(TAG, "Reordjson = " + Recordjson);
 
         return Recordjson;
+    }
+
+    public void getloadlist(String savelist) {
+        try {
+            List<String> getjson = new ArrayList<>();
+            getjson.clear();
+            List<List<String>> getlist = new ArrayList<>();
+            getlist.clear();
+            JSONArray convertlist = new JSONArray(savelist);
+            Log.e(TAG, "convertlist = " + convertlist.length());
+            for (int i = 0; i < convertlist.length(); i++) {
+                JSONArray newjson = (JSONArray) convertlist.get(i);
+                for (int j = 0; j < newjson.length(); j++) {
+                    getjson.add(newjson.get(j).toString());
+                }
+                getlist.add(getjson);
+            }
+            Log.e(TAG, "getlist = " + getlist);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getloadnumlist(String numlist) {
+        try {
+            List<String> getjson = new ArrayList<>();
+            getjson.clear();
+            JSONArray convertlist = new JSONArray(numlist);
+            for (int i = 0; i < convertlist.length(); i++) {
+                getjson.add(convertlist.get(i).toString());
+            }
+            Log.e(TAG, "getjson = " + getjson);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

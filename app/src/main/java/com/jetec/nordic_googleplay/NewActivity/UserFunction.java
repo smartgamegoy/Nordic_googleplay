@@ -34,6 +34,7 @@ import android.view.View;
 import com.jetec.nordic_googleplay.Activity.MainActivity;
 import com.jetec.nordic_googleplay.Dialog.ModifyPassword;
 import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToHex;
+import com.jetec.nordic_googleplay.NewActivity.New_Dialog.LoadDialog;
 import com.jetec.nordic_googleplay.NewActivity.New_Dialog.SaveDialog;
 import com.jetec.nordic_googleplay.NewActivity.UserSQL.ConvertList;
 import com.jetec.nordic_googleplay.NewActivity.ViewAdapter.*;
@@ -461,34 +462,12 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                 Recordjson = convertList.getnumList();
                 SaveDialog saveDialog = new SaveDialog();
                 saveDialog.setDialog(this, vibrator, SQLjson, Recordjson);
-
-
-
-                /*ConvertList convertList = new ConvertList();
-                convertList.bytetoString();*/
-
-                /*String a = "03010000000005";
-                ByteToHex byteToHex = new ByteToHex();
-                byte[] b = byteToHex.hex2Byte(a);
-                StringBuilder hex = new StringBuilder(b.length * 2);
-                for (byte aData : b) {
-                    hex.append(String.format("%02X", aData));
-                }
-                String gethex = hex.toString();
-                Log.e(TAG, "b = " + gethex);
-                byte[] c = NewModel.viewList.get(0).get(0);
-                StringBuilder hex2 = new StringBuilder(c.length * 2);
-                for (byte aData : c) {
-                    hex2.append(String.format("%02X", aData));
-                }
-                String gethex2 = hex2.toString();
-                Log.e(TAG, "c = " + gethex2);
-                Log.e(TAG, "b?c = " + Arrays.equals(b, c));*/
             }
         } else if (id == R.id.loadbar) {
             vibrator.vibrate(100);
             if (Value.passwordFlag != 4) {
-
+                LoadDialog loadDialog = new LoadDialog();
+                loadDialog.setDialog(this, vibrator);
             }
         } else if (id == R.id.datadownload) {
             vibrator.vibrate(100);
@@ -555,7 +534,6 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         if (id == R.id.action_settings) {
             if (Value.passwordFlag != 4) {
                 vibrator.vibrate(100);
-                //NewModel.checkbyte
                 NewModel.menu.getItem(0).setTitle("");
                 NewModel.menu.getItem(0).setEnabled(false);
                 newModel.checkList(this);
