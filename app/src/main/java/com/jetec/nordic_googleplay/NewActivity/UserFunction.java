@@ -34,12 +34,16 @@ import android.view.View;
 import com.jetec.nordic_googleplay.Activity.MainActivity;
 import com.jetec.nordic_googleplay.Dialog.ModifyPassword;
 import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToHex;
+import com.jetec.nordic_googleplay.NewActivity.New_Dialog.SaveDialog;
 import com.jetec.nordic_googleplay.NewActivity.UserSQL.ConvertList;
 import com.jetec.nordic_googleplay.NewActivity.ViewAdapter.*;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Value;
+
+import org.json.JSONArray;
+
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -451,8 +455,18 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         if (id == R.id.savedialog) {
             vibrator.vibrate(100);
             if (Value.passwordFlag != 4) {
+                JSONArray SQLjson, Recordjson;
                 ConvertList convertList = new ConvertList();
-                convertList.bytetoString();
+                SQLjson = convertList.getsetlist();
+                Recordjson = convertList.getnumList();
+                SaveDialog saveDialog = new SaveDialog();
+                saveDialog.setDialog(this, vibrator, SQLjson, Recordjson);
+
+
+
+                /*ConvertList convertList = new ConvertList();
+                convertList.bytetoString();*/
+
                 /*String a = "03010000000005";
                 ByteToHex byteToHex = new ByteToHex();
                 byte[] b = byteToHex.hex2Byte(a);
