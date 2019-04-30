@@ -3,6 +3,7 @@ package com.jetec.nordic_googleplay.NewActivity.New_Dialog;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Vibrator;
 import android.support.constraint.ConstraintLayout;
@@ -16,6 +17,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.jetec.nordic_googleplay.NewActivity.EmptyClass;
+import com.jetec.nordic_googleplay.NewActivity.Listener.GetStatus;
 import com.jetec.nordic_googleplay.NewActivity.UserSQL.ConvertList;
 import com.jetec.nordic_googleplay.NewActivity.UserSQL.SaveSQL;
 import com.jetec.nordic_googleplay.R;
@@ -46,19 +49,19 @@ public class LoadDialog {
         super();
     }
 
-    public void setDialog(Context context, Vibrator vibrator){
+    public void setDialog(Context context, Vibrator vibrator, GetStatus getStatus){
         this.vibrator = vibrator;
         saveSQL = new SaveSQL(context);
         listData = new ArrayList<>();
         SQLdata = new ArrayList<>();
         listData.clear();
         SQLdata.clear();
-        progressDialog = showDialog(context, vibrator);
+        progressDialog = showDialog(context, vibrator, getStatus);
         progressDialog.show();
         progressDialog.setCanceledOnTouchOutside(false);
     }
 
-    private Dialog showDialog(Context context, Vibrator vibrator){
+    private Dialog showDialog(Context context, Vibrator vibrator, GetStatus getStatus){
         Screen screen = new Screen(context);
         DisplayMetrics dm = screen.size();
         Dialog progressDialog = new Dialog(context);
@@ -97,18 +100,23 @@ public class LoadDialog {
 
         by.setOnClickListener(v12 -> {
             vibrator.vibrate(100);
-            //JSONArray a = data_table.getJSON(dataList.getItem(select_item));
-            listData = saveSQL.fillList(Value.deviceModel);
-            HashMap<String, String> getitem = new HashMap<>();
-            getitem.clear();
-            getitem = listData.get(select_item);
-            ConvertList convertList = new ConvertList();
+            if(select_item != -1) {
+                //JSONArray a = data_table.getJSON(dataList.getItem(select_item));
+                listData = saveSQL.fillList(Value.deviceModel);
+                HashMap<String, String> getitem = new HashMap<>();
+                getitem.clear();
+                getitem = listData.get(select_item);
+                String savelist = getitem.get("savelist");
+                String numlist = getitem.get("numlist");
+                getStatus.readytointent(savelist, numlist);
+
+            /*ConvertList convertList = new ConvertList();
             convertList.getloadlist(getitem.get("savelist"));
-            convertList.getloadnumlist(getitem.get("numlist"));
-            Log.e(TAG, "listData.get()" + listData.get(select_item));
-            Log.e(TAG, "getitem.get(\"savelist\")" + getitem.get("savelist"));
-            Log.e(TAG, "getitem.get(\"numlist\")" + getitem.get("numlist"));
-            progressDialog.dismiss();
+            convertList.getloadnumlist(getitem.get("numlist"));*/
+                //Log.e(TAG, "listData.get()" + listData.get(select_item));
+
+                progressDialog.dismiss();
+            }
         });
 
         if (dm.heightPixels > dm.widthPixels) {

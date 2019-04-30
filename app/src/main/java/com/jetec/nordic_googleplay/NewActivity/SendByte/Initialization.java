@@ -23,6 +23,7 @@ public class Initialization {
     private final String[] C = {"PV", "EH", "EL", "CR"};
     private final String[] D = {"PV", "EH", "EL", "CR"};
     private final String[] E = {"PV", "EH", "EL", "CR"};
+    private final String[] M = {"PV", "EH", "EL", "CR"};
     private final String[] I = {"PV", "EH", "EL", "IH", "IL", "CR"};
     private final String[] L = {"COUNT", "INTER", "DATE", "TIME", "LOG"};
     private final String[] SP = {"SPK"};
@@ -142,7 +143,25 @@ public class Initialization {
                     str = RL[j] + (i + 1) + "+" + "0";
                     send.sendinitial(str);
                 }
-            } else if (model.get(i).toString().matches("I")) {  //9999~-999
+            }else if (model.get(i).toString().matches("M")) {  //0~1000
+                for (int j = 0; j < M.length; j++) {
+                    if (M[j].matches("PV")) {
+                        str = M[j] + (i + 1) + "+" + "0";
+                    } else if (M[j].matches("EH")) {
+                        str = M[j] + (i + 1) + "+" + "1000";
+                    } else if (M[j].matches("EL")) {
+                        str = M[j] + (i + 1) + "+" + "0";
+                    } else if (M[j].matches("CR")) {
+                        str = M[j] + (i + 1) + "+" + "0";
+                    }
+                    send.sendinitial(str);
+                }
+                for (int j = 0; j < RL.length; j++) {
+                    str = RL[j] + (i + 1) + "+" + "0";
+                    send.sendinitial(str);
+                }
+            }
+            else if (model.get(i).toString().matches("I")) {  //9999~-999
                 for (int j = 0; j < I.length; j++) {
                     if (I[j].matches("IH")) {
                         str = I[j] + (i + 1) + "+" + "9999";

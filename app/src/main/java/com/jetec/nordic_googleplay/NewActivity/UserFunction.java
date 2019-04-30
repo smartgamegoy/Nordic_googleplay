@@ -33,7 +33,8 @@ import android.view.MenuItem;
 import android.view.View;
 import com.jetec.nordic_googleplay.Activity.MainActivity;
 import com.jetec.nordic_googleplay.Dialog.ModifyPassword;
-import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToHex;
+import com.jetec.nordic_googleplay.NewActivity.Listener.GetStatus;
+import com.jetec.nordic_googleplay.NewActivity.Listener.LoadListener;
 import com.jetec.nordic_googleplay.NewActivity.New_Dialog.LoadDialog;
 import com.jetec.nordic_googleplay.NewActivity.New_Dialog.SaveDialog;
 import com.jetec.nordic_googleplay.NewActivity.UserSQL.ConvertList;
@@ -42,18 +43,15 @@ import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Value;
-
 import org.json.JSONArray;
-
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-public class UserFunction extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class UserFunction extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoadListener {
 
     private String TAG = "UserFunction";
     private Vibrator vibrator;
@@ -70,6 +68,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
     private SetPagerAdapter setPagerAdapter = new SetPagerAdapter();
     private NameView nameView = new NameView();
     private NavigationView navigationView;
+    private GetStatus getStatus = new GetStatus();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -466,8 +465,9 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.loadbar) {
             vibrator.vibrate(100);
             if (Value.passwordFlag != 4) {
+                getStatus.setListener(this);
                 LoadDialog loadDialog = new LoadDialog();
-                loadDialog.setDialog(this, vibrator);
+                loadDialog.setDialog(this, vibrator, getStatus);
             }
         } else if (id == R.id.datadownload) {
             vibrator.vibrate(100);
@@ -551,5 +551,17 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         menu.getItem(0).setEnabled(false);
         NewModel.menu = menu;
         return true;
+    }
+
+    @Override
+    public void update(String str1, String str2){
+        Log.e(TAG, "savelist = " + str1);
+        Log.e(TAG, "numlist = " + str2);
+        Intent intent = new Intent(this, EmptyClass.class);
+        intent.putExtra("savelist", str1);
+        intent.putExtra("numlist", str2);
+        intent.putExtra("default_model", default_model);
+        startActivity(intent);
+        finish();
     }
 }

@@ -80,15 +80,15 @@ public class ConvertList {
         return Recordjson;
     }
 
-    public void getloadlist(String savelist) {
+    public List<List<String>> getloadlist(String savelist) {
+        List<List<String>> getlist = new ArrayList<>();
+        getlist.clear();
         try {
-            List<String> getjson = new ArrayList<>();
-            getjson.clear();
-            List<List<String>> getlist = new ArrayList<>();
-            getlist.clear();
             JSONArray convertlist = new JSONArray(savelist);
             Log.e(TAG, "convertlist = " + convertlist.length());
             for (int i = 0; i < convertlist.length(); i++) {
+                List<String> getjson = new ArrayList<>();
+                getjson.clear();
                 JSONArray newjson = (JSONArray) convertlist.get(i);
                 for (int j = 0; j < newjson.length(); j++) {
                     getjson.add(newjson.get(j).toString());
@@ -99,12 +99,13 @@ public class ConvertList {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return getlist;
     }
 
-    public void getloadnumlist(String numlist) {
+    public List<String> getloadnumlist(String numlist) {
+        List<String> getjson = new ArrayList<>();
+        getjson.clear();
         try {
-            List<String> getjson = new ArrayList<>();
-            getjson.clear();
             JSONArray convertlist = new JSONArray(numlist);
             for (int i = 0; i < convertlist.length(); i++) {
                 getjson.add(convertlist.get(i).toString());
@@ -113,5 +114,6 @@ public class ConvertList {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return getjson;
     }
 }
