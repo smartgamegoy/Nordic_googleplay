@@ -95,6 +95,8 @@ public class AlertButton {
             else {
                 button.setText(str + "\n" + context.getString(R.string.on));
             }
+            NewModel.menu.getItem(0).setTitle(context.getString(R.string.send));
+            NewModel.menu.getItem(0).setEnabled(true);
             setNewbyte(getlist_i, i, setSwitch);
             //setNewbyte(getlist_i, i, spinnerList);
             progressDialog.dismiss();

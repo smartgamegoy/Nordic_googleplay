@@ -74,7 +74,7 @@ public class EmptyClass extends AppCompatActivity {
     }
 
     private void showlist(String savelist, String numlist) {
-        setContentView(R.layout.user_function);
+        setContentView(R.layout.empty);
 
         mHandler = new Handler();
         sendHandler = new Handler();
@@ -140,7 +140,7 @@ public class EmptyClass extends AppCompatActivity {
             sendHandler.postDelayed(() ->{
                 Log.e(TAG, "readytosend.get(finali) = " + readytosend.get(finali));
                 send.sendlist(readytosend.get(finali));
-            } , 3000 * count);
+            } , 3200 * count);
             count++;
         }
 

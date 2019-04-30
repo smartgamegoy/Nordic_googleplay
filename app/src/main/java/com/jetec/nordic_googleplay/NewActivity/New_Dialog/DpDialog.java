@@ -128,7 +128,8 @@ public class DpDialog {
                     }
                     Log.e(TAG, "sb1 = " + gstr);
                 }
-
+                NewModel.menu.getItem(0).setTitle(context.getString(R.string.send));
+                NewModel.menu.getItem(0).setEnabled(true);
                 resetButtonView(context, list, s, buttonList, getlist_i);
             }
             progressDialog.dismiss();
@@ -149,7 +150,8 @@ public class DpDialog {
     private void resetButtonView(Context context, List<byte[]> list, String s, List<Button> buttonList, int getlist_i) {
         //int point;
         int count = list.size();
-        //NewModel.viewList.set(getlist_i, list);
+        Log.e(TAG, "list = " + NewModel.viewList.get(getlist_i).equals(list));
+        NewModel.viewList.set(getlist_i, list);
         //byte[] getarr = list.get(0);
         //byte[] getdp = Arrays.copyOfRange(getarr, 2, 3);
 
@@ -384,8 +386,10 @@ public class DpDialog {
     private List<byte[]> getList(int i){
         List<byte[]> list = new ArrayList<>();
         list.clear();
-
-        list = NewModel.viewList.get(i);
+        for(int j = 0; j < NewModel.viewList.get(i).size(); j++){
+            byte[] newbyte = Arrays.copyOfRange(NewModel.viewList.get(i).get(j), 0, NewModel.viewList.get(i).get(j).length);
+            list.add(newbyte);
+        }
 
         return list;
     }

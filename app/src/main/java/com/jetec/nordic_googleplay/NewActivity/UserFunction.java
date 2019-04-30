@@ -1,5 +1,6 @@
 package com.jetec.nordic_googleplay.NewActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
@@ -12,6 +13,7 @@ import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
@@ -31,21 +33,27 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
 import com.jetec.nordic_googleplay.Activity.MainActivity;
 import com.jetec.nordic_googleplay.Dialog.ModifyPassword;
+import com.jetec.nordic_googleplay.Dialog.WriteDialog;
 import com.jetec.nordic_googleplay.NewActivity.Listener.GetStatus;
 import com.jetec.nordic_googleplay.NewActivity.Listener.LoadListener;
 import com.jetec.nordic_googleplay.NewActivity.New_Dialog.LoadDialog;
 import com.jetec.nordic_googleplay.NewActivity.New_Dialog.SaveDialog;
+import com.jetec.nordic_googleplay.NewActivity.SendByte.SendString;
 import com.jetec.nordic_googleplay.NewActivity.UserSQL.ConvertList;
 import com.jetec.nordic_googleplay.NewActivity.ViewAdapter.*;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Value;
+
 import org.json.JSONArray;
+
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -187,7 +195,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                     String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                     byte[] txValue = intents.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
                     String text = new String(txValue, StandardCharsets.UTF_8);
-                    Log.e(TAG, "[" + currentDateTimeString + "] send: " + text);
+                    Log.e(TAG, "[" + currentDateTimeString + "] get: " + text);
                 });
             }
         }
@@ -499,11 +507,57 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
             vibrator.vibrate(100);
             if (Value.passwordFlag != 4) {
                 if (!Value.downlog) {
-                    Value.downlog = true;
-                    navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.end) + getString(R.string.LOG));
+                    new AlertDialog.Builder(this)
+                            .setTitle(R.string.warning)
+                            .setMessage(R.string.restart)
+                            .setPositiveButton(R.string.butoon_yes, (dialog, which) -> {
+                                vibrator.vibrate(100);
+                                WriteDialog writeDialog = new WriteDialog();
+                                writeDialog.set_Dialog(this, true);
+                                SendString sendString = new SendString();
+                                Handler handler1 = new Handler();   //sendtime
+                                Handler handler2 = new Handler();   //send start log
+                                Value.downlog = true;
+                                navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.end) + getString(R.string.LOG));
+                                String model = Value.deviceModel;
+                                String[] arr = model.split("-");
+                                String name = arr[2];
+                                if(name.contains("Y") || name.contains("Z")){
+                                    Log.e(TAG, "name = " + name);
+                                    sendString.sendstr("START");
+                                    writeDialog.closeDialog();
+                                }
+                                else {
+                                    Log.e(TAG, "name = " + name);
+                                    @SuppressLint("SimpleDateFormat")
+                                    SimpleDateFormat get_date = new SimpleDateFormat("yyMMdd");
+                                    @SuppressLint("SimpleDateFormat")
+                                    SimpleDateFormat get_time = new SimpleDateFormat("HHmmss");
+                                    Date date = new Date();
+                                    String strDate = get_date.format(date);
+                                    String strtime = get_time.format(date);
+                                    sendString.sendstr("DATE" + strDate);
+                                    handler1.postDelayed(() -> {
+                                        sendString.sendstr("TIME" + strtime);
+                                        Log.e(TAG,"strtime = " + strtime);
+                                        handler2.postDelayed(() -> {
+                                            sendString.sendstr("START");
+                                            Log.e(TAG,"START = ");
+                                            writeDialog.closeDialog();
+                                        }, 500);
+                                    }, 500);
+                                }
+
+                            })
+                            .setNegativeButton(R.string.butoon_no, (dialog, which) -> {
+                                vibrator.vibrate(100);
+                            })
+                            .show();
                 } else {
                     Value.downlog = false;
                     navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.start) + getString(R.string.LOG));
+                    SendString sendString = new SendString();
+                    sendString.sendstr("END");
                 }
             }
         }
@@ -554,7 +608,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void update(String str1, String str2){
+    public void update(String str1, String str2) {
         Log.e(TAG, "savelist = " + str1);
         Log.e(TAG, "numlist = " + str2);
         Intent intent = new Intent(this, EmptyClass.class);

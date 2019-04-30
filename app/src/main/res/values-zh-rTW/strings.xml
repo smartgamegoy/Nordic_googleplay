@@ -204,4 +204,5 @@
     <string name="out">4~20mA\n輸出</string>
     <string name="output">輸出</string>
     <string name="send">發送</string>
+    <string name="loading">載入中</string>
 </resources>

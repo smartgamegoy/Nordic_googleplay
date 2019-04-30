@@ -118,7 +118,7 @@ public class Send {
                 snedthislist(getList);
                 listsize--;
             }
-        }, 120);
+        }, 150);
     }
 
     private void sendbyte(byte[] getbyte) {

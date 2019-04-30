@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Vibrator;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -101,21 +102,24 @@ public class LoadDialog {
         by.setOnClickListener(v12 -> {
             vibrator.vibrate(100);
             if(select_item != -1) {
-                //JSONArray a = data_table.getJSON(dataList.getItem(select_item));
-                listData = saveSQL.fillList(Value.deviceModel);
-                HashMap<String, String> getitem = new HashMap<>();
-                getitem.clear();
-                getitem = listData.get(select_item);
-                String savelist = getitem.get("savelist");
-                String numlist = getitem.get("numlist");
-                getStatus.readytointent(savelist, numlist);
-
-            /*ConvertList convertList = new ConvertList();
-            convertList.getloadlist(getitem.get("savelist"));
-            convertList.getloadnumlist(getitem.get("numlist"));*/
-                //Log.e(TAG, "listData.get()" + listData.get(select_item));
-
-                progressDialog.dismiss();
+                new AlertDialog.Builder(context)
+                        .setTitle(context.getString(R.string.warning))
+                        .setMessage(context.getString(R.string.warn))
+                        .setPositiveButton(R.string.butoon_yes, (dialog, which) -> {
+                            vibrator.vibrate(100);
+                            listData = saveSQL.fillList(Value.deviceModel);
+                            HashMap<String, String> getitem = new HashMap<>();
+                            getitem.clear();
+                            getitem = listData.get(select_item);
+                            String savelist = getitem.get("savelist");
+                            String numlist = getitem.get("numlist");
+                            getStatus.readytointent(savelist, numlist);
+                            progressDialog.dismiss();
+                        })
+                        .setNeutralButton(R.string.butoon_no, (dialog, which) -> {
+                            vibrator.vibrate(100);
+                        })
+                        .show();
             }
         });
 

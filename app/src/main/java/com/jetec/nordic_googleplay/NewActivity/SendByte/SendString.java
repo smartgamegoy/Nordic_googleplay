@@ -51,7 +51,7 @@ public class SendString {
                 }
                 //sendHandler.removeCallbacksAndMessages(null);
             }
-        }, 120);
+        }, 150);
     }
 
     private void sendbyte(byte[] getbyte) {
