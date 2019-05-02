@@ -112,6 +112,7 @@ public class ErrActivity extends AppCompatActivity {
                 mHandler.postDelayed(() -> {
                     initialization.setinitial(str, mBluetoothLeService);
                     initialization.startinitial();
+                    initialization.nameinitial();
                     devicelist();
                     mHandler.removeCallbacksAndMessages(null);
                 }, 2000);

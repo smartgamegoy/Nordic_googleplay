@@ -46,10 +46,36 @@ public class Initialization {
     public void initialname() {
         try {
             sleep(100);
+            send.sendString("NAMEJTC");
+            sleep(100);
+            send.sendString("PWR=000000");
+            sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void nameinitial() {
+        try {
             send.sendString("NAMEJTC-N");
             sleep(100);
             send.sendString("PWR=000000");
             sleep(100);
+            send.sendString("INTER00030");
+            sleep(100);
+            if (model.contains('Y') || model.contains('Z')) {
+                @SuppressLint("SimpleDateFormat")
+                SimpleDateFormat get_date = new SimpleDateFormat("yyMMdd");
+                @SuppressLint("SimpleDateFormat")
+                SimpleDateFormat get_time = new SimpleDateFormat("HHmmss");
+                Date date = new Date();
+                String strDate = get_date.format(date);
+                String strtime = get_time.format(date);
+                send.sendString("DATE" + strDate);
+                sleep(100);
+                send.sendString("TIME" + strtime);
+                sleep(100);
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -143,7 +169,7 @@ public class Initialization {
                     str = RL[j] + (i + 1) + "+" + "0";
                     send.sendinitial(str);
                 }
-            }else if (model.get(i).toString().matches("M")) {  //0~1000
+            } else if (model.get(i).toString().matches("M")) {  //0~1000
                 for (int j = 0; j < M.length; j++) {
                     if (M[j].matches("PV")) {
                         str = M[j] + (i + 1) + "+" + "0";
@@ -160,8 +186,7 @@ public class Initialization {
                     str = RL[j] + (i + 1) + "+" + "0";
                     send.sendinitial(str);
                 }
-            }
-            else if (model.get(i).toString().matches("I")) {  //9999~-999
+            } else if (model.get(i).toString().matches("I")) {  //9999~-999
                 for (int j = 0; j < I.length; j++) {
                     if (I[j].matches("IH")) {
                         str = I[j] + (i + 1) + "+" + "9999";

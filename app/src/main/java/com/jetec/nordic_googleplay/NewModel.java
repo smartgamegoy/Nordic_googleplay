@@ -19,6 +19,7 @@ public class NewModel {
     public static BluetoothLeService mBluetoothLeService;
     public static boolean checkmodel = false;
     public static List<byte[]> sub1, sub2, sub3, sub4, sub5, sub6, sub7;
+    public static List<byte[]> list08, list09;
     public static List<List<byte[]>> viewList, saveList;
     public static List<String> spinList;
     public static Menu menu;

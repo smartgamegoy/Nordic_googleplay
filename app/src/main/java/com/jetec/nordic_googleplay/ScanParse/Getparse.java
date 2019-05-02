@@ -107,15 +107,16 @@ public class Getparse {
 
             text = str2;
         }
-        Log.e(TAG,"s1 = " + s1);
+
+        /*Log.e(TAG,"s1 = " + s1);
         Log.e(TAG,"s2 = " + s2);
         Log.e(TAG,"s3 = " + s3);
         Log.e(TAG,"s4 = " + s4);
         Log.e(TAG,"s5 = " + s5);
         Log.e(TAG,"s6 = " + s6);
-        Log.e(TAG,"s7 = " + s7);
+        Log.e(TAG,"s7 = " + s7);*/
 
-        for(int i = 0; i < sb1.size(); i++){
+        /*for(int i = 0; i < sb1.size(); i++){
             String[] arr = byteToHex.hexstring(sb1.get(i));
             StringBuilder str = new StringBuilder();
             for (String s : arr) {
@@ -138,7 +139,7 @@ public class Getparse {
                 str.append(s).append(" ");
             }
             Log.e(TAG,"sb3 = " + str);
-        }
+        }*/
 
         return text;
     }

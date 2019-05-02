@@ -35,12 +35,11 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.jetec.nordic_googleplay.Activity.MainActivity;
-import com.jetec.nordic_googleplay.Dialog.ModifyPassword;
-import com.jetec.nordic_googleplay.Dialog.WriteDialog;
-import com.jetec.nordic_googleplay.NewActivity.Listener.GetStatus;
-import com.jetec.nordic_googleplay.NewActivity.Listener.LoadListener;
-import com.jetec.nordic_googleplay.NewActivity.New_Dialog.LoadDialog;
-import com.jetec.nordic_googleplay.NewActivity.New_Dialog.SaveDialog;
+import com.jetec.nordic_googleplay.Dialog.*;
+import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToHex;
+import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToInt;
+import com.jetec.nordic_googleplay.NewActivity.Listener.*;
+import com.jetec.nordic_googleplay.NewActivity.New_Dialog.*;
 import com.jetec.nordic_googleplay.NewActivity.SendByte.SendString;
 import com.jetec.nordic_googleplay.NewActivity.UserSQL.ConvertList;
 import com.jetec.nordic_googleplay.NewActivity.ViewAdapter.*;
@@ -55,9 +54,12 @@ import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+
+import static java.lang.Thread.sleep;
 
 public class UserFunction extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoadListener {
 
@@ -67,9 +69,11 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
     private BluetoothAdapter mBluetoothAdapter;
     private boolean s_connect = false;
     private String[] default_model;
+    private Handler mHandler;
     private Intent intents;
     private List<View> listview;
-    private byte[] getbyte = {0x42, 0x59, 0x54, 0x45}, getover = {0x4F, 0x56, 0x45, 0x52};
+    private byte[] getbyte = {0x42, 0x59, 0x54, 0x45}, getover = {0x4F, 0x56, 0x45, 0x52},
+            getend = {0x45, 0x4E, 0x44, 0x00}, getnull = {0x4E, 0x55, 0x4C, 0x4C};
     private SetViewPager setViewPager = new SetViewPager();
     private NewModel newModel = new NewModel();
     private LastViewPager lastViewPager = new LastViewPager();
@@ -77,6 +81,14 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
     private NameView nameView = new NameView();
     private NavigationView navigationView;
     private GetStatus getStatus = new GetStatus();
+    private ByteToHex byteToHex = new ByteToHex();
+    private ByteToInt byteToInt = new ByteToInt();
+    private CheckDownload checkDownload = new CheckDownload();
+    private byte[] getbyte08, getbyte09;    //savedownlod
+    private String logdate, logtime;    //savedownlod
+    private int logcounter, loginter;   //savedownlod
+    private int getflag = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -195,7 +207,75 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                     String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                     byte[] txValue = intents.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
                     String text = new String(txValue, StandardCharsets.UTF_8);
-                    Log.e(TAG, "[" + currentDateTimeString + "] get: " + text);
+                    if (Value.opendialog) {
+                        if (Arrays.equals(getend, txValue)) {
+                            navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.start) + getString(R.string.LOG));
+                        } else if (Arrays.equals(getover, txValue)) {
+                            Value.opendialog = false;
+                            mHandler.removeCallbacksAndMessages(null);
+                            Log.e(TAG, "ENDING");
+                            checkDownload.checklist(UserFunction.this, vibrator, mBluetoothLeService, logdate, logtime, logcounter, loginter);
+                            Log.e(TAG, "list08 = " + NewModel.list08.size());
+                            Log.e(TAG, "list09 = " + NewModel.list09.size());
+                        } else if (text.contains("DATE")) {
+                            Log.e(TAG, "text = " + text);
+                            text = text.replace("DATE", "");
+                            logdate = text;
+                            Log.e(TAG, "logdate = " + logdate);
+                        } else if (text.contains("TIME")) {
+                            Log.e(TAG, "text = " + text);
+                            text = text.replace("TIME", "");
+                            logtime = text;
+                            Log.e(TAG, "logtime = " + logtime);
+                        } else if (text.contains("COUNT")) {
+                            Log.e(TAG, "text = " + text);
+                            text = text.replace("COUNT", "");
+                            logcounter = Integer.valueOf(text);
+                            Log.e(TAG, "logcounter = " + logcounter);
+                        } else if (text.contains("INTER")) {
+                            Log.e(TAG, "text = " + text);
+                            text = text.replace("INTER", "");
+                            loginter = Integer.valueOf(text);
+                            Log.e(TAG, "loginter = " + loginter);
+                        } else {
+                            byte[] data = Arrays.copyOfRange(txValue, 0, 1);
+                            String[] arr = byteToHex.hexstring(txValue);
+                            StringBuilder str = new StringBuilder();
+                            for (String s : arr) {
+                                str.append(s).append(" ");
+                            }
+                            if (data[0] == 0x08) {
+                                getflag = 1;
+                                getbyte08 = txValue;
+                                Log.e(TAG, "08 = " + str);
+                            } else if (data[0] == 0x09) {
+                                getflag = 1;
+                                getbyte09 = txValue;
+                                Log.e(TAG, "09 = " + str);
+                            }
+                            if(getbyte08 != null && getbyte09 != null){
+                                getflag = 0;
+                                NewModel.list08.add(getbyte08);
+                                NewModel.list09.add(getbyte09);
+                                getbyte08 = null;
+                                getbyte09 = null;
+                                mHandler.removeCallbacksAndMessages(null);
+                                checkhandler();
+                            }
+                            else {
+                                if(getflag == 0) {
+                                    NewModel.list08.add(getnull);
+                                    NewModel.list09.add(getnull);
+                                    getbyte08 = null;
+                                    getbyte09 = null;
+                                    mHandler.removeCallbacksAndMessages(null);
+                                    checkhandler();
+                                }
+                            }
+                        }
+                    } else {
+                        Log.e(TAG, "[" + currentDateTimeString + "] get: " + text);
+                    }
                 });
             }
         }
@@ -368,6 +448,15 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         finish();
     }
 
+    private void checkhandler(){
+        Log.e(TAG, "開始傳");
+        mHandler.postDelayed(() -> {
+            Log.e(TAG, "list08 = " + NewModel.list08.size());
+            Log.e(TAG, "list09 = " + NewModel.list09.size());
+            checkDownload.checklist(UserFunction.this, vibrator, mBluetoothLeService, logdate, logtime, logcounter, loginter);
+        }, 2000);
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -424,6 +513,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                                 mBluetoothAdapter.stopLeScan(mLeScanCallback);
                             Service_close();
                             Value.YMD = false;
+                            Value.downlog = false;
                             Value.connected = false;
                             Value.deviceModel = "";
                             Value.BID = "";
@@ -480,7 +570,33 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.datadownload) {
             vibrator.vibrate(100);
             if (Value.passwordFlag != 4) {
-
+                SendString sendString = new SendString();
+                mHandler = new Handler();
+                NewModel.list08 = new ArrayList<>();
+                NewModel.list09 = new ArrayList<>();
+                NewModel.list08.clear();
+                NewModel.list09.clear();
+                getbyte08 = null;
+                getbyte09 = null;
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.warning)
+                        .setMessage(R.string.stoprecord)
+                        .setPositiveButton(R.string.butoon_yes, (dialog, which) -> {
+                            sendString.sendstr("END");
+                            try {
+                                sleep(100);
+                                sendString.sendstr("DOWNLOAD");
+                                sleep(100);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            Value.opendialog = true;
+                        })
+                        .setNegativeButton(R.string.butoon_no, (dialog, which) -> {
+                            Value.downloading = false;
+                            Log.e(TAG, "取消下載");
+                        })
+                        .show();
             }
         } else if (id == R.id.showdialog) {
             vibrator.vibrate(100);
@@ -522,12 +638,11 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                                 String model = Value.deviceModel;
                                 String[] arr = model.split("-");
                                 String name = arr[2];
-                                if(name.contains("Y") || name.contains("Z")){
+                                if (name.contains("Y") || name.contains("Z")) {
                                     Log.e(TAG, "name = " + name);
                                     sendString.sendstr("START");
                                     writeDialog.closeDialog();
-                                }
-                                else {
+                                } else {
                                     Log.e(TAG, "name = " + name);
                                     @SuppressLint("SimpleDateFormat")
                                     SimpleDateFormat get_date = new SimpleDateFormat("yyMMdd");
@@ -539,10 +654,10 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                                     sendString.sendstr("DATE" + strDate);
                                     handler1.postDelayed(() -> {
                                         sendString.sendstr("TIME" + strtime);
-                                        Log.e(TAG,"strtime = " + strtime);
+                                        Log.e(TAG, "strtime = " + strtime);
                                         handler2.postDelayed(() -> {
                                             sendString.sendstr("START");
-                                            Log.e(TAG,"START = ");
+                                            Log.e(TAG, "START = ");
                                             writeDialog.closeDialog();
                                         }, 500);
                                     }, 500);
