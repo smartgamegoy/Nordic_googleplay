@@ -54,7 +54,7 @@ public class SendString {
         }, 150);
     }
 
-    private void sendbyte(byte[] getbyte) {
+    public void sendbyte(byte[] getbyte) {
         StringBuilder hex = new StringBuilder(getbyte.length * 2);
         for (byte aData : getbyte) {
             hex.append(String.format("%02X", aData));
