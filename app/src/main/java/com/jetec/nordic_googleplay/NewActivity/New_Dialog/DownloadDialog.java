@@ -75,6 +75,8 @@ public class DownloadDialog {
                         sendString.sendstr("END");
                         try {
                             sleep(100);
+                            sendString.sendstr("Delay00010");
+                            sleep(100);
                             sendString.sendstr("DOWNLOAD");
                             sleep(100);
                         } catch (InterruptedException e) {

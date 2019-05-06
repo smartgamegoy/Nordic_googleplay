@@ -71,6 +71,8 @@ import com.jetec.nordic_googleplay.DialogFunction.IH;
 import com.jetec.nordic_googleplay.DialogFunction.IL;
 import com.jetec.nordic_googleplay.DialogFunction.PV;
 import com.jetec.nordic_googleplay.EditManagert.EditChangeName;
+import com.jetec.nordic_googleplay.EditManagert.EditChangeNum;
+import com.jetec.nordic_googleplay.EditManagert.EditChangePV;
 import com.jetec.nordic_googleplay.GetDeviceName;
 import com.jetec.nordic_googleplay.GetDeviceNum;
 import com.jetec.nordic_googleplay.R;
@@ -726,72 +728,37 @@ public class DeviceEngineer extends AppCompatActivity implements NavigationView.
             case "NAME": {  //editChangeName
                 c = true;
                 editText.setHint(getString(R.string.changename));
-                /*editText.setKeyListener(DigitsKeyListener.getInstance(".,$%&^!()-_=+';:|}{[]*→←↘↖、，。?~～#€￠" +
-                        "￡￥abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@>/<"));
-                editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);*/
                 editText.setInputType(InputType.TYPE_CLASS_TEXT);
                 editText.addTextChangedListener(new EditChangeName(editText));
             }
             break;
             case "PV1": {
                 if (Value.name.get(0).toString().matches("T")) {
+                    c = true;
                     editText.setHint(" - 5 ~ 5");
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                             InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    editText.addTextChangedListener(new EditChangePV(editText, "T"));
                 } else if (Value.name.get(0).toString().matches("H")) {
+                    c = true;
                     editText.setHint(" - 10 ~ 10");
                     editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-                        }
-                    });
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                    editText.addTextChangedListener(new EditChangePV(editText, "H"));
+                } else if (Value.name.get(0).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" - 10 ~ 10");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                    editText.addTextChangedListener(new EditChangePV(editText, "M"));
                 } else if (Value.name.get(0).toString().matches("C") ||
                         Value.name.get(0).toString().matches("D") ||
                         Value.name.get(0).toString().matches("E")) {
+                    c = true;
                     editText.setHint(" -500 ~ 500");
                     editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    c = true;
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                    editText.addTextChangedListener(new EditChangePV(editText, Value.name.get(0).toString()));
                 } else if (Value.name.get(0).toString().matches("I")) {
                     c = true;
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
@@ -799,1335 +766,903 @@ public class DeviceEngineer extends AppCompatActivity implements NavigationView.
                     Log.e(TAG, "Value.IDP1 = " + Value.IDP1);
                     if (!Value.IDP1) {
                         editText.setHint(" 999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        editText.addTextChangedListener(new EditChangePV(editText, "I1"));
                     } else {
                         editText.setHint(" 99.9 ~ -99.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangePV(editText, "I1"));
                     }
                 }
             }
             break;
             case "PV2": {
-
                 if (Value.name.get(1).toString().matches("T")) {
+                    c = true;
                     editText.setHint(" - 5 ~ 5");
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                             InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    editText.addTextChangedListener(new EditChangePV(editText, "T"));
                 } else if (Value.name.get(1).toString().matches("H")) {
+                    c = true;
                     editText.setHint(" - 10 ~ 10");
                     editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-                        }
-                    });
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                    editText.addTextChangedListener(new EditChangePV(editText, "H"));
+                } else if (Value.name.get(1).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" - 10 ~ 10");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                    editText.addTextChangedListener(new EditChangePV(editText, "M"));
                 } else if (Value.name.get(1).toString().matches("C") ||
                         Value.name.get(1).toString().matches("D") ||
                         Value.name.get(1).toString().matches("E")) {
+                    c = true;
                     editText.setHint(" -500 ~ 500");
                     editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    c = true;
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                    editText.addTextChangedListener(new EditChangePV(editText, Value.name.get(1).toString()));
                 } else if (Value.name.get(1).toString().matches("I")) {
                     c = true;
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                             InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP2) {
                         editText.setHint(" 999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        editText.addTextChangedListener(new EditChangePV(editText, "I2"));
                     } else {
                         editText.setHint(" 99.9 ~ -99.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangePV(editText, "I2"));
                     }
                 }
             }
             break;
             case "PV3": {
                 if (Value.name.get(2).toString().matches("T")) {
+                    c = true;
                     editText.setHint(" - 5 ~ 5");
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                             InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    editText.addTextChangedListener(new EditChangePV(editText, "T"));
                 } else if (Value.name.get(2).toString().matches("H")) {
+                    c = true;
                     editText.setHint(" - 10 ~ 10");
                     editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-                        }
-                    });
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                    editText.addTextChangedListener(new EditChangePV(editText, "H"));
+                } else if (Value.name.get(2).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" - 10 ~ 10");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                    editText.addTextChangedListener(new EditChangePV(editText, "M"));
                 } else if (Value.name.get(2).toString().matches("C") ||
                         Value.name.get(2).toString().matches("D") ||
                         Value.name.get(2).toString().matches("E")) {
+                    c = true;
                     editText.setHint(" -500 ~ 500");
                     editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    c = true;
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                    editText.addTextChangedListener(new EditChangePV(editText, Value.name.get(2).toString()));
                 } else if (Value.name.get(2).toString().matches("I")) {
                     c = true;
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                             InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP3) {
                         editText.setHint(" 999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        editText.addTextChangedListener(new EditChangePV(editText, "I3"));
                     } else {
                         editText.setHint(" 99.9 ~ -99.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangePV(editText, "I3"));
                     }
                 }
             }
             break;
             case "EH1": {
                 if (Value.name.get(0).toString().matches("T")) {
+                    c = true;
                     editText.setHint(" - 10 ~ 65");
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                             InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    editText.addTextChangedListener(new EditChangeNum(editText, "T"));
                 } else if (Value.name.get(0).toString().matches("H")) {
-                    editText.setHint(" 0 ~ 99");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    c = true;
+                    editText.setHint(" 0 ~ 100");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "H"));
+                } else if (Value.name.get(0).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" 0 ~ 1000");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "M"));
                 } else if (Value.name.get(0).toString().matches("C") ||
                         Value.name.get(0).toString().matches("D") ||
                         Value.name.get(0).toString().matches("E")) {
-                    if (Value.name.get(0).toString().matches("C"))
+                    if (Value.name.get(0).toString().matches("C")) {
                         editText.setHint(" 0 ~ 2000");
-                    else if (Value.name.get(0).toString().matches("D"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "C"));
+                    } else if (Value.name.get(0).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
-                    else if (Value.name.get(0).toString().matches("E"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "D"));
+                    } else if (Value.name.get(0).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "E"));
+                    }
                     c = true;
                 } else if (Value.name.get(0).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP1) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     }
                 }
             }
             break;
             case "EH2": {
                 if (Value.name.get(1).toString().matches("T")) {
+                    c = true;
                     editText.setHint(" - 10 ~ 65");
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                             InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    editText.addTextChangedListener(new EditChangeNum(editText, "T"));
                 } else if (Value.name.get(1).toString().matches("H")) {
-                    editText.setHint(" 0 ~ 99");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    c = true;
+                    editText.setHint(" 0 ~ 100");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "H"));
+                } else if (Value.name.get(1).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" 0 ~ 1000");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "M"));
                 } else if (Value.name.get(1).toString().matches("C") ||
                         Value.name.get(1).toString().matches("D") ||
                         Value.name.get(1).toString().matches("E")) {
-                    if (Value.name.get(1).toString().matches("C"))
+                    if (Value.name.get(1).toString().matches("C")) {
                         editText.setHint(" 0 ~ 2000");
-                    else if (Value.name.get(1).toString().matches("D"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "C"));
+                    } else if (Value.name.get(1).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
-                    else if (Value.name.get(1).toString().matches("E"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "D"));
+                    } else if (Value.name.get(1).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "E"));
+                    }
                     c = true;
                 } else if (Value.name.get(1).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP2) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     }
                 }
             }
             break;
             case "EH3": {
                 if (Value.name.get(2).toString().matches("T")) {
+                    c = true;
                     editText.setHint(" - 10 ~ 65");
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                             InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    editText.addTextChangedListener(new EditChangeNum(editText, "T"));
                 } else if (Value.name.get(2).toString().matches("H")) {
-                    editText.setHint(" 0 ~ 99");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    c = true;
+                    editText.setHint(" 0 ~ 100");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "H"));
+                } else if (Value.name.get(2).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" 0 ~ 1000");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "M"));
                 } else if (Value.name.get(2).toString().matches("C") ||
                         Value.name.get(2).toString().matches("D") ||
                         Value.name.get(2).toString().matches("E")) {
-                    if (Value.name.get(2).toString().matches("C"))
+                    if (Value.name.get(2).toString().matches("C")) {
                         editText.setHint(" 0 ~ 2000");
-                    else if (Value.name.get(2).toString().matches("D"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "C"));
+                    } else if (Value.name.get(2).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
-                    else if (Value.name.get(2).toString().matches("E"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "D"));
+                    } else if (Value.name.get(2).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "E"));
+                    }
                     c = true;
                 } else if (Value.name.get(2).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP3) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     }
                 }
             }
             break;
             case "EL1": {
                 if (Value.name.get(0).toString().matches("T")) {
+                    c = true;
                     editText.setHint(" - 10 ~ 65");
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                             InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    editText.addTextChangedListener(new EditChangeNum(editText, "T"));
                 } else if (Value.name.get(0).toString().matches("H")) {
-                    editText.setHint(" 0 ~ 99");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    c = true;
+                    editText.setHint(" 0 ~ 100");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "H"));
+                } else if (Value.name.get(0).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" 0 ~ 1000");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "M"));
                 } else if (Value.name.get(0).toString().matches("C") ||
                         Value.name.get(0).toString().matches("D") ||
                         Value.name.get(0).toString().matches("E")) {
-                    if (Value.name.get(0).toString().matches("C"))
+                    if (Value.name.get(0).toString().matches("C")) {
                         editText.setHint(" 0 ~ 2000");
-                    else if (Value.name.get(0).toString().matches("D"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "C"));
+                    } else if (Value.name.get(0).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
-                    else if (Value.name.get(0).toString().matches("E"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "D"));
+                    } else if (Value.name.get(0).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "E"));
+                    }
                     c = true;
                 } else if (Value.name.get(0).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP1) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     }
                 }
             }
             break;
             case "EL2": {
                 if (Value.name.get(1).toString().matches("T")) {
+                    c = true;
                     editText.setHint(" - 10 ~ 65");
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                             InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    editText.addTextChangedListener(new EditChangeNum(editText, "T"));
                 } else if (Value.name.get(1).toString().matches("H")) {
-                    editText.setHint(" 0 ~ 99");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
-                } else if (Value.name.get(1).toString().matches("C") ||
+                    c = true;
+                    editText.setHint(" 0 ~ 100");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "H"));
+                } else if (Value.name.get(1).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" 0 ~ 1000");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "M"));
+                }else if (Value.name.get(1).toString().matches("C") ||
                         Value.name.get(1).toString().matches("D") ||
                         Value.name.get(1).toString().matches("E")) {
-                    if (Value.name.get(1).toString().matches("C"))
+                    if (Value.name.get(1).toString().matches("C")) {
                         editText.setHint(" 0 ~ 2000");
-                    else if (Value.name.get(1).toString().matches("D"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "C"));
+                    } else if (Value.name.get(1).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
-                    else if (Value.name.get(1).toString().matches("E"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "D"));
+                    } else if (Value.name.get(1).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "E"));
+                    }
                     c = true;
                 } else if (Value.name.get(1).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP2) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     }
                 }
             }
             break;
             case "EL3": {
                 if (Value.name.get(2).toString().matches("T")) {
+                    c = true;
                     editText.setHint(" - 10 ~ 65");
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                             InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    editText.addTextChangedListener(new EditChangeNum(editText, "T"));
                 } else if (Value.name.get(2).toString().matches("H")) {
-                    editText.setHint(" 0 ~ 99");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    c = true;
+                    editText.setHint(" 0 ~ 100");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "H"));
+                }else if (Value.name.get(2).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" 0 ~ 1000");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "M"));
                 } else if (Value.name.get(2).toString().matches("C") ||
                         Value.name.get(2).toString().matches("D") ||
                         Value.name.get(2).toString().matches("E")) {
-                    if (Value.name.get(2).toString().matches("C"))
+                    if (Value.name.get(2).toString().matches("C")) {
                         editText.setHint(" 0 ~ 2000");
-                    else if (Value.name.get(2).toString().matches("D"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "C"));
+                    } else if (Value.name.get(2).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
-                    else if (Value.name.get(2).toString().matches("E"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "D"));
+                    } else if (Value.name.get(2).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "E"));
+                    }
                     c = true;
                 } else if (Value.name.get(2).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP3) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     }
                 }
             }
             break;
             case "CR1": {
                 if (Value.name.get(0).toString().matches("T")) {
+                    c = true;
                     editText.setHint(" - 10 ~ 65");
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                             InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    editText.addTextChangedListener(new EditChangeNum(editText, "T"));
                 } else if (Value.name.get(0).toString().matches("H")) {
-                    editText.setHint(" 0 ~ 99");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    c = true;
+                    editText.setHint(" 0 ~ 100");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "H"));
+                }else if (Value.name.get(0).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" 0 ~ 1000");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "M"));
                 } else if (Value.name.get(0).toString().matches("C") ||
                         Value.name.get(0).toString().matches("D") ||
                         Value.name.get(0).toString().matches("E")) {
-                    if (Value.name.get(0).toString().matches("C"))
+                    if (Value.name.get(0).toString().matches("C")) {
                         editText.setHint(" 0 ~ 2000");
-                    else if (Value.name.get(0).toString().matches("D"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "C"));
+                    } else if (Value.name.get(0).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
-                    else if (Value.name.get(0).toString().matches("E"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "D"));
+                    } else if (Value.name.get(0).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "E"));
+                    }
                     c = true;
                 } else if (Value.name.get(0).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP1) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     }
                 }
             }
             break;
             case "CR2": {
                 if (Value.name.get(1).toString().matches("T")) {
+                    c = true;
                     editText.setHint(" - 10 ~ 65");
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                             InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    editText.addTextChangedListener(new EditChangeNum(editText, "T"));
                 } else if (Value.name.get(1).toString().matches("H")) {
-                    editText.setHint(" 0 ~ 99");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
-                } else if (Value.name.get(1).toString().matches("C") ||
+                    c = true;
+                    editText.setHint(" 0 ~ 100");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "H"));
+                } else if (Value.name.get(1).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" 0 ~ 1000");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "M"));
+                }else if (Value.name.get(1).toString().matches("C") ||
                         Value.name.get(1).toString().matches("D") ||
                         Value.name.get(1).toString().matches("E")) {
-                    if (Value.name.get(1).toString().matches("C"))
+                    if (Value.name.get(1).toString().matches("C")) {
                         editText.setHint(" 0 ~ 2000");
-                    else if (Value.name.get(1).toString().matches("D"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "C"));
+                    } else if (Value.name.get(1).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
-                    else if (Value.name.get(1).toString().matches("E"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "D"));
+                    } else if (Value.name.get(1).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "E"));
+                    }
                     c = true;
                 } else if (Value.name.get(1).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP2) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     }
                 }
             }
             break;
             case "CR3": {
                 if (Value.name.get(2).toString().matches("T")) {
+                    c = true;
                     editText.setHint(" - 10 ~ 65");
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                             InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    editText.addTextChangedListener(new EditChangeNum(editText, "T"));
                 } else if (Value.name.get(2).toString().matches("H")) {
-                    editText.setHint(" 0 ~ 99");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
-                } else if (Value.name.get(2).toString().matches("C") ||
+                    c = true;
+                    editText.setHint(" 0 ~ 100");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "H"));
+                } else if (Value.name.get(2).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" 0 ~ 1000");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "M"));
+                }else if (Value.name.get(2).toString().matches("C") ||
                         Value.name.get(2).toString().matches("D") ||
                         Value.name.get(2).toString().matches("E")) {
-                    if (Value.name.get(2).toString().matches("C"))
+                    if (Value.name.get(2).toString().matches("C")) {
                         editText.setHint(" 0 ~ 2000");
-                    else if (Value.name.get(2).toString().matches("D"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "C"));
+                    } else if (Value.name.get(2).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
-                    else if (Value.name.get(2).toString().matches("E"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "D"));
+                    } else if (Value.name.get(2).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "E"));
+                    }
                     c = true;
                 } else if (Value.name.get(2).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP3) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     }
                 }
             }
             break;
             case "IH1": {
-
                 if (Value.name.get(0).toString().matches("T")) {
+                    c = true;
                     editText.setHint(" - 10 ~ 65");
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                             InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    editText.addTextChangedListener(new EditChangeNum(editText, "T"));
                 } else if (Value.name.get(0).toString().matches("H")) {
-                    editText.setHint(" 0 ~ 99");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    c = true;
+                    editText.setHint(" 0 ~ 100");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "H"));
                 } else if (Value.name.get(0).toString().matches("C") ||
                         Value.name.get(0).toString().matches("D") ||
                         Value.name.get(0).toString().matches("E")) {
-                    if (Value.name.get(0).toString().matches("C"))
+                    if (Value.name.get(0).toString().matches("C")) {
                         editText.setHint(" 0 ~ 2000");
-                    else if (Value.name.get(0).toString().matches("D"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "C"));
+                    } else if (Value.name.get(0).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
-                    else if (Value.name.get(0).toString().matches("E"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "D"));
+                    } else if (Value.name.get(0).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "E"));
+                    }
                     c = true;
                 } else if (Value.name.get(0).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP1) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     }
                 }
             }
             break;
             case "IH2": {
                 if (Value.name.get(1).toString().matches("T")) {
+                    c = true;
                     editText.setHint(" - 10 ~ 65");
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                             InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    editText.addTextChangedListener(new EditChangeNum(editText, "T"));
                 } else if (Value.name.get(1).toString().matches("H")) {
-                    editText.setHint(" 0 ~ 99");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    c = true;
+                    editText.setHint(" 0 ~ 100");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "H"));
                 } else if (Value.name.get(1).toString().matches("C") ||
                         Value.name.get(1).toString().matches("D") ||
                         Value.name.get(1).toString().matches("E")) {
-                    if (Value.name.get(1).toString().matches("C"))
+                    if (Value.name.get(1).toString().matches("C")) {
                         editText.setHint(" 0 ~ 2000");
-                    else if (Value.name.get(1).toString().matches("D"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "C"));
+                    } else if (Value.name.get(1).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
-                    else if (Value.name.get(1).toString().matches("E"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "D"));
+                    } else if (Value.name.get(1).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "E"));
+                    }
                     c = true;
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
                 } else if (Value.name.get(1).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP2) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     }
                 }
             }
             break;
             case "IH3": {
                 if (Value.name.get(2).toString().matches("T")) {
+                    c = true;
                     editText.setHint(" - 10 ~ 65");
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                             InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    editText.addTextChangedListener(new EditChangeNum(editText, "T"));
                 } else if (Value.name.get(2).toString().matches("H")) {
-                    editText.setHint(" 0 ~ 99");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    c = true;
+                    editText.setHint(" 0 ~ 100");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "H"));
                 } else if (Value.name.get(2).toString().matches("C") ||
                         Value.name.get(2).toString().matches("D") ||
                         Value.name.get(2).toString().matches("E")) {
-                    if (Value.name.get(2).toString().matches("C"))
+                    if (Value.name.get(2).toString().matches("C")) {
                         editText.setHint(" 0 ~ 2000");
-                    else if (Value.name.get(2).toString().matches("D"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "C"));
+                    } else if (Value.name.get(2).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
-                    else if (Value.name.get(2).toString().matches("E"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "D"));
+                    } else if (Value.name.get(2).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "E"));
+                    }
                     c = true;
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
                 } else if (Value.name.get(2).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP3) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     }
                 }
             }
             break;
             case "IL1": {
                 if (Value.name.get(0).toString().matches("T")) {
+                    c = true;
                     editText.setHint(" - 10 ~ 65");
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                             InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    editText.addTextChangedListener(new EditChangeNum(editText, "T"));
                 } else if (Value.name.get(0).toString().matches("H")) {
-                    editText.setHint(" 0 ~ 99");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    c = true;
+                    editText.setHint(" 0 ~ 100");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "H"));
                 } else if (Value.name.get(0).toString().matches("C") ||
                         Value.name.get(0).toString().matches("D") ||
                         Value.name.get(0).toString().matches("E")) {
-                    if (Value.name.get(0).toString().matches("C"))
+                    if (Value.name.get(0).toString().matches("C")) {
                         editText.setHint(" 0 ~ 2000");
-                    else if (Value.name.get(0).toString().matches("D"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "C"));
+                    } else if (Value.name.get(0).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
-                    else if (Value.name.get(0).toString().matches("E"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "D"));
+                    } else if (Value.name.get(0).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "E"));
+                    }
                     c = true;
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
                 } else if (Value.name.get(0).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP1) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I1"));
                     }
                 }
             }
             break;
             case "IL2": {
                 if (Value.name.get(1).toString().matches("T")) {
+                    c = true;
                     editText.setHint(" - 10 ~ 65");
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                             InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    editText.addTextChangedListener(new EditChangeNum(editText, "T"));
                 } else if (Value.name.get(1).toString().matches("H")) {
-                    editText.setHint(" 0 ~ 99");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    c = true;
+                    editText.setHint(" 0 ~ 100");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "H"));
                 } else if (Value.name.get(1).toString().matches("C") ||
                         Value.name.get(1).toString().matches("D") ||
                         Value.name.get(1).toString().matches("E")) {
-                    if (Value.name.get(1).toString().matches("C"))
+                    if (Value.name.get(1).toString().matches("C")) {
                         editText.setHint(" 0 ~ 2000");
-                    else if (Value.name.get(1).toString().matches("D"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "C"));
+                    } else if (Value.name.get(1).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
-                    else if (Value.name.get(1).toString().matches("E"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "D"));
+                    } else if (Value.name.get(1).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "E"));
+                    }
                     c = true;
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
                 } else if (Value.name.get(1).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP2) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I2"));
                     }
                 }
             }
             break;
             case "IL3": {
                 if (Value.name.get(2).toString().matches("T")) {
+                    c = true;
                     editText.setHint(" - 10 ~ 65");
                     editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
                             InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    editText.addTextChangedListener(new EditChangeNum(editText, "T"));
                 } else if (Value.name.get(2).toString().matches("H")) {
-                    editText.setHint(" 0 ~ 99");
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
-                    editText.addTextChangedListener(new TextWatcher() {
-                        int l = 0;    //記錄字串删除字元之前，字串的長度
-                        int location = 0; //記錄光標位置
-
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                            l = s.length();
-                            location = editText.getSelectionStart();
-                        }
-
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                            Matcher m = p.matcher(s.toString());
-                            c = m.find() || ("").equals(s.toString());
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-
-                        }
-                    });
+                    c = true;
+                    editText.setHint(" 0 ~ 100");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "H"));
                 } else if (Value.name.get(2).toString().matches("C") ||
                         Value.name.get(2).toString().matches("D") ||
                         Value.name.get(2).toString().matches("E")) {
-                    if (Value.name.get(2).toString().matches("C"))
+                    if (Value.name.get(2).toString().matches("C")) {
                         editText.setHint(" 0 ~ 2000");
-                    else if (Value.name.get(2).toString().matches("D"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "C"));
+                    } else if (Value.name.get(2).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
-                    else if (Value.name.get(2).toString().matches("E"))
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "D"));
+                    } else if (Value.name.get(2).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "E"));
+                    }
                     c = true;
-                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_CLASS_NUMBER);
                 } else if (Value.name.get(2).toString().matches("I")) {
                     c = true;
-                    editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
-                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     if (!Value.IDP3) {
                         editText.setHint(" 9999 ~ -999");
+                        editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     } else {
                         editText.setHint(" 999.9~-199.9");
+                        editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                                InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                        editText.addTextChangedListener(new EditChangeNum(editText, "I3"));
                     }
                 }
             }
             break;
             case "ADR": {
-                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                c = true;
                 editText.setHint(" 1 ~ 255");
-                editText.addTextChangedListener(new TextWatcher() {
-                    int l = 0;    //記錄字串删除字元之前，字串的長度
-                    int location = 0; //記錄光標位置
-
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                        l = s.length();
-                        location = editText.getSelectionStart();
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        Pattern p = Pattern.compile("^[-]?\\d{1,4}([.]\\d)?$");    //^\-?[0-5](.[0-9])?$
-                        Matcher m = p.matcher(s.toString());
-                        c = m.find() || ("").equals(s.toString());
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                    }
-                });
+                editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                editText.addTextChangedListener(new EditChangeNum(editText, "ADR"));
             }
             break;
             default:

@@ -744,6 +744,8 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
     @Override
     public void update(int size, int count) {
         Log.e(TAG, "You got it!");
+        SaveList saveList = new SaveList();
+        saveList.convertLogdata(logdate, logtime, loginter);
     }
 
     @SuppressLint("SetTextI18n")

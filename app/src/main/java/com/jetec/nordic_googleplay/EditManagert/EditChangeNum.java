@@ -178,7 +178,51 @@ public class EditChangeNum implements TextWatcher {
                     }
                 }
             }
-        } else if (name.matches("C")) {
+        } else if (name.matches("M")) {
+            if (!num.matches("-") && !num.matches("")) {
+                if (Integer.valueOf(num) > 1000) {
+                    last = true;
+                    editText.setText("1000");
+                } else if (Integer.valueOf(num) < 0) {
+                    last = true;
+                    editText.setText("0");
+                } else {
+                    if (Float.valueOf(num) == 0) {
+                        int len = 1;
+                        byte[] bytes = String.valueOf(editable).getBytes();
+                        if (last) {
+                            last = false;
+                            int selEndIndex = editText.getText().length();
+                            Selection.setSelection(editable, selEndIndex);
+                        }
+                        if (bytes.length > len) {
+                            last = true;
+                            byte[] newBytes = new byte[len];
+                            System.arraycopy(bytes, 0, newBytes, 0, len);
+                            String newStr = new String(newBytes);
+                            editText.setText(newStr);
+                        } else {
+                            int index = editText.getSelectionStart();
+                            Selection.setSelection(editable, index);
+                        }
+                    } else {
+                        if (num.startsWith("0")) {
+                            last = true;
+                            num = num.replaceFirst("^0*", "");
+                            editText.setText(num);
+                        }
+                    }
+                    if (last) {
+                        last = false;
+                        int selEndIndex = editText.getText().length();
+                        Selection.setSelection(editable, selEndIndex);
+                    } else {
+                        int index = editText.getSelectionStart();
+                        Selection.setSelection(editable, index);
+                    }
+                }
+            }
+        }else if (name.matches("C")) {
             if (!num.matches("-") && !num.matches("")) {
                 if (Integer.valueOf(num) > 2000) {
                     last = true;

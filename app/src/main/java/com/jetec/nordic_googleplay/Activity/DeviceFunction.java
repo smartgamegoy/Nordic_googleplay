@@ -55,6 +55,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.jetec.nordic_googleplay.CheckDeviceName;
 import com.jetec.nordic_googleplay.Dialog.Interval;
 import com.jetec.nordic_googleplay.Dialog.ModifyPassword;
@@ -78,8 +79,10 @@ import com.jetec.nordic_googleplay.Thread.ConnectThread;
 import com.jetec.nordic_googleplay.Value;
 import com.jetec.nordic_googleplay.ViewAdapter.DataList;
 import com.jetec.nordic_googleplay.ViewAdapter.Function;
+
 import org.json.JSONArray;
 import org.json.JSONException;
+
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -89,6 +92,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+
 import static com.jetec.nordic_googleplay.Activity.DeviceList.getManager;
 import static java.lang.Thread.sleep;
 
@@ -692,8 +696,7 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                             default:
                                 Log.e(TAG, "Error");
                         }
-                    }
-                    else {
+                    } else {
                         Toast.makeText(DeviceFunction.this, getString(R.string.wrong), Toast.LENGTH_SHORT).show();
                     }
                 } catch (InterruptedException e) {
@@ -729,13 +732,19 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
                     editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                     editText.addTextChangedListener(new EditChangePV(editText, "H"));
+                } else if (Value.name.get(0).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" - 10 ~ 10");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                    editText.addTextChangedListener(new EditChangePV(editText, "M"));
                 } else if (Value.name.get(0).toString().matches("C") ||
                         Value.name.get(0).toString().matches("D") ||
                         Value.name.get(0).toString().matches("E")) {
                     c = true;
                     editText.setHint(" -500 ~ 500");
                     editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
-                    editText.setInputType(InputType.TYPE_CLASS_NUMBER| InputType.TYPE_NUMBER_FLAG_SIGNED);
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                     editText.addTextChangedListener(new EditChangePV(editText, Value.name.get(0).toString()));
                 } else if (Value.name.get(0).toString().matches("I")) {
                     c = true;
@@ -769,6 +778,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
                     editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                     editText.addTextChangedListener(new EditChangePV(editText, "H"));
+                } else if (Value.name.get(1).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" - 10 ~ 10");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                    editText.addTextChangedListener(new EditChangePV(editText, "M"));
                 } else if (Value.name.get(1).toString().matches("C") ||
                         Value.name.get(1).toString().matches("D") ||
                         Value.name.get(1).toString().matches("E")) {
@@ -808,6 +823,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
                     editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
                     editText.addTextChangedListener(new EditChangePV(editText, "H"));
+                } else if (Value.name.get(2).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" - 10 ~ 10");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+                    editText.addTextChangedListener(new EditChangePV(editText, "M"));
                 } else if (Value.name.get(2).toString().matches("C") ||
                         Value.name.get(2).toString().matches("D") ||
                         Value.name.get(2).toString().matches("E")) {
@@ -847,6 +868,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                     editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                     editText.addTextChangedListener(new EditChangeNum(editText, "H"));
+                } else if (Value.name.get(0).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" 0 ~ 1000");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "M"));
                 } else if (Value.name.get(0).toString().matches("C") ||
                         Value.name.get(0).toString().matches("D") ||
                         Value.name.get(0).toString().matches("E")) {
@@ -855,14 +882,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "C"));
-                    }
-                    else if (Value.name.get(0).toString().matches("D")) {
+                    } else if (Value.name.get(0).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "D"));
-                    }
-                    else if (Value.name.get(0).toString().matches("E")) {
+                    } else if (Value.name.get(0).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -898,6 +923,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                     editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                     editText.addTextChangedListener(new EditChangeNum(editText, "H"));
+                } else if (Value.name.get(1).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" 0 ~ 1000");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "M"));
                 } else if (Value.name.get(1).toString().matches("C") ||
                         Value.name.get(1).toString().matches("D") ||
                         Value.name.get(1).toString().matches("E")) {
@@ -906,14 +937,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "C"));
-                    }
-                    else if (Value.name.get(1).toString().matches("D")) {
+                    } else if (Value.name.get(1).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "D"));
-                    }
-                    else if (Value.name.get(1).toString().matches("E")) {
+                    } else if (Value.name.get(1).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -949,6 +978,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                     editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                     editText.addTextChangedListener(new EditChangeNum(editText, "H"));
+                } else if (Value.name.get(2).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" 0 ~ 1000");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "M"));
                 } else if (Value.name.get(2).toString().matches("C") ||
                         Value.name.get(2).toString().matches("D") ||
                         Value.name.get(2).toString().matches("E")) {
@@ -957,14 +992,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "C"));
-                    }
-                    else if (Value.name.get(2).toString().matches("D")) {
+                    } else if (Value.name.get(2).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "D"));
-                    }
-                    else if (Value.name.get(2).toString().matches("E")) {
+                    } else if (Value.name.get(2).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -1000,6 +1033,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                     editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                     editText.addTextChangedListener(new EditChangeNum(editText, "H"));
+                } else if (Value.name.get(0).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" 0 ~ 1000");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "M"));
                 } else if (Value.name.get(0).toString().matches("C") ||
                         Value.name.get(0).toString().matches("D") ||
                         Value.name.get(0).toString().matches("E")) {
@@ -1008,14 +1047,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "C"));
-                    }
-                    else if (Value.name.get(0).toString().matches("D")) {
+                    } else if (Value.name.get(0).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "D"));
-                    }
-                    else if (Value.name.get(0).toString().matches("E")) {
+                    } else if (Value.name.get(0).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -1051,7 +1088,13 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                     editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                     editText.addTextChangedListener(new EditChangeNum(editText, "H"));
-                } else if (Value.name.get(1).toString().matches("C") ||
+                } else if (Value.name.get(1).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" 0 ~ 1000");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "M"));
+                }else if (Value.name.get(1).toString().matches("C") ||
                         Value.name.get(1).toString().matches("D") ||
                         Value.name.get(1).toString().matches("E")) {
                     if (Value.name.get(1).toString().matches("C")) {
@@ -1059,14 +1102,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "C"));
-                    }
-                    else if (Value.name.get(1).toString().matches("D")) {
+                    } else if (Value.name.get(1).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "D"));
-                    }
-                    else if (Value.name.get(1).toString().matches("E")) {
+                    } else if (Value.name.get(1).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -1102,6 +1143,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                     editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                     editText.addTextChangedListener(new EditChangeNum(editText, "H"));
+                }else if (Value.name.get(2).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" 0 ~ 1000");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "M"));
                 } else if (Value.name.get(2).toString().matches("C") ||
                         Value.name.get(2).toString().matches("D") ||
                         Value.name.get(2).toString().matches("E")) {
@@ -1110,14 +1157,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "C"));
-                    }
-                    else if (Value.name.get(2).toString().matches("D")) {
+                    } else if (Value.name.get(2).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "D"));
-                    }
-                    else if (Value.name.get(2).toString().matches("E")) {
+                    } else if (Value.name.get(2).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -1153,6 +1198,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                     editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                     editText.addTextChangedListener(new EditChangeNum(editText, "H"));
+                }else if (Value.name.get(0).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" 0 ~ 1000");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "M"));
                 } else if (Value.name.get(0).toString().matches("C") ||
                         Value.name.get(0).toString().matches("D") ||
                         Value.name.get(0).toString().matches("E")) {
@@ -1161,14 +1212,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "C"));
-                    }
-                    else if (Value.name.get(0).toString().matches("D")) {
+                    } else if (Value.name.get(0).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "D"));
-                    }
-                    else if (Value.name.get(0).toString().matches("E")) {
+                    } else if (Value.name.get(0).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -1204,7 +1253,13 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                     editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                     editText.addTextChangedListener(new EditChangeNum(editText, "H"));
-                } else if (Value.name.get(1).toString().matches("C") ||
+                } else if (Value.name.get(1).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" 0 ~ 1000");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "M"));
+                }else if (Value.name.get(1).toString().matches("C") ||
                         Value.name.get(1).toString().matches("D") ||
                         Value.name.get(1).toString().matches("E")) {
                     if (Value.name.get(1).toString().matches("C")) {
@@ -1212,14 +1267,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "C"));
-                    }
-                    else if (Value.name.get(1).toString().matches("D")) {
+                    } else if (Value.name.get(1).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "D"));
-                    }
-                    else if (Value.name.get(1).toString().matches("E")) {
+                    } else if (Value.name.get(1).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -1255,7 +1308,13 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                     editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                     editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                     editText.addTextChangedListener(new EditChangeNum(editText, "H"));
-                } else if (Value.name.get(2).toString().matches("C") ||
+                } else if (Value.name.get(2).toString().matches("M")) {
+                    c = true;
+                    editText.setHint(" 0 ~ 1000");
+                    editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    editText.addTextChangedListener(new EditChangeNum(editText, "M"));
+                }else if (Value.name.get(2).toString().matches("C") ||
                         Value.name.get(2).toString().matches("D") ||
                         Value.name.get(2).toString().matches("E")) {
                     if (Value.name.get(2).toString().matches("C")) {
@@ -1263,14 +1322,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "C"));
-                    }
-                    else if (Value.name.get(2).toString().matches("D")) {
+                    } else if (Value.name.get(2).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "D"));
-                    }
-                    else if (Value.name.get(2).toString().matches("E")) {
+                    } else if (Value.name.get(2).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -1314,14 +1371,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "C"));
-                    }
-                    else if (Value.name.get(0).toString().matches("D")) {
+                    } else if (Value.name.get(0).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "D"));
-                    }
-                    else if (Value.name.get(0).toString().matches("E")) {
+                    } else if (Value.name.get(0).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -1365,14 +1420,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "C"));
-                    }
-                    else if (Value.name.get(1).toString().matches("D")) {
+                    } else if (Value.name.get(1).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "D"));
-                    }
-                    else if (Value.name.get(1).toString().matches("E")) {
+                    } else if (Value.name.get(1).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -1416,14 +1469,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "C"));
-                    }
-                    else if (Value.name.get(2).toString().matches("D")) {
+                    } else if (Value.name.get(2).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "D"));
-                    }
-                    else if (Value.name.get(2).toString().matches("E")) {
+                    } else if (Value.name.get(2).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -1467,14 +1518,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "C"));
-                    }
-                    else if (Value.name.get(0).toString().matches("D")) {
+                    } else if (Value.name.get(0).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "D"));
-                    }
-                    else if (Value.name.get(0).toString().matches("E")) {
+                    } else if (Value.name.get(0).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -1518,14 +1567,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "C"));
-                    }
-                    else if (Value.name.get(1).toString().matches("D")) {
+                    } else if (Value.name.get(1).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "D"));
-                    }
-                    else if (Value.name.get(1).toString().matches("E")) {
+                    } else if (Value.name.get(1).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -1569,14 +1616,12 @@ public class DeviceFunction extends AppCompatActivity implements NavigationView.
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "C"));
-                    }
-                    else if (Value.name.get(2).toString().matches("D")) {
+                    } else if (Value.name.get(2).toString().matches("D")) {
                         editText.setHint(" 0 ~ 3000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                         editText.addTextChangedListener(new EditChangeNum(editText, "D"));
-                    }
-                    else if (Value.name.get(2).toString().matches("E")) {
+                    } else if (Value.name.get(2).toString().matches("E")) {
                         editText.setHint(" 0 ~ 5000");
                         editText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
                         editText.setInputType(InputType.TYPE_CLASS_NUMBER);

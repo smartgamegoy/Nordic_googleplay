@@ -131,7 +131,7 @@ public class EditChangePV implements TextWatcher {
                     }
                 }
             }
-        } else if (name.matches("H")) {
+        } else if (name.matches("H") || name.matches("M")) {
             if (!num.matches("-") && !num.matches("")) {
                 if (Integer.valueOf(num) > 10) {
                     last = true;

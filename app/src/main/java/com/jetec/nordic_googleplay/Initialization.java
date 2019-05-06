@@ -106,38 +106,27 @@ public class Initialization {
                 if (Value.Jsonlist.get(i).matches("OVER")) {
                     sendValue.send(Value.Jsonlist.get(i));
                     sleep(500);
-                }
-                else if (Value.Jsonlist.get(i).matches("LOG")) {
-                }
-                else if (Value.Jsonlist.get(i).matches("TIME")) {
+                } else if (Value.Jsonlist.get(i).matches("LOG")) {
+                } else if (Value.Jsonlist.get(i).matches("TIME")) {
                     sendValue.send(Value.Jsonlist.get(i) + nowTime);
                     sleep(500);
-                }
-                else if (Value.Jsonlist.get(i).matches("DATE")) {
+                } else if (Value.Jsonlist.get(i).matches("DATE")) {
                     sendValue.send(Value.Jsonlist.get(i) + nowDate);
                     sleep(500);
-                }
-                else if (Value.Jsonlist.get(i).matches("INTER")) {
+                } else if (Value.Jsonlist.get(i).matches("INTER")) {
                     sendValue.send(Value.Jsonlist.get(i) + "00030");
                     sleep(500);
-                }
-                else if (Value.Jsonlist.get(i).matches("COUNT")) {
-                }
-                else if (Value.Jsonlist.get(i).matches("DP3")) {
-                }
-                else if (Value.Jsonlist.get(i).matches("DP2")) {
-                }
-                else if (Value.Jsonlist.get(i).matches("DP1")) {
-                }
-                else if (Value.Jsonlist.get(i).matches("SPK")) {
+                } else if (Value.Jsonlist.get(i).matches("COUNT")) {
+                } else if (Value.Jsonlist.get(i).matches("DP3")) {
+                } else if (Value.Jsonlist.get(i).matches("DP2")) {
+                } else if (Value.Jsonlist.get(i).matches("DP1")) {
+                } else if (Value.Jsonlist.get(i).matches("SPK")) {
                     sendValue.send(Value.Jsonlist.get(i) + "+0001.0");
                     sleep(500);
-                }
-                else if (Value.Jsonlist.get(i).matches("ADR")) {
+                } else if (Value.Jsonlist.get(i).matches("ADR")) {
                     sendValue.send(Value.Jsonlist.get(i) + "+0001.0");
                     sleep(500);
-                }
-                else if (Value.Jsonlist.get(i).matches("CR3")) {
+                } else if (Value.Jsonlist.get(i).matches("CR3")) {
                     if (num.charAt(2) == 'T') {
                         sendValue.send(Value.Jsonlist.get(i) + "+0065.0");
                     } else if (num.charAt(2) == 'H') {
@@ -150,10 +139,11 @@ public class Initialization {
                         sendValue.send(Value.Jsonlist.get(i) + "+5000.0");
                     } else if (num.charAt(2) == 'I') {
                         sendValue.send(Value.Jsonlist.get(i) + "+9999.0");
+                    }else if (num.charAt(2) == 'M') {
+                        sendValue.send(Value.Jsonlist.get(i) + "+1000.0");
                     }
                     sleep(500);
-                }
-                else if (Value.Jsonlist.get(i).matches("CR2")) {
+                } else if (Value.Jsonlist.get(i).matches("CR2")) {
                     if (num.charAt(1) == 'T') {
                         sendValue.send(Value.Jsonlist.get(i) + "+0065.0");
                     } else if (num.charAt(1) == 'H') {
@@ -166,10 +156,11 @@ public class Initialization {
                         sendValue.send(Value.Jsonlist.get(i) + "+5000.0");
                     } else if (num.charAt(1) == 'I') {
                         sendValue.send(Value.Jsonlist.get(i) + "+9999.0");
+                    }else if (num.charAt(1) == 'M') {
+                        sendValue.send(Value.Jsonlist.get(i) + "+1000.0");
                     }
                     sleep(500);
-                }
-                else if (Value.Jsonlist.get(i).matches("CR1")) {
+                } else if (Value.Jsonlist.get(i).matches("CR1")) {
                     if (num.charAt(0) == 'T') {
                         sendValue.send(Value.Jsonlist.get(i) + "+0065.0");
                     } else if (num.charAt(0) == 'H') {
@@ -182,31 +173,29 @@ public class Initialization {
                         sendValue.send(Value.Jsonlist.get(i) + "+5000.0");
                     } else if (num.charAt(0) == 'I') {
                         sendValue.send(Value.Jsonlist.get(i) + "+9999.0");
+                    }else if (num.charAt(0) == 'M') {
+                        sendValue.send(Value.Jsonlist.get(i) + "+1000.0");
                     }
                     sleep(500);
-                }
-                else if (Value.Jsonlist.get(i).matches("IL3")) {
+                } else if (Value.Jsonlist.get(i).matches("IL3")) {
                     sendValue.send(Value.Jsonlist.get(i) + "-0999.0");
                     sleep(500);
                 } else if (Value.Jsonlist.get(i).matches("IH3")) {
                     sendValue.send(Value.Jsonlist.get(i) + "+9999.0");
                     sleep(500);
-                }
-                else if (Value.Jsonlist.get(i).matches("IL2")) {
+                } else if (Value.Jsonlist.get(i).matches("IL2")) {
                     sendValue.send(Value.Jsonlist.get(i) + "-0999.0");
                     sleep(500);
                 } else if (Value.Jsonlist.get(i).matches("IH2")) {
                     sendValue.send(Value.Jsonlist.get(i) + "+9999.0");
                     sleep(500);
-                }
-                else if (Value.Jsonlist.get(i).matches("IL1")) {
+                } else if (Value.Jsonlist.get(i).matches("IL1")) {
                     sendValue.send(Value.Jsonlist.get(i) + "-0999.0");
                     sleep(500);
                 } else if (Value.Jsonlist.get(i).matches("IH1")) {
                     sendValue.send(Value.Jsonlist.get(i) + "+9999.0");
                     sleep(500);
-                }
-                else if (Value.Jsonlist.get(i).matches("EL3")) {
+                } else if (Value.Jsonlist.get(i).matches("EL3")) {
                     if (num.charAt(2) == 'T') {
                         sendValue.send(Value.Jsonlist.get(i) + "-0010.0");
                     } else if (num.charAt(2) == 'H') {
@@ -219,10 +208,11 @@ public class Initialization {
                         sendValue.send(Value.Jsonlist.get(i) + "+0000.0");
                     } else if (num.charAt(2) == 'I') {
                         sendValue.send(Value.Jsonlist.get(i) + "-0999.0");
+                    }else if (num.charAt(2) == 'M') {
+                        sendValue.send(Value.Jsonlist.get(i) + "+0000.0");
                     }
                     sleep(500);
-                }
-                else if (Value.Jsonlist.get(i).matches("EH3")) {
+                } else if (Value.Jsonlist.get(i).matches("EH3")) {
                     if (num.charAt(2) == 'T') {
                         sendValue.send(Value.Jsonlist.get(i) + "+0065.0");
                     } else if (num.charAt(2) == 'H') {
@@ -235,10 +225,11 @@ public class Initialization {
                         sendValue.send(Value.Jsonlist.get(i) + "+5000.0");
                     } else if (num.charAt(2) == 'I') {
                         sendValue.send(Value.Jsonlist.get(i) + "+9999.0");
+                    }else if (num.charAt(2) == 'M') {
+                        sendValue.send(Value.Jsonlist.get(i) + "+1000.0");
                     }
                     sleep(500);
-                }
-                else if (Value.Jsonlist.get(i).matches("EL2")) {
+                } else if (Value.Jsonlist.get(i).matches("EL2")) {
                     if (num.charAt(1) == 'T') {
                         sendValue.send(Value.Jsonlist.get(i) + "-0010.0");
                     } else if (num.charAt(1) == 'H') {
@@ -251,10 +242,11 @@ public class Initialization {
                         sendValue.send(Value.Jsonlist.get(i) + "+0000.0");
                     } else if (num.charAt(1) == 'I') {
                         sendValue.send(Value.Jsonlist.get(i) + "-0999.0");
+                    }else if (num.charAt(1) == 'M') {
+                        sendValue.send(Value.Jsonlist.get(i) + "+0000.0");
                     }
                     sleep(500);
-                }
-                else if (Value.Jsonlist.get(i).matches("EH2")) {
+                } else if (Value.Jsonlist.get(i).matches("EH2")) {
                     if (num.charAt(1) == 'T') {
                         sendValue.send(Value.Jsonlist.get(i) + "+0065.0");
                     } else if (num.charAt(1) == 'H') {
@@ -267,10 +259,11 @@ public class Initialization {
                         sendValue.send(Value.Jsonlist.get(i) + "+5000.0");
                     } else if (num.charAt(1) == 'I') {
                         sendValue.send(Value.Jsonlist.get(i) + "+9999.0");
+                    }else if (num.charAt(1) == 'M') {
+                        sendValue.send(Value.Jsonlist.get(i) + "+1000.0");
                     }
                     sleep(500);
-                }
-                else if (Value.Jsonlist.get(i).matches("EL1")) {
+                } else if (Value.Jsonlist.get(i).matches("EL1")) {
                     if (num.charAt(0) == 'T') {
                         sendValue.send(Value.Jsonlist.get(i) + "-0010.0");
                     } else if (num.charAt(0) == 'H') {
@@ -283,10 +276,11 @@ public class Initialization {
                         sendValue.send(Value.Jsonlist.get(i) + "+0000.0");
                     } else if (num.charAt(0) == 'I') {
                         sendValue.send(Value.Jsonlist.get(i) + "-0999.0");
+                    } else if (num.charAt(0) == 'M') {
+                        sendValue.send(Value.Jsonlist.get(i) + "+0000.0");
                     }
                     sleep(500);
-                }
-                else if (Value.Jsonlist.get(i).matches("EH1")) {
+                } else if (Value.Jsonlist.get(i).matches("EH1")) {
                     if (num.charAt(0) == 'T') {
                         sendValue.send(Value.Jsonlist.get(i) + "+0065.0");
                     } else if (num.charAt(0) == 'H') {
@@ -299,18 +293,17 @@ public class Initialization {
                         sendValue.send(Value.Jsonlist.get(i) + "+5000.0");
                     } else if (num.charAt(0) == 'I') {
                         sendValue.send(Value.Jsonlist.get(i) + "+9999.0");
+                    } else if (num.charAt(0) == 'M') {
+                        sendValue.send(Value.Jsonlist.get(i) + "+1000.0");
                     }
                     sleep(500);
-                }
-                else if (Value.Jsonlist.get(i).matches("PV3")) {
+                } else if (Value.Jsonlist.get(i).matches("PV3")) {
                     sendValue.send(Value.Jsonlist.get(i) + "+0000.0");
                     sleep(500);
-                }
-                else if (Value.Jsonlist.get(i).matches("PV2")) {
+                } else if (Value.Jsonlist.get(i).matches("PV2")) {
                     sendValue.send(Value.Jsonlist.get(i) + "+0000.0");
                     sleep(500);
-                }
-                else if (Value.Jsonlist.get(i).matches("PV1")) {
+                } else if (Value.Jsonlist.get(i).matches("PV1")) {
                     sendValue.send(Value.Jsonlist.get(i) + "+0000.0");
                     sleep(500);
                 }
