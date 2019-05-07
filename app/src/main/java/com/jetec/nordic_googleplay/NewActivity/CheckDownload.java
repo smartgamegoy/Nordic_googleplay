@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.TextView;
+
 import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToInt;
 import com.jetec.nordic_googleplay.NewActivity.Listener.GetCounter;
 import com.jetec.nordic_googleplay.NewActivity.SendByte.SendString;
@@ -13,6 +14,7 @@ import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Value;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,13 +35,13 @@ public class CheckDownload {
     private TextView showtext;
     private Dialog dialog;
 
-    public CheckDownload(){
+    public CheckDownload() {
         super();
     }
 
     public void checklist(Context context, Vibrator vibrator, BluetoothLeService mBluetoothLeService
             , String date, String time, int count, int interval, GetCounter getCounter,
-                          TextView showtext, Dialog DownloadprogressDialog){
+                          TextView showtext, Dialog DownloadprogressDialog) {
         listnum = new ArrayList<>();
         countlist = new ArrayList<>();
         recordlist = new ArrayList<>();
@@ -60,18 +62,14 @@ public class CheckDownload {
         recheck();
     }
 
-    private void recheck(){
-        for(int i = count; i > 0; i--){
-            countlist.add(i);
-        }
-        for(int i = 0; i < NewModel.list09.size(); i++){
-            if(Arrays.equals(NewModel.list09.get(i), getnull) || Arrays.equals(NewModel.list09.get(i), getnull)){
+    private void recheck() {
+        for (int i = 0; i < NewModel.list09.size(); i++) {
+            if (Arrays.equals(NewModel.list09.get(i), getnull) || Arrays.equals(NewModel.list09.get(i), getnull)) {
                 //noinspection SuspiciousListRemoveInLoop
                 NewModel.list09.remove(i);
                 //noinspection SuspiciousListRemoveInLoop
                 NewModel.list08.remove(i);
-            }
-            else {
+            } else {
                 byte[] getbyte = NewModel.list09.get(i);
                 byte[] data = Arrays.copyOfRange(getbyte, 1, 4);
                 int num = byteToInt.byteToInt(data);
@@ -79,38 +77,49 @@ public class CheckDownload {
                 //Log.e(TAG, "num = " + num);
             }
         }
+        for (int i = count; i > 0; i--) {
+            countlist.add(i);
+        }
         Log.e(TAG, "countlist = " + countlist.size());
         Log.e(TAG, "listnum = " + listnum.size());
-        for(int i = 0; i < listnum.size(); i++){
-            if(!listnum.get(i).equals(countlist.get(number))){
-                recordlist.add(countlist.get(number));
-                i--;
+        Log.e(TAG, "list08.size = " + NewModel.list08.size());
+        Log.e(TAG, "list09.size = " + NewModel.list09.size());
+        Log.e(TAG, "list08.size = " + NewModel.list08);
+        Log.e(TAG, "list09.size = " + NewModel.list09);
+        for (int i = 0; i < listnum.size(); i++) {
+            if (number < countlist.size()) {
+                if (!listnum.get(i).equals(countlist.get(number))) {
+                    recordlist.add(countlist.get(number));
+                    i--;
+                }
+                number++;
+            } else {
+                break;
             }
-            number++;
         }
         Log.e(TAG, "countlist = " + countlist.size());
         Log.e(TAG, "recordlist = " + recordlist);
         Log.e(TAG, "recordlist = " + recordlist.size());
-        Log.e(TAG, "list08.size = " + NewModel.list08.size());
-        Log.e(TAG, "list09.size = " + NewModel.list09.size());
+
         showtext.setText(context.getString(R.string.process));
-        if(NewModel.list08.size() != count && NewModel.list09.size() != count) {
+        if (NewModel.list08.size() != count || NewModel.list09.size() != count || listnum.size() != count) {
             getlost(0);
-        }
-        else {
+        } else {
             dialog.dismiss();
             getCounter.readytointent(NewModel.list09.size(), count);
             NewModel.checklost = false;
             Value.opendialog = false;
+            Log.e(TAG, "list08.size = " + NewModel.list08.size());
+            Log.e(TAG, "list09.size = " + NewModel.list09.size());
             Log.e(TAG, "收工");
         }
     }
 
-    private void getlost(int i){
+    private void getlost(int i) {
         SendString sendString = new SendString();
         Handler lostHandler = new Handler();
         final int[] lost_i = {i};
-        if(i < recordlist.size()) {
+        if (i < recordlist.size()) {
             NewModel.checklost = true;
             lostHandler.postDelayed(() -> {
                 int lost = recordlist.get(i);
@@ -121,16 +130,23 @@ public class CheckDownload {
                 sendString.sendbyte(wantbyte);
                 lost_i[0]++;
                 getlost(lost_i[0]);
-            }, 500);
-        }
-        else {
+            }, 50);
+        } else {
             lostHandler.postDelayed(() -> {
+                lostHandler.removeCallbacksAndMessages(null);
+                //sendString.sendstr("END");
+                /*recordlist.clear();
+                listnum.clear();
+                countlist.clear();
+                recheck();*/
+            }, 300);
+            /*lostHandler.postDelayed(() -> {
                 getCounter.readytointent(NewModel.list09.size(), count);
                 dialog.dismiss();
                 NewModel.checklost = false;
                 Value.opendialog = false;
                 Log.e(TAG, "收工");
-            }, 2000);
+            }, 2000);*/
         }
     }
 }

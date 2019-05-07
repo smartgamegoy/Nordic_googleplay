@@ -3,6 +3,7 @@ package com.jetec.nordic_googleplay.NewActivity.New_Dialog;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
@@ -28,12 +29,15 @@ public class DownloadDialog {
     private Dialog progressDialog = null;
     private String TAG = "DownloadDialog";
     private TextView showing;
+    private Handler delayHandler, downloadHandler;
 
     public DownloadDialog(){
         super();
     }
 
     public void set_Dialog(Context context, Vibrator vibrator){
+        delayHandler = new Handler();
+        downloadHandler = new Handler();
         progressDialog = showDialog(context, vibrator);
         progressDialog.show();
         progressDialog.setCanceledOnTouchOutside(false);
@@ -67,28 +71,29 @@ public class DownloadDialog {
             vibrator.vibrate(100);
             pb_progress_bar.setVisibility(View.VISIBLE);
             bn.setClickable(false);
-            new AlertDialog.Builder(context)
-                    .setTitle(R.string.warning)
-                    .setMessage(R.string.stoprecord)
-                    .setPositiveButton(R.string.butoon_yes, (dialog, which) -> {
-                        vibrator.vibrate(100);
-                        sendString.sendstr("END");
-                        try {
-                            sleep(100);
-                            sendString.sendstr("Delay00010");
-                            sleep(100);
-                            sendString.sendstr("DOWNLOAD");
-                            sleep(100);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        Value.opendialog = true;
-                    })
-                    .setNegativeButton(R.string.butoon_no, (dialog, which) -> {
-                        vibrator.vibrate(100);
-                        Log.e(TAG, "取消下載");
-                    })
-                    .show();
+            if(!Value.opendialog) {
+                new AlertDialog.Builder(context)
+                        .setTitle(R.string.warning)
+                        .setMessage(R.string.stoprecord)
+                        .setPositiveButton(R.string.butoon_yes, (dialog, which) -> {
+                            vibrator.vibrate(100);
+                            sendString.sendstr("END");
+                            delayHandler.postDelayed(() -> {
+                                sendString.sendstr("Delay00005");
+                            }, 100);
+                            downloadHandler.postDelayed(() -> {
+                                sendString.sendstr("DOWNLOAD");
+                                Value.opendialog = true;
+                            }, 200);
+                        })
+                        .setNegativeButton(R.string.butoon_no, (dialog, which) -> {
+                            vibrator.vibrate(100);
+                            pb_progress_bar.setVisibility(View.GONE);
+                            bn.setClickable(true);
+                            Log.e(TAG, "取消下載");
+                        })
+                        .show();
+            }
         });
 
         if (dm.heightPixels > dm.widthPixels) {

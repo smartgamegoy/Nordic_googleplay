@@ -101,22 +101,22 @@ public class NewModel {
 
     public void checkList(Context context) {
         boolean checkfirst = false;
-        int count = 1;
+        int count = 0;
         for (int i = 0; i < viewList.size(); i++) {
             if(viewList.get(i).equals(saveList.get(i))){
                 Log.e(TAG, "viewList.get(" + i + ") = the same");
             }
             else {
-                if(!checkfirst){
+                /*if(!checkfirst){
                     sendString.sendList(viewList.get(i), context);
                     checkfirst = true;
-                }
-                else {
+                }*/
+                //else {
                     Handler mHandler = new Handler();
                     int finalI = i;
                     mHandler.postDelayed(() -> sendString.sendList(viewList.get(finalI), context), 3000 * count);
                     count = count + 1;
-                }
+                //}
             }
         }
         saveList();

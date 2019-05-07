@@ -96,6 +96,7 @@ public class LoadDialog {
 
         bn.setOnClickListener(v1 -> {
             vibrator.vibrate(100);
+            saveSQL.close();
             progressDialog.dismiss();
         });
 

@@ -126,8 +126,7 @@ public class SaveSQL extends SQLiteOpenHelper {
         db.update(table_name, cv, "_id=" + id, null);
     }
 
-    public void insert(JSONArray SQLjson, JSONArray Recordjson, String name, String model)
-    {
+    public void insert(JSONArray SQLjson, JSONArray Recordjson, String name, String model) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
@@ -135,7 +134,6 @@ public class SaveSQL extends SQLiteOpenHelper {
         cv.put("name", name);
         cv.put("savelist", SQLjson.toString());
         cv.put("numlist", Recordjson.toString());
-        cv.put("model", model);
 
         long new_insert = db.insert(table_name, model, cv);
         Log.e(TAG,"SQL = " + new_insert);

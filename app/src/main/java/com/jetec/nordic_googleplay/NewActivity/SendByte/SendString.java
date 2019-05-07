@@ -3,18 +3,18 @@ package com.jetec.nordic_googleplay.NewActivity.SendByte;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
-
 import com.jetec.nordic_googleplay.Dialog.WriteDialog;
+import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToInt;
+import com.jetec.nordic_googleplay.NewActivity.Parase;
 import com.jetec.nordic_googleplay.NewModel;
-
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 
 public class SendString {
 
     private String TAG = "SendString";
     private android.os.Handler mHandler, sendHandler;
-    private WriteDialog writeDialog = new WriteDialog();
     private int listsize;
 
     public SendString() {
@@ -28,22 +28,27 @@ public class SendString {
     }
 
     public void sendList(List<byte[]> getList, Context context) {
+        WriteDialog writeDialog = new WriteDialog();
         writeDialog.set_Dialog(context, false);
+        Parase parase = new Parase();
         mHandler = new Handler();
         sendHandler = new Handler();
         listsize = getList.size();
-        sendstr("ERA");
+        byte[] row = getList.get(0);
+        byte[] data = Arrays.copyOfRange(row, 0, 1);
+        int getrow = parase.byteArrayToInt(data);
+        sendstr("ERA" + getrow);
         mHandler.postDelayed(() -> {
-            checklist(getList);
-        }, 2000);
+            checklist(getList, writeDialog);
+        }, 1500);
     }
 
-    private void checklist(List<byte[]> getList) {
+    private void checklist(List<byte[]> getList, WriteDialog writeDialog) {
         sendHandler.postDelayed(() -> {
             Log.e(TAG, "listsize = " + listsize);
             if (listsize > 0) {
                 sendbyte(getList.get((listsize - 1)));
-                checklist(getList);
+                checklist(getList, writeDialog);
                 listsize--;
             } else {
                 if (writeDialog.checkshowing()) {
@@ -51,7 +56,7 @@ public class SendString {
                 }
                 //sendHandler.removeCallbacksAndMessages(null);
             }
-        }, 150);
+        }, 100);
     }
 
     public void sendbyte(byte[] getbyte) {

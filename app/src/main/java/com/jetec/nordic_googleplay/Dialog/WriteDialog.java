@@ -31,6 +31,7 @@ public class WriteDialog {
 
     public void set_Dialog(Context context, boolean password){
         vibrator = (Vibrator) context.getSystemService(VIBRATOR_SERVICE);
+        Log.e(TAG, "開幾次");
         this.password = password;
         progressDialog = showDialog(context);
         progressDialog.show();

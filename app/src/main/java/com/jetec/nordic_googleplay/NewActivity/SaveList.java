@@ -1,10 +1,15 @@
 package com.jetec.nordic_googleplay.NewActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.util.Log;
 
+import com.jetec.nordic_googleplay.NewActivity.Listener.GetLog;
+import com.jetec.nordic_googleplay.NewActivity.UserSQL.LogSQL;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.Value;
+
+import org.json.JSONArray;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,12 +23,13 @@ public class SaveList {
     private String TAG = "SaveList";
     private List<byte[]> list1, list2;
     private Parase parase = new Parase();
+    private LogSQL logSQL;
 
-    public SaveList() {
-        super();
+    public SaveList(Context context) {
+        logSQL = new LogSQL(context);
     }
 
-    public void convertLogdata(String logdate, String logtime, int loginter) {
+    public void convertLogdata(String logdate, String logtime, int loginter, GetLog getLog) {
         list1 = new ArrayList<>();
         list2 = new ArrayList<>();
         list1.clear();
@@ -43,7 +49,7 @@ public class SaveList {
         }
         Log.e(TAG, "t1 = " + t1);
         Log.e(TAG, "t2 = " + t2);*/
-        convert(logdate, logtime, loginter);
+        convert(logdate, logtime, loginter, getLog);
     }
 
     private int getcount(byte[] getbyte) {
@@ -51,7 +57,7 @@ public class SaveList {
         return parase.byteArrayToInt(data);
     }
 
-    private void convert(String date, String time, int inter) {
+    private void convert(String date, String time, int inter, GetLog getLog) {
         String model = Value.deviceModel;
         String[] arr = model.split("-");
         String name = arr[2];
@@ -59,8 +65,12 @@ public class SaveList {
         name = name.replace("L", "");
         name = name.replace("Z", "");
         int namesize = name.length();
-        Log.e(TAG, "name = " + name);
-        Log.e(TAG, "namesize = " + namesize);
+        Log.e(TAG, "date = " + date);
+        Log.e(TAG, "time = " + time);
+
+        if(logSQL.getCount(name) > 0){
+            logSQL.delete(name);
+        }
 
         List<String> timeList = new ArrayList<>();
         timeList.clear();
@@ -379,7 +389,12 @@ public class SaveList {
             saveList.add(record6);
         }
 
+        JSONArray timeJson = new JSONArray(timeList);
+        JSONArray saveJson = new JSONArray(saveList);
 
+        logSQL.insert(timeJson, saveJson, name);
+        getLog.readytointent();
+        logSQL.close();
     }
 
     private List<String> timelist(String date, String time, int inter) {

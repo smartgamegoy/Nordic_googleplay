@@ -34,6 +34,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.jetec.nordic_googleplay.Activity.MainActivity;
 import com.jetec.nordic_googleplay.Dialog.*;
 import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToHex;
@@ -41,6 +42,7 @@ import com.jetec.nordic_googleplay.NewActivity.Listener.*;
 import com.jetec.nordic_googleplay.NewActivity.New_Dialog.*;
 import com.jetec.nordic_googleplay.NewActivity.SendByte.SendString;
 import com.jetec.nordic_googleplay.NewActivity.UserSQL.ConvertList;
+import com.jetec.nordic_googleplay.NewActivity.UserSQL.LogSQL;
 import com.jetec.nordic_googleplay.NewActivity.ViewAdapter.*;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
@@ -57,7 +59,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class UserFunction extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        LoadListener, CountListener, TextListener {
+        LoadListener, CountListener, TextListener, LogListener {
 
     private String TAG = "UserFunction";
     private Vibrator vibrator;
@@ -80,6 +82,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
     private GetStatus getStatus = new GetStatus();
     private GetCounter getCounter = new GetCounter();
     private GetTextview getTextview = new GetTextview();
+    private GetLog getLog = new GetLog();
     private ByteToHex byteToHex = new ByteToHex();
     private CheckDownload checkDownload = new CheckDownload();
     private byte[] getbyte08, getbyte09;    //savedownlod
@@ -87,6 +90,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
     private int logcounter, loginter;   //savedownlod
     private int getflag = 0;
     private Dialog DownloadprogressDialog = null;
+    private LogSQL logSQL;
 
 
     @Override
@@ -206,15 +210,21 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                     String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                     byte[] txValue = intents.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
                     String text = new String(txValue, StandardCharsets.UTF_8);
+                    StringBuilder hex = new StringBuilder(txValue.length * 2);
+                    for (byte aData : txValue) {
+                        hex.append(String.format("%02X", aData));
+                    }
+                    String gethex = hex.toString();
                     if (Value.opendialog) {
                         if (Arrays.equals(getend, txValue)) {
                             navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.start) + getString(R.string.LOG));
                         } else if (Arrays.equals(getover, txValue)) {
                             mHandler.removeCallbacksAndMessages(null);
                             Log.e(TAG, "ENDING");
-                            checkDownload.checklist(UserFunction.this, vibrator, mBluetoothLeService,
-                                    logdate, logtime, logcounter, loginter,
-                                    getCounter, showText, DownloadprogressDialog);
+                            //CheckDownload checkDownload = new CheckDownload();
+                            //checkDownload.checklist(UserFunction.this, vibrator, mBluetoothLeService,
+                              //      logdate, logtime, logcounter, loginter,
+                              //      getCounter, showText, DownloadprogressDialog);
                             Log.e(TAG, "list08 = " + NewModel.list08.size());
                             Log.e(TAG, "list09 = " + NewModel.list09.size());
                         } else if (text.contains("DATE")) {
@@ -236,7 +246,10 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                             Log.e(TAG, "text = " + text);
                             text = text.replace("INTER", "");
                             loginter = Integer.valueOf(text);
+                            Value.opendialog = true;
                             Log.e(TAG, "loginter = " + loginter);
+                        } else if (text.contains("Delay")) {
+                            Log.e(TAG, "[" + currentDateTimeString + "] get: " + text);
                         } else {
                             byte[] data = Arrays.copyOfRange(txValue, 0, 1);
                             String[] arr = byteToHex.hexstring(txValue);
@@ -253,27 +266,29 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                                 getbyte09 = txValue;
                                 Log.e(TAG, "09 = " + str);
                             }
-                            if(getbyte08 != null && getbyte09 != null){
+                            if (getbyte08 != null && getbyte09 != null) {
                                 getflag = 0;
                                 NewModel.list08.add(getbyte08);
                                 NewModel.list09.add(getbyte09);
                                 getbyte08 = null;
                                 getbyte09 = null;
                                 mHandler.removeCallbacksAndMessages(null);
-                                if(!NewModel.checklost)
+                                if (!NewModel.checklost)
                                     getTextview.readytointent(NewModel.list09.size(), logcounter);
-                                checkhandler();
-                            }
-                            else {
-                                if(getflag == 0) {
+                                //checkhandler();
+                            } else {
+                                if (getflag == 0) {
+                                    Log.e(TAG, "馬上");
+                                    Log.e(TAG, "[" + currentDateTimeString + "] get: " + text);
+                                    Log.e(TAG, "[" + currentDateTimeString + "] getbyte: " + gethex);
                                     NewModel.list08.add(getnull);
                                     NewModel.list09.add(getnull);
                                     getbyte08 = null;
                                     getbyte09 = null;
                                     mHandler.removeCallbacksAndMessages(null);
-                                    if(!NewModel.checklost)
+                                    if (!NewModel.checklost)
                                         getTextview.readytointent(NewModel.list09.size(), logcounter);
-                                    checkhandler();
+                                   // checkhandler();
                                 }
                             }
                         }
@@ -289,6 +304,12 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.user_function);
 
         Value.btn = Value.deviceModel.indexOf('L') != -1;  //check is this device has L?
+        if(Value.btn){
+            logSQL = new LogSQL(this);
+            getLog.setListener(this);
+            getLog.readytointent();
+        }
+
         Toolbar myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
@@ -452,9 +473,10 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         finish();
     }
 
-    private void checkhandler(){
-        Log.e(TAG, "開始傳");
-        if(!NewModel.checklost) {
+    private void checkhandler() {
+        Log.e(TAG, "list08.size() = " + NewModel.list08.size());
+        Log.e(TAG, "list09.size() = " + NewModel.list09.size());
+        if (!NewModel.checklost) {
             mHandler.postDelayed(() -> {
                 Log.e(TAG, "list08 = " + NewModel.list08.size());
                 Log.e(TAG, "list09 = " + NewModel.list09.size());
@@ -462,13 +484,12 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                         logdate, logtime, logcounter, loginter, getCounter,
                         showText, DownloadprogressDialog);
             }, 3000);
-        }
-        else {
+        } else {
             Log.e(TAG, "list08 = " + NewModel.list08.size());
             Log.e(TAG, "list09 = " + NewModel.list09.size());
             Log.e(TAG, "list08 = " + NewModel.list08);
             Log.e(TAG, "list09 = " + NewModel.list09);
-            if(NewModel.list08.size() != logcounter && NewModel.list09.size() != logcounter){
+            if (NewModel.list08.size() != logcounter && NewModel.list09.size() != logcounter) {
                 mHandler.postDelayed(() -> {
                     checkDownload.checklist(UserFunction.this, vibrator, mBluetoothLeService,
                             logdate, logtime, logcounter, loginter, getCounter,
@@ -608,7 +629,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.showdialog) {
             vibrator.vibrate(100);
             if (Value.passwordFlag != 4) {
-
+                getLog.showlog();
             }
         } else if (id == R.id.modifypassword) {
             vibrator.vibrate(100);
@@ -744,13 +765,37 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
     @Override
     public void update(int size, int count) {
         Log.e(TAG, "You got it!");
-        SaveList saveList = new SaveList();
-        saveList.convertLogdata(logdate, logtime, loginter);
+        SaveList saveList = new SaveList(this);
+        saveList.convertLogdata(logdate, logtime, loginter, getLog);
     }
 
     @SuppressLint("SetTextI18n")
     @Override
     public void updateText(int size, int count) {
         showText.setText(size + " / " + count);
+    }
+
+    @Override
+    public void getjson() {
+        Log.e(TAG, "Log.size = " + logSQL.getCount());
+        String model = Value.deviceModel;
+        String[] arr = model.split("-");
+        String name = arr[2];
+        name = name.replace("Y", "");
+        name = name.replace("L", "");
+        name = name.replace("Z", "");
+        if(logSQL.getCount(name) > 0){
+            getLog.getJsonlist(logSQL, name);
+        }
+    }
+
+    @Override
+    public void showjson() {
+        if(logSQL.getCount() > 0){
+
+        }
+        else {
+            Toast.makeText(this, getString(R.string.logdata), Toast.LENGTH_SHORT).show();
+        }
     }
 }
