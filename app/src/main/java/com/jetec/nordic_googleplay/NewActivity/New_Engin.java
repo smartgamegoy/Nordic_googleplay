@@ -1,5 +1,6 @@
 package com.jetec.nordic_googleplay.NewActivity;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
@@ -9,7 +10,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.support.v7.app.AlertDialog;
@@ -25,7 +25,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-
 import com.jetec.nordic_googleplay.Activity.MainActivity;
 import com.jetec.nordic_googleplay.DialogFunction.ENGIN;
 import com.jetec.nordic_googleplay.EditManagert.EditChangePointer;
@@ -37,13 +36,11 @@ import com.jetec.nordic_googleplay.ScanParse.*;
 import com.jetec.nordic_googleplay.SendValue;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Value;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 import static com.jetec.nordic_googleplay.Activity.DeviceList.getManager;
 import static java.lang.Thread.sleep;
@@ -69,9 +66,6 @@ public class New_Engin extends AppCompatActivity {
     private ByteToHex byteToHex = new ByteToHex();
     private Getparse getparse = new Getparse();
     private Initialization initialization = new Initialization();
-    private int test;
-    private List<Integer> recordlist = new ArrayList<>();
-    private TestLost testLost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -288,18 +282,7 @@ public class New_Engin extends AppCompatActivity {
         GET.setOnClickListener(v -> {
             vibrator.vibrate(100);
             NewModel.mBluetoothLeService = mBluetoothLeService;
-
-            Integer[] a = {72};
-            recordlist = new ArrayList<>();
-            recordlist.clear();
-            for(int i = 0; i < a.length; i++){
-                recordlist.add(a[i]);
-            }
-            testLost = new TestLost(listAdapter, list1);
-            test = 0;
-            testLost.getlost(recordlist, test);
-            //test++;
-            /*if(change){
+            if(change){
                 try {
                     byteconvert = false;
                     String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
@@ -325,7 +308,7 @@ public class New_Engin extends AppCompatActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            }*/
+            }
         });
 
         SP2.setOnClickListener(v -> {
@@ -534,63 +517,49 @@ public class New_Engin extends AppCompatActivity {
                 listAdapter.add("[" + currentDateTimeString + "] 連線狀態: " + "已重新連線");
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 runOnUiThread(() -> {
+                    @SuppressLint("SimpleDateFormat")
                     SimpleDateFormat get_time = new SimpleDateFormat("HH:mm:ss:SSS");
                     String currentDateTimeString = get_time.format(new Date());
                     byte[] txValue = intents.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
-                    StringBuilder hex = new StringBuilder(txValue.length * 2);
-                    for (byte aData : txValue) {
-                        hex.append(String.format("%02X", aData));
-                    }
-                    String gethex = hex.toString();
-                    listAdapter.add("[" + currentDateTimeString + "] RE: " + gethex);
-                    list1.smoothScrollToPosition(listAdapter.getCount() - 1);
-                    //testLost.getlost(recordlist, test);
-                    //test++;
-                    /*
-                    try {
-
-                        if (Arrays.equals(getbyte, txValue)) {
-                            byteconvert = true;
-                            showhex(txValue);
-                        } else if (Arrays.equals(getover, txValue)) {
-                            byteconvert = false;
-                            getparse.recodesub();
-                            showhex(txValue);
-                        } else {
-                            if (byteconvert) {
-                                byte[] data = Arrays.copyOfRange(txValue, 0, 4);
-                                if(Arrays.equals(data, getDate)){
-                                    String text = new String(txValue, "UTF-8");
-                                    listAdapter.add("[" + currentDateTimeString + "] RE: " + text);
-                                    list1.smoothScrollToPosition(listAdapter.getCount() - 1);
-                                }
-                                else if(Arrays.equals(data, getTime)){
-                                    String text = new String(txValue, "UTF-8");
-                                    listAdapter.add("[" + currentDateTimeString + "] RE: " + text);
-                                    list1.smoothScrollToPosition(listAdapter.getCount() - 1);
-                                }
-                                else if(Arrays.equals(data, getPWR)){
-                                    String text = new String(txValue, "UTF-8");
-                                    listAdapter.add("[" + currentDateTimeString + "] RE: " + text);
-                                    list1.smoothScrollToPosition(listAdapter.getCount() - 1);
-                                    getparse.recodesub();
-                                }
-                                else if(Arrays.equals(data, getName)){
-                                    String text = new String(txValue, "UTF-8");
-                                    listAdapter.add("[" + currentDateTimeString + "] RE: " + text);
-                                    list1.smoothScrollToPosition(listAdapter.getCount() - 1);
-                                }
-                                else
-                                    showhex(txValue);
-                            } else {
-                                String text = new String(txValue, "UTF-8");
+                    if (Arrays.equals(getbyte, txValue)) {
+                        byteconvert = true;
+                        showhex(txValue);
+                    } else if (Arrays.equals(getover, txValue)) {
+                        byteconvert = false;
+                        getparse.recodesub();
+                        showhex(txValue);
+                    } else {
+                        if (byteconvert) {
+                            byte[] data = Arrays.copyOfRange(txValue, 0, 4);
+                            if(Arrays.equals(data, getDate)){
+                                String text = new String(txValue, StandardCharsets.UTF_8);
                                 listAdapter.add("[" + currentDateTimeString + "] RE: " + text);
                                 list1.smoothScrollToPosition(listAdapter.getCount() - 1);
                             }
+                            else if(Arrays.equals(data, getTime)){
+                                String text = new String(txValue, StandardCharsets.UTF_8);
+                                listAdapter.add("[" + currentDateTimeString + "] RE: " + text);
+                                list1.smoothScrollToPosition(listAdapter.getCount() - 1);
+                            }
+                            else if(Arrays.equals(data, getPWR)){
+                                String text = new String(txValue, StandardCharsets.UTF_8);
+                                listAdapter.add("[" + currentDateTimeString + "] RE: " + text);
+                                list1.smoothScrollToPosition(listAdapter.getCount() - 1);
+                                getparse.recodesub();
+                            }
+                            else if(Arrays.equals(data, getName)){
+                                String text = new String(txValue, StandardCharsets.UTF_8);
+                                listAdapter.add("[" + currentDateTimeString + "] RE: " + text);
+                                list1.smoothScrollToPosition(listAdapter.getCount() - 1);
+                            }
+                            else
+                                showhex(txValue);
+                        } else {
+                            String text = new String(txValue, StandardCharsets.UTF_8);
+                            listAdapter.add("[" + currentDateTimeString + "] RE: " + text);
+                            list1.smoothScrollToPosition(listAdapter.getCount() - 1);
                         }
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }*/
+                    }
                 });
             }
         }
@@ -647,6 +616,13 @@ public class New_Engin extends AppCompatActivity {
     private void resetmodel() {
         Intent intent = new Intent(this, ErrActivity.class);
         NewModel.checkmodel = false;
+        intent.putExtra("default_model", default_model);
+        startActivity(intent);
+        finish();
+    }
+
+    private void userfuntion() {
+        Intent intent = new Intent(this, UserFunction.class);
         intent.putExtra("default_model", default_model);
         startActivity(intent);
         finish();
@@ -753,9 +729,7 @@ public class New_Engin extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             vibrator.vibrate(100);
-            /*Intent intent = new Intent(this, DeviceEngineer.class);
-            startActivity(intent);
-            finish();*/
+            userfuntion();
             return true;
         } else if (id == R.id.reset) {
             vibrator.vibrate(100);

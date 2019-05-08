@@ -260,6 +260,7 @@ public class CheckPassword extends AppCompatActivity {
 
     private void gotoEngin(){
         Intent intent = new Intent(CheckPassword.this, New_Engin.class);
+        NewModel.enginmode = true;
         intent.putExtra("default_model", default_model);
         getparse.recodesub();
         startActivity(intent);

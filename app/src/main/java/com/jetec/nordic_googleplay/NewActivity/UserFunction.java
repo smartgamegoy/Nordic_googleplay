@@ -1,5 +1,6 @@
 package com.jetec.nordic_googleplay.NewActivity;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
@@ -10,8 +11,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -19,6 +22,8 @@ import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -38,6 +43,7 @@ import android.widget.Toast;
 import com.jetec.nordic_googleplay.Activity.MainActivity;
 import com.jetec.nordic_googleplay.Dialog.*;
 import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToHex;
+import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToInt;
 import com.jetec.nordic_googleplay.NewActivity.Listener.*;
 import com.jetec.nordic_googleplay.NewActivity.New_Dialog.*;
 import com.jetec.nordic_googleplay.NewActivity.SendByte.SendString;
@@ -59,9 +65,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class UserFunction extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        LoadListener, CountListener, TextListener, LogListener {
+        LoadListener, CountListener, TextListener, LogListener, WantListener {
 
     private String TAG = "UserFunction";
+    private static final int REQUEST_EXTERNAL_STORAGE = 3;
     private Vibrator vibrator;
     private BluetoothLeService mBluetoothLeService;
     private BluetoothAdapter mBluetoothAdapter;
@@ -215,16 +222,15 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                         hex.append(String.format("%02X", aData));
                     }
                     String gethex = hex.toString();
-                    if (Value.opendialog) {
+                    if (Value.opendialog && !NewModel.checkwant) {
                         if (Arrays.equals(getend, txValue)) {
                             navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.start) + getString(R.string.LOG));
                         } else if (Arrays.equals(getover, txValue)) {
                             mHandler.removeCallbacksAndMessages(null);
                             Log.e(TAG, "ENDING");
-                            //CheckDownload checkDownload = new CheckDownload();
-                            //checkDownload.checklist(UserFunction.this, vibrator, mBluetoothLeService,
-                              //      logdate, logtime, logcounter, loginter,
-                              //      getCounter, showText, DownloadprogressDialog);
+                            checkDownload.checklist(UserFunction.this, vibrator, mBluetoothLeService,
+                                    logdate, logtime, logcounter, loginter,
+                                    getCounter, showText, DownloadprogressDialog);
                             Log.e(TAG, "list08 = " + NewModel.list08.size());
                             Log.e(TAG, "list09 = " + NewModel.list09.size());
                         } else if (text.contains("DATE")) {
@@ -273,9 +279,10 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                                 getbyte08 = null;
                                 getbyte09 = null;
                                 mHandler.removeCallbacksAndMessages(null);
-                                if (!NewModel.checklost)
+                                if (!NewModel.checklost) {
                                     getTextview.readytointent(NewModel.list09.size(), logcounter);
-                                //checkhandler();
+                                    checkhandler();
+                                }
                             } else {
                                 if (getflag == 0) {
                                     Log.e(TAG, "馬上");
@@ -286,13 +293,44 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                                     getbyte08 = null;
                                     getbyte09 = null;
                                     mHandler.removeCallbacksAndMessages(null);
-                                    if (!NewModel.checklost)
+                                    if (!NewModel.checklost) {
                                         getTextview.readytointent(NewModel.list09.size(), logcounter);
-                                   // checkhandler();
+                                        checkhandler();
+                                    }
                                 }
                             }
                         }
-                    } else {
+                    } else if(Value.opendialog){
+                        byte[] data = Arrays.copyOfRange(txValue, 0, 1);
+                        if (data[0] == 0x08) {
+                            getflag = 1;
+                            getbyte08 = txValue;
+                        } else if (data[0] == 0x09) {
+                            getflag = 1;
+                            getbyte09 = txValue;
+                        }
+                        if (getbyte08 != null && getbyte09 != null) {
+                            getflag = 0;
+                            String[] arr = byteToHex.hexstring(getbyte08);
+                            String[] arr2 = byteToHex.hexstring(getbyte09);
+                            StringBuilder str = new StringBuilder();
+                            for (String s : arr) {
+                                str.append(s).append(" ");
+                            }
+                            StringBuilder str2 = new StringBuilder();
+                            for (String s : arr2) {
+                                str2.append(s).append(" ");
+                            }
+                            Log.e(TAG, "08 = " + str);
+                            Log.e(TAG, "09 = " + str2);
+                            NewModel.list08.add(getbyte08);
+                            NewModel.list09.add(getbyte09);
+                            getbyte08 = null;
+                            getbyte09 = null;
+                            checkDownload.removerecordlist(true);
+                        }
+                    }
+                    else {
                         Log.e(TAG, "[" + currentDateTimeString + "] get: " + text);
                     }
                 });
@@ -304,7 +342,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.user_function);
 
         Value.btn = Value.deviceModel.indexOf('L') != -1;  //check is this device has L?
-        if(Value.btn){
+        if (Value.btn) {
             logSQL = new LogSQL(this);
             getLog.setListener(this);
             getLog.readytointent();
@@ -499,6 +537,33 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    private void gotoEngin(){
+        Intent intent = new Intent(this, New_Engin.class);
+        intent.putExtra("default_model", default_model);
+        startActivity(intent);
+        finish();
+    }
+
+    private void requeststorage() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                //未取得權限，向使用者要求允許權限
+                ActivityCompat.requestPermissions(this,
+                        new String[]{
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.READ_EXTERNAL_STORAGE
+                        },
+                        REQUEST_EXTERNAL_STORAGE);
+            } else {
+                getLog.showlog();
+                //已有權限，可進行工作
+            }
+        } else {
+            getLog.showlog();
+        }
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -545,26 +610,58 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                 break;
             case KeyEvent.KEYCODE_BACK: {
                 vibrator.vibrate(100);
-                new AlertDialog.Builder(this)
-                        .setTitle("結束連線")
-                        .setMessage("斷開藍牙")
-                        .setPositiveButton(R.string.butoon_yes, (dialog, which) -> {
-                            vibrator.vibrate(100);
-                            if (mBluetoothAdapter != null)
-                                //noinspection deprecation
-                                mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                            Service_close();
-                            Value.YMD = false;
-                            Value.downlog = false;
-                            Value.connected = false;
-                            Value.deviceModel = "";
-                            Value.BID = "";
-                            Value.BName = "";
-                            disconnect();
-                        })
-                        .setNeutralButton(R.string.butoon_no, (dialog, which) -> {
-                        })
-                        .show();
+                if(!NewModel.enginmode) {
+                    new AlertDialog.Builder(this)
+                            .setTitle(getString(R.string.action_settings))
+                            .setMessage(getString(R.string.disconnectdevice))
+                            .setPositiveButton(R.string.butoon_yes, (dialog, which) -> {
+                                vibrator.vibrate(100);
+                                if (mBluetoothAdapter != null)
+                                    //noinspection deprecation
+                                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                                Service_close();
+                                Value.YMD = false;
+                                Value.downlog = false;
+                                NewModel.checkmodel = false;
+                                Value.connected = false;
+                                Value.deviceModel = "";
+                                Value.BID = "";
+                                Value.BName = "";
+                                disconnect();
+                            })
+                            .setNeutralButton(R.string.butoon_no, (dialog, which) -> {
+                            })
+                            .show();
+                }
+                else {
+                    new AlertDialog.Builder(this)
+                            .setTitle("結束連線")
+                            .setMessage("斷開藍牙")
+                            .setPositiveButton(R.string.butoon_yes, (dialog, which) -> {
+                                vibrator.vibrate(100);
+                                if (mBluetoothAdapter != null)
+                                    //noinspection deprecation
+                                    mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                                Service_close();
+                                Value.YMD = false;
+                                Value.downlog = false;
+                                NewModel.checkmodel = false;
+                                NewModel.enginmode = false;
+                                Value.connected = false;
+                                Value.deviceModel = "";
+                                Value.BID = "";
+                                Value.BName = "";
+                                disconnect();
+                            })
+                            .setNegativeButton(R.string.engin_mode, (dialog, which) -> {
+                                vibrator.vibrate(100);
+                                gotoEngin();
+                            })
+                            .setNeutralButton(R.string.butoon_no, (dialog, which) -> {
+                                vibrator.vibrate(100);
+                            })
+                            .show();
+                }
             }
             break;
             case KeyEvent.KEYCODE_DPAD_CENTER:
@@ -613,6 +710,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
             vibrator.vibrate(100);
             if (Value.passwordFlag != 4) {
                 getCounter.setListener(this);
+                checkDownload.setWantListener(this);
                 DownloadDialog downloadDialog = new DownloadDialog();
                 downloadDialog.set_Dialog(this, vibrator);
                 DownloadprogressDialog = downloadDialog.getprocess();
@@ -629,7 +727,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.showdialog) {
             vibrator.vibrate(100);
             if (Value.passwordFlag != 4) {
-                getLog.showlog();
+                requeststorage();
             }
         } else if (id == R.id.modifypassword) {
             vibrator.vibrate(100);
@@ -784,18 +882,40 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         name = name.replace("Y", "");
         name = name.replace("L", "");
         name = name.replace("Z", "");
-        if(logSQL.getCount(name) > 0){
+        if (logSQL.getCount(name) > 0) {
             getLog.getJsonlist(logSQL, name);
         }
     }
 
     @Override
     public void showjson() {
-        if(logSQL.getCount() > 0){
-
-        }
-        else {
+        if (logSQL.getCount() > 0) {
+            List<List<String>> alllist = new ArrayList<>();
+            alllist.clear();
+            alllist = getLog.getLoglist();
+            JSONArray logjson = new JSONArray(alllist);
+            Intent intent = new Intent(this, LogListActivity.class);
+            intent.putExtra("default_model", default_model);
+            intent.putExtra("logjson", logjson.toString());
+            startActivity(intent);
+            finish();
+        } else {
             Toast.makeText(this, getString(R.string.logdata), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void checkwant(List<Integer> recordlist) {
+        if(recordlist.size() > 0) {
+            SendString sendString = new SendString();
+            ByteToInt byteToInt = new ByteToInt();
+            int lost = recordlist.get(0);
+            byte[] lostbyte = byteToInt.intToByteArray(lost);
+            byte[] wantbyte = new byte[(getwant.length + lostbyte.length)];
+            System.arraycopy(getwant, 0, wantbyte, 0, getwant.length);
+            System.arraycopy(lostbyte, 0, wantbyte, getwant.length, lostbyte.length);
+            sendString.sendbyte(wantbyte);
+            checkDownload.removerecordlist(false);
         }
     }
 }

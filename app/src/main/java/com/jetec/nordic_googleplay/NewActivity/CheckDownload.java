@@ -6,15 +6,14 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.TextView;
-
 import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToInt;
 import com.jetec.nordic_googleplay.NewActivity.Listener.GetCounter;
+import com.jetec.nordic_googleplay.NewActivity.Listener.WantListener;
 import com.jetec.nordic_googleplay.NewActivity.SendByte.SendString;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Value;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,6 +21,7 @@ import java.util.List;
 public class CheckDownload {
 
     private String TAG = "CheckDownload";
+    private WantListener wantListener;
     private Context context;
     private Vibrator vibrator;
     private BluetoothLeService mBluetoothLeService;
@@ -34,6 +34,8 @@ public class CheckDownload {
     private GetCounter getCounter;
     private TextView showtext;
     private Dialog dialog;
+    private boolean listen;
+    private Handler wanthandler;
 
     public CheckDownload() {
         super();
@@ -42,6 +44,7 @@ public class CheckDownload {
     public void checklist(Context context, Vibrator vibrator, BluetoothLeService mBluetoothLeService
             , String date, String time, int count, int interval, GetCounter getCounter,
                           TextView showtext, Dialog DownloadprogressDialog) {
+        wanthandler = new Handler();
         listnum = new ArrayList<>();
         countlist = new ArrayList<>();
         recordlist = new ArrayList<>();
@@ -63,6 +66,8 @@ public class CheckDownload {
     }
 
     private void recheck() {
+        BubbleDownload bubbleDownload = new BubbleDownload();
+        bubbleDownload.sortList();
         for (int i = 0; i < NewModel.list09.size(); i++) {
             if (Arrays.equals(NewModel.list09.get(i), getnull) || Arrays.equals(NewModel.list09.get(i), getnull)) {
                 //noinspection SuspiciousListRemoveInLoop
@@ -77,11 +82,11 @@ public class CheckDownload {
                 //Log.e(TAG, "num = " + num);
             }
         }
-        for (int i = count; i > 0; i--) {
+        for (int i = 1; i <= count; i++) {
             countlist.add(i);
         }
-        Log.e(TAG, "countlist = " + countlist.size());
-        Log.e(TAG, "listnum = " + listnum.size());
+        Log.e(TAG, "countlist = " + countlist);
+        Log.e(TAG, "listnum = " + listnum);
         Log.e(TAG, "list08.size = " + NewModel.list08.size());
         Log.e(TAG, "list09.size = " + NewModel.list09.size());
         Log.e(TAG, "list08.size = " + NewModel.list08);
@@ -103,7 +108,9 @@ public class CheckDownload {
 
         showtext.setText(context.getString(R.string.process));
         if (NewModel.list08.size() != count || NewModel.list09.size() != count || listnum.size() != count) {
-            getlost(0);
+            NewModel.checkwant = true;
+            checkwant();
+            //getlost(0);
         } else {
             dialog.dismiss();
             getCounter.readytointent(NewModel.list09.size(), count);
@@ -131,15 +138,15 @@ public class CheckDownload {
                 lost_i[0]++;
                 getlost(lost_i[0]);
             }, 50);
-        } else {
-            lostHandler.postDelayed(() -> {
-                lostHandler.removeCallbacksAndMessages(null);
+        } //else {
+            //lostHandler.postDelayed(() -> {
+                //lostHandler.removeCallbacksAndMessages(null);
                 //sendString.sendstr("END");
                 /*recordlist.clear();
                 listnum.clear();
                 countlist.clear();
                 recheck();*/
-            }, 300);
+            //}, 300);
             /*lostHandler.postDelayed(() -> {
                 getCounter.readytointent(NewModel.list09.size(), count);
                 dialog.dismiss();
@@ -147,6 +154,43 @@ public class CheckDownload {
                 Value.opendialog = false;
                 Log.e(TAG, "收工");
             }, 2000);*/
+        //}
+    }
+
+    public void setWantListener(WantListener mWantListener) {
+        wantListener = mWantListener;
+    }
+
+    public void checkwant() {
+        if (wantListener != null) {
+            wantListener.checkwant(recordlist);
+        }
+    }
+
+    public void removerecordlist(boolean rewant){
+        if(rewant){
+            listen = true;
+            Log.e(TAG, "停止重發");
+            wanthandler.removeCallbacksAndMessages(null);
+            recordlist.remove(0);
+            if(recordlist.size() > 0){
+                Log.e(TAG, "發下一筆");
+                Log.e(TAG, "recordlist = " + recordlist);
+                countlist.clear();
+                listnum.clear();
+                checkwant();
+            }
+            else {
+                NewModel.checkwant = false;
+                recheck();
+            }
+        }
+        else {
+            Log.e(TAG, "準備重發");
+            wanthandler.postDelayed(() -> {
+                if(!listen)
+                    checkwant();
+            }, 300);
         }
     }
 }

@@ -12,6 +12,7 @@
     <string name="app_message_b1">Exit</string>
     <string name="app_message_b2">Cancel</string>
     <string name="action_settings">Disconnect</string>
+    <string name="disconnectdevice">Disconnect device</string>
     <string name="settimes">Set Time</string>
     <string name="support">This BLE device is not support!</string>
     <string name="BLE_adp">Bluetooth not open!</string>
@@ -148,6 +149,9 @@
     <string name="I1row">1st data</string>
     <string name="I2row">2nd data</string>
     <string name="I3row">3rd data</string>
+    <string name="I4row">4th data</string>
+    <string name="I5row">5th data</string>
+    <string name="I6row">6rd data</string>
     <string name="UL">upper limit</string>
     <string name="LL">lower limit</string>
     <string name="intervalset">Setting…</string>

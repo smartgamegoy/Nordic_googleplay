@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
+import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToHex;
+import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToInt;
 import com.jetec.nordic_googleplay.NewActivity.Listener.GetLog;
 import com.jetec.nordic_googleplay.NewActivity.UserSQL.LogSQL;
 import com.jetec.nordic_googleplay.NewModel;
@@ -398,7 +400,7 @@ public class SaveList {
     }
 
     private List<String> timelist(String date, String time, int inter) {
-
+        ByteToHex byteToHex = new ByteToHex();
         List<String> timelist = new ArrayList<>();
         timelist.clear();
         try {
@@ -407,11 +409,29 @@ public class SaveList {
             date = date.substring(0, 2) + "-" + date.substring(2, 4) + "-" + date.substring(4, 6);
             time = time.substring(0, 2) + ":" + time.substring(2, 4) + ":" + time.substring(4, 6);
             String all_date = date + " " + time;
-            Date setdate = log_date.parse(all_date);
+
             for(int i = 0; i < list2.size(); i++){
+                Date setdate = log_date.parse(all_date);
+                byte[] data = list1.get(i);
+                byte[] data2 = list2.get(i);
+                String[] arr = byteToHex.hexstring(data);
+                String[] arr2 = byteToHex.hexstring(data2);
+                StringBuilder str = new StringBuilder();
+                StringBuilder str2 = new StringBuilder();
+                for (String s : arr) {
+                    str.append(s).append(" ");
+                }
+                for (String s : arr2) {
+                    str2.append(s).append(" ");
+                }
+                Log.e(TAG, "08 = " + str);
+                Log.e(TAG, "09 = " + str2);
+                byte[] count = Arrays.copyOfRange(data, 1, 4);
+                int timer = parase.byteArrayToInt(count);
+                Log.e(TAG, "timer = " + timer);
+                setdate.setTime(setdate.getTime() + (inter * (timer - 1) * 1000));
                 String formattime = log_date.format(setdate);
                 timelist.add(formattime);
-                setdate.setTime(setdate.getTime() + (inter * 1000));
             }
             Log.e(TAG, "timelist = " + timelist);
         } catch (ParseException e) {

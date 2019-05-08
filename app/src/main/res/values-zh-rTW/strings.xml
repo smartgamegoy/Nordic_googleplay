@@ -12,6 +12,7 @@
     <string name="app_message_b1">離開</string>
     <string name="app_message_b2">取消</string>
     <string name="action_settings">中斷連線</string>
+    <string name="disconnectdevice">中斷裝置連線</string>
     <string name="settimes">時間設定</string>
     <string name="support">不支援此藍芽裝置!</string>
     <string name="BLE_adp">藍芽未開啟!</string>
@@ -148,6 +149,9 @@
     <string name="I1row">第一排數值</string>
     <string name="I2row">第二排數值</string>
     <string name="I3row">第三排數值</string>
+    <string name="I4row">第四排數值</string>
+    <string name="I5row">第五排數值</string>
+    <string name="I6row">第六排數值</string>
     <string name="UL">上限</string>
     <string name="LL">下限</string>
     <string name="intervalset">設定中…</string>

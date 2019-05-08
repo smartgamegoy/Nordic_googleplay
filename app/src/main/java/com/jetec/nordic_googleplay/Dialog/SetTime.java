@@ -108,10 +108,15 @@ public class SetTime {
     private void fastset() {
         try {
             @SuppressLint("SimpleDateFormat")
+            SimpleDateFormat get_date = new SimpleDateFormat("yyMMdd");
+            @SuppressLint("SimpleDateFormat")
             SimpleDateFormat get_time = new SimpleDateFormat("HHmmss"); //for 12hours use hhmmss
             Date date = new Date();
+            String strdate = get_date.format(date);
             String strtime = get_time.format(date);
             Log.e("fastset", "strtime = " + strtime);
+            sendValue.send("DATE" + strdate);
+            sleep(500);
             sendValue.send("TIME" + strtime);
             sleep(500);
         } catch (InterruptedException e) {

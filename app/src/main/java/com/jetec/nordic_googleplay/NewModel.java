@@ -17,7 +17,7 @@ public class NewModel {
     private String TAG = "NewModel";
     private SendString sendString = new SendString();
     public static BluetoothLeService mBluetoothLeService;
-    public static boolean checkmodel = false, checklost = false;
+    public static boolean checkmodel = false, checklost = false, checkwant = false, enginmode = false;
     public static List<byte[]> sub1, sub2, sub3, sub4, sub5, sub6, sub7;
     public static List<byte[]> list08, list09;
     public static List<List<byte[]>> viewList, saveList;
