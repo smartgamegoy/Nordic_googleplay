@@ -84,6 +84,25 @@ public class Send {
             byte[] data = Arrays.copyOfRange(value, 3, value.length);
             Log.d("send", "sendbyte = " + "[" + value[0] + "," + value[1] + "," + value[2] + "," + byteArrayToInt(data) + "]");
             sleep(100);
+            if(str.contains("NAME")) {
+                if (value.length != 20) {
+                    byte[] check = new byte[20];
+                    for (int i = 0; i < 20; i++) {
+                        if (i < value.length) {
+                            check[i] = value[i];
+                        } else {
+                            check[i] = 0x00;
+                        }
+                    }
+                    value = check;
+                    StringBuilder hex = new StringBuilder(value.length * 2);
+                    for (byte aData : value) {
+                        hex.append(String.format("%02X", aData));
+                    }
+                    String gethex = hex.toString();
+                    Log.e(TAG, "check = " + gethex);
+                }
+            }
             bluetoothLeService.writeRXCharacteristic(value);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -94,12 +113,50 @@ public class Send {
         String getstr = str.replace(" ","");
         byte[] value = bytes(getstr);
         Log.w(TAG, "str = " + str);
+        if(str.contains("NAME")) {
+            if (value.length != 20) {
+                byte[] check = new byte[20];
+                for (int i = 0; i < 20; i++) {
+                    if (i < value.length) {
+                        check[i] = value[i];
+                    } else {
+                        check[i] = 0x00;
+                    }
+                }
+                value = check;
+                StringBuilder hex = new StringBuilder(value.length * 2);
+                for (byte aData : value) {
+                    hex.append(String.format("%02X", aData));
+                }
+                String gethex = hex.toString();
+                Log.e(TAG, "check = " + gethex);
+            }
+        }
         bluetoothLeService.writeRXCharacteristic(value);
     }
 
     public void sendString(String str){
         byte[] sends;
         sends = str.getBytes(StandardCharsets.UTF_8);
+        if(str.contains("NAME")) {
+            if (sends.length != 20) {
+                byte[] check = new byte[20];
+                for (int i = 0; i < 20; i++) {
+                    if (i < sends.length) {
+                        check[i] = sends[i];
+                    } else {
+                        check[i] = 0x00;
+                    }
+                }
+                sends = check;
+                StringBuilder hex = new StringBuilder(sends.length * 2);
+                for (byte aData : sends) {
+                    hex.append(String.format("%02X", aData));
+                }
+                String gethex = hex.toString();
+                Log.e(TAG, "check = " + gethex);
+            }
+        }
         Log.e(TAG, "str = " + str);
         bluetoothLeService.writeRXCharacteristic(sends);
     }

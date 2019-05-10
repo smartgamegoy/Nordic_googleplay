@@ -13,6 +13,8 @@ import com.jetec.nordic_googleplay.Value;
 
 import org.json.JSONArray;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,8 +28,10 @@ public class SaveList {
     private List<byte[]> list1, list2;
     private Parase parase = new Parase();
     private LogSQL logSQL;
+    private Context context;
 
     public SaveList(Context context) {
+        this.context = context;
         logSQL = new LogSQL(context);
     }
 
@@ -73,6 +77,10 @@ public class SaveList {
         if(logSQL.getCount(name) > 0){
             logSQL.delete(name);
         }
+        if(logSQL.getCount() > 0){
+            logSQL.deleteAll();
+            logSQL = new LogSQL(context);
+        }
 
         List<String> timeList = new ArrayList<>();
         timeList.clear();
@@ -92,6 +100,8 @@ public class SaveList {
         record5.clear();
         record6.clear();
 
+        DecimalFormat decimalFormat = new DecimalFormat("#.##############");
+
         for (int i = 0; i < list1.size(); i++) {
             if (namesize <= 3) {
                 byte[] getbyte = list1.get(i);
@@ -107,7 +117,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value);
                         double d_value = getvalue * point;
-                        record1.add(String.valueOf(d_value));
+                        record1.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                 } else if (parase.byteArrayToInt(data) == 10) {
                     byte[] dp1 = Arrays.copyOfRange(getbyte, 5, 6);
@@ -122,7 +132,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value);
                         double d_value = getvalue * point;
-                        record1.add(String.valueOf(d_value));
+                        record1.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                     if (parase.byteArrayToInt(dp2) == 0) {
                         int getvalue = parase.byteArrayToInt(value2);
@@ -132,7 +142,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value2);
                         double d_value = getvalue * point;
-                        record2.add(String.valueOf(d_value));
+                        record2.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                 } else if (parase.byteArrayToInt(data) == 15) {
                     byte[] dp1 = Arrays.copyOfRange(getbyte, 5, 6);
@@ -149,7 +159,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value);
                         double d_value = getvalue * point;
-                        record1.add(String.valueOf(d_value));
+                        record1.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                     if (parase.byteArrayToInt(dp2) == 0) {
                         int getvalue = parase.byteArrayToInt(value2);
@@ -159,7 +169,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value2);
                         double d_value = getvalue * point;
-                        record2.add(String.valueOf(d_value));
+                        record2.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                     if (parase.byteArrayToInt(dp3) == 0) {
                         int getvalue = parase.byteArrayToInt(value3);
@@ -169,7 +179,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value3);
                         double d_value = getvalue * point;
-                        record3.add(String.valueOf(d_value));
+                        record3.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                 }
             } else {
@@ -193,7 +203,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value);
                         double d_value = getvalue * point;
-                        record1.add(String.valueOf(d_value));
+                        record1.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                     if (parase.byteArrayToInt(dp2) == 0) {
                         int getvalue = parase.byteArrayToInt(value2);
@@ -203,7 +213,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value2);
                         double d_value = getvalue * point;
-                        record2.add(String.valueOf(d_value));
+                        record2.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                     if (parase.byteArrayToInt(dp3) == 0) {
                         int getvalue = parase.byteArrayToInt(value3);
@@ -213,7 +223,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value3);
                         double d_value = getvalue * point;
-                        record3.add(String.valueOf(d_value));
+                        record3.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                     if (parase.byteArrayToInt(dp4) == 0) {
                         int getvalue = parase.byteArrayToInt(value4);
@@ -223,7 +233,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value4);
                         double d_value = getvalue * point;
-                        record4.add(String.valueOf(d_value));
+                        record4.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                 } else if (parase.byteArrayToInt(data2) == 10) {
                     byte[] dp1 = Arrays.copyOfRange(getbyte, 5, 6);
@@ -244,7 +254,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value);
                         double d_value = getvalue * point;
-                        record1.add(String.valueOf(d_value));
+                        record1.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                     if (parase.byteArrayToInt(dp2) == 0) {
                         int getvalue = parase.byteArrayToInt(value2);
@@ -254,7 +264,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value2);
                         double d_value = getvalue * point;
-                        record2.add(String.valueOf(d_value));
+                        record2.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                     if (parase.byteArrayToInt(dp3) == 0) {
                         int getvalue = parase.byteArrayToInt(value3);
@@ -264,7 +274,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value3);
                         double d_value = getvalue * point;
-                        record3.add(String.valueOf(d_value));
+                        record3.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                     if (parase.byteArrayToInt(dp4) == 0) {
                         int getvalue = parase.byteArrayToInt(value4);
@@ -274,7 +284,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value4);
                         double d_value = getvalue * point;
-                        record4.add(String.valueOf(d_value));
+                        record4.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                     if (parase.byteArrayToInt(dp5) == 0) {
                         int getvalue = parase.byteArrayToInt(value5);
@@ -284,7 +294,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value5);
                         double d_value = getvalue * point;
-                        record5.add(String.valueOf(d_value));
+                        record5.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                 } else if (parase.byteArrayToInt(data2) == 15) {
                     byte[] dp1 = Arrays.copyOfRange(getbyte, 5, 6);
@@ -307,7 +317,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value);
                         double d_value = getvalue * point;
-                        record1.add(String.valueOf(d_value));
+                        record1.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                     if (parase.byteArrayToInt(dp2) == 0) {
                         int getvalue = parase.byteArrayToInt(value2);
@@ -317,7 +327,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value2);
                         double d_value = getvalue * point;
-                        record2.add(String.valueOf(d_value));
+                        record2.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                     if (parase.byteArrayToInt(dp3) == 0) {
                         int getvalue = parase.byteArrayToInt(value3);
@@ -327,7 +337,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value3);
                         double d_value = getvalue * point;
-                        record3.add(String.valueOf(d_value));
+                        record3.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                     if (parase.byteArrayToInt(dp4) == 0) {
                         int getvalue = parase.byteArrayToInt(value4);
@@ -337,7 +347,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value4);
                         double d_value = getvalue * point;
-                        record4.add(String.valueOf(d_value));
+                        record4.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                     if (parase.byteArrayToInt(dp5) == 0) {
                         int getvalue = parase.byteArrayToInt(value5);
@@ -347,7 +357,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value5);
                         double d_value = getvalue * point;
-                        record5.add(String.valueOf(d_value));
+                        record5.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                     if (parase.byteArrayToInt(dp6) == 0) {
                         int getvalue = parase.byteArrayToInt(value6);
@@ -357,7 +367,7 @@ public class SaveList {
                         double point = Math.pow(10, b);
                         int getvalue = parase.byteArrayToInt(value6);
                         double d_value = getvalue * point;
-                        record6.add(String.valueOf(d_value));
+                        record6.add(String.valueOf(decimalFormat.format(d_value)));
                     }
                 }
             }
@@ -394,7 +404,8 @@ public class SaveList {
         JSONArray timeJson = new JSONArray(timeList);
         JSONArray saveJson = new JSONArray(saveList);
 
-        logSQL.insert(timeJson, saveJson, name);
+        String devicename = Value.BName;
+        logSQL.insert(timeJson, saveJson, name, devicename);
         getLog.readytointent();
         logSQL.close();
     }

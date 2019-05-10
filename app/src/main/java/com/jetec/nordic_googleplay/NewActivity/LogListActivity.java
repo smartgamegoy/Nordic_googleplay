@@ -1,5 +1,6 @@
 package com.jetec.nordic_googleplay.NewActivity;
 
+import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
@@ -25,8 +26,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import com.jetec.nordic_googleplay.Activity.ChartActivity;
 import com.jetec.nordic_googleplay.Activity.MainActivity;
+import com.jetec.nordic_googleplay.Activity.SearchActivity;
+import com.jetec.nordic_googleplay.Dialog.WriteDialog;
 import com.jetec.nordic_googleplay.NewActivity.Export.MakeCSV;
+import com.jetec.nordic_googleplay.NewActivity.Export.MakePDF;
 import com.jetec.nordic_googleplay.NewActivity.Listener.GetLogList;
 import com.jetec.nordic_googleplay.NewActivity.Listener.ListViewListener;
 import com.jetec.nordic_googleplay.NewActivity.ViewAdapter.LogListViewAdapter;
@@ -34,7 +39,6 @@ import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Value;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
@@ -58,21 +62,32 @@ public class LogListActivity extends AppCompatActivity implements ListViewListen
     private ListView listView;
     private Uri csvuri;
     private File file, pdffile;
+    private String filePath;
+    private MakeCSV makeCSV = new MakeCSV();
+    private MakePDF makePDF = new MakePDF();
+    private WriteDialog writeDialog = new WriteDialog();
+    private boolean doingPDF = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.user_loglist);
+
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
+
         vibrator = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
         }
+
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
         builder.detectFileUriExposure();
+
         BluetoothManager bluetoothManager = getManager(this);
         mBluetoothAdapter = bluetoothManager.getAdapter();
         if (mBluetoothLeService == null) {
@@ -83,7 +98,9 @@ public class LogListActivity extends AppCompatActivity implements ListViewListen
             } else
                 Log.e(TAG, "連線失敗");
         }
+
         listView = findViewById(R.id.datalist1);
+
         get_intent();
     }
 
@@ -97,7 +114,8 @@ public class LogListActivity extends AppCompatActivity implements ListViewListen
 
         Intent intent = getIntent();
         default_model = intent.getStringArrayExtra("default_model");
-        String logjson = intent.getStringExtra("logjson");
+        //String logjson = intent.getStringExtra("logjson");
+        String logjson = NewModel.LogString;
         getLogList.setListener(this);
         getLogList.readytointent(logjson);
     }
@@ -177,12 +195,35 @@ public class LogListActivity extends AppCompatActivity implements ListViewListen
         finish();
     }
 
-    private void goback(){
+    private void goback() {
         Intent intent = new Intent(this, UserFunction.class);
         intent.putExtra("default_model", default_model);
         startActivity(intent);
         finish();
     }
+
+    private Runnable todoCSV = new Runnable() {
+        @Override
+        public void run() {
+            makeCSV.todocsv(file, filePath, nameList, timeList, saveList);
+        }
+    };
+
+    private Runnable todoPDF = new Runnable() {
+        @Override
+        public void run() {
+            makePDF.todoPDF(LogListActivity.this, pdffile, nameList, timeList, saveList);
+            doingPDF = true;
+            Log.e(TAG, "doingPDF = " + doingPDF);
+            if (writeDialog.checkshowing()) {
+                writeDialog.closeDialog();
+                Intent intent = new Intent(LogListActivity.this, PDFListView.class);
+                intent.putExtra("default_model", default_model);
+                startActivity(intent);
+                finish();
+            }
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -213,27 +254,28 @@ public class LogListActivity extends AppCompatActivity implements ListViewListen
                         shareIntent.setType("text/*");
                         startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.send_to)));
                     })
-                    /*.setNegativeButton(R.string.PDF, (dialog, which) -> {
+                    .setNegativeButton(R.string.PDF, (dialog, which) -> {
                         vibrator.vibrate(100);
-                        flag = 1;
-                        if (!setdpp) {
-                            running.show();
-                            running.setCanceledOnTouchOutside(false);
-                        } else {
-                            Intent shareIntent = new Intent();
-                            shareIntent.setAction(Intent.ACTION_SEND);
-                            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(pdffile));
-                            shareIntent.setType("text/*");
-                            startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.send_to)));
+                        if (!doingPDF) {
+                            writeDialog.set_Dialog(this, true);
                         }
-                    })*/
+                        else {
+                            Intent intent = new Intent(this, PDFListView.class);
+                            intent.putExtra("default_model", default_model);
+                            startActivity(intent);
+                            finish();
+                        }
+                    })
                     .setNeutralButton(R.string.mes_no, (dialog, which) -> vibrator.vibrate(100))
                     .show();
-        }
-        else if (id == R.id.search) {
-
-        }
-        else if (id == R.id.disconnect) {
+        } else if (id == R.id.search) {
+            vibrator.vibrate(100);
+            Intent intent = new Intent(this, SearchActivity.class);
+            intent.putExtra("default_model", default_model);
+            startActivity(intent);
+            finish();
+        } else if (id == R.id.disconnect) {
+            vibrator.vibrate(100);
             new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.action_settings))
                     .setMessage(getString(R.string.disconnectdevice))
@@ -250,6 +292,7 @@ public class LogListActivity extends AppCompatActivity implements ListViewListen
                         disconnect();
                     })
                     .setNeutralButton(R.string.butoon_no, (dialog, which) -> {
+                        vibrator.vibrate(100);
                     })
                     .show();
         }
@@ -343,16 +386,22 @@ public class LogListActivity extends AppCompatActivity implements ListViewListen
     @Override
     public void makecsv() {
         Log.e(TAG, "開始做csv");
-        MakeCSV makeCSV = new MakeCSV();
         String baseDir = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
         String fileName = "JetecRemote" + ".csv";
-        String filePath = baseDir + File.separator + fileName;
+        filePath = baseDir + File.separator + fileName;
         file = new File(filePath);
-        makeCSV.todocsv(file, filePath, nameList, timeList, saveList);
+        new Thread(todoCSV).start();
     }
 
     @Override
     public void makepdf() {
+        // SD卡位置getApplicationContext().getFilesDir().getAbsolutePath();
+        // 系統位置android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
         Log.e(TAG, "開始做pdf");
+        String baseDir = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
+        String fileName = "JetecRemote" + ".pdf";
+        String filePath = baseDir + File.separator + fileName;
+        pdffile = new File(filePath);
+        new Thread(todoPDF).start();
     }
 }

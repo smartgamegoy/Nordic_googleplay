@@ -23,6 +23,7 @@ public class NewModel {
     public static List<List<byte[]>> viewList, saveList;
     public static List<String> spinList;
     public static Menu menu;
+    public static String LogString;
 
     public NewModel() {
         super();

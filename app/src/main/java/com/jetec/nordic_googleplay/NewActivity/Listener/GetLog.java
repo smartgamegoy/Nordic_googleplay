@@ -3,6 +3,7 @@ package com.jetec.nordic_googleplay.NewActivity.Listener;
 import android.content.Context;
 import android.util.Log;
 
+import com.jetec.nordic_googleplay.NewActivity.Simulate;
 import com.jetec.nordic_googleplay.NewActivity.UserSQL.LogSQL;
 
 import org.json.JSONArray;
@@ -25,6 +26,12 @@ public class GetLog {
     public void readytointent() {
         if (logListener != null) {
             logListener.getjson();
+        }
+    }
+
+    public void endDownload() {
+        if (logListener != null) {
+            logListener.getEnd();
         }
     }
 
@@ -79,6 +86,9 @@ public class GetLog {
     }
 
     public List<List<String>> getLoglist(){
+        /*Simulate simulate = new Simulate();
+        loglist = simulate.simulate();
+        Log.e(TAG, "loglist = " + loglist);*/
         return loglist;
     }
 }

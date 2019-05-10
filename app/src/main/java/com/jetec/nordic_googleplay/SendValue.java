@@ -22,6 +22,25 @@ public class SendValue {
             try {
                 Value.downlog = false;
                 sends = log.getBytes(StandardCharsets.UTF_8);
+                if(str.contains("NAME")) {
+                    if (sends.length != 20) {
+                        byte[] check = new byte[20];
+                        for (int i = 0; i < 20; i++) {
+                            if (i < sends.length) {
+                                check[i] = sends[i];
+                            } else {
+                                check[i] = 0x00;
+                            }
+                        }
+                        sends = check;
+                        StringBuilder hex = new StringBuilder(sends.length * 2);
+                        for (byte aData : sends) {
+                            hex.append(String.format("%02X", aData));
+                        }
+                        String gethex = hex.toString();
+                        Log.e(TAG, "check = " + gethex);
+                    }
+                }
                 bluetoothLeService.writeRXCharacteristic(sends);
                 sleep(100);
             } catch (InterruptedException e) {

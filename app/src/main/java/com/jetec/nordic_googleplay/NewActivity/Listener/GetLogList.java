@@ -50,13 +50,16 @@ public class GetLogList {
                     saveList.add(getjsonlist);
                 }
             } catch (JSONException e) {
+                Log.e(TAG, "未知錯誤進" + e);
                 e.printStackTrace();
             }
 
             listViewListener.convert(nameList, timeList, saveList);
         }
         else {
-            Log.e(TAG, "未知錯誤");
+            Log.e(TAG, "未知錯誤" + "readytointent");
+            Log.e(TAG, "listViewListener = " + listViewListener);
+            Log.e(TAG, "log" + log);
         }
     }
 

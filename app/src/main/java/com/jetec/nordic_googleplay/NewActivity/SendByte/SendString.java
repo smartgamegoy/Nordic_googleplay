@@ -3,10 +3,12 @@ package com.jetec.nordic_googleplay.NewActivity.SendByte;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
+
 import com.jetec.nordic_googleplay.Dialog.WriteDialog;
 import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToInt;
 import com.jetec.nordic_googleplay.NewActivity.Parase;
 import com.jetec.nordic_googleplay.NewModel;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +26,25 @@ public class SendString {
     public void sendstr(String str) {
         byte[] sends;
         sends = str.getBytes(StandardCharsets.UTF_8);
+        if(str.contains("NAME")) {
+            if (sends.length != 20) {
+                byte[] check = new byte[20];
+                for (int i = 0; i < 20; i++) {
+                    if (i < sends.length) {
+                        check[i] = sends[i];
+                    } else {
+                        check[i] = 0x00;
+                    }
+                }
+                sends = check;
+                StringBuilder hex = new StringBuilder(sends.length * 2);
+                for (byte aData : sends) {
+                    hex.append(String.format("%02X", aData));
+                }
+                String gethex = hex.toString();
+                Log.e(TAG, "check = " + gethex);
+            }
+        }
         NewModel.mBluetoothLeService.writeRXCharacteristic(sends);
     }
 
@@ -60,12 +81,6 @@ public class SendString {
     }
 
     public void sendbyte(byte[] getbyte) {
-        StringBuilder hex = new StringBuilder(getbyte.length * 2);
-        for (byte aData : getbyte) {
-            hex.append(String.format("%02X", aData));
-        }
-        String gethex = hex.toString();
-        Log.e(TAG, "getbyte = " + gethex);
         NewModel.mBluetoothLeService.writeRXCharacteristic(getbyte);
     }
 }

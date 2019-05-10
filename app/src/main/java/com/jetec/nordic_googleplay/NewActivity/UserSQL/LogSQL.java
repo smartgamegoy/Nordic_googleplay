@@ -30,14 +30,15 @@ public class LogSQL extends SQLiteOpenHelper {
                 "_id INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL," +
                 "name" + " TEXT, " +   //名稱
                 "timelist" + " TEXT, " +    //時間
-                "savelist" + " TEXT" + ")"; //list資料
+                "savelist" + " TEXT, " +
+                "device" + " TEXT" + ")"; //list資料
         db.execSQL(DATABASE_CREATE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //oldVersion=舊的資料庫版本；newVersion=新的資料庫版本
-        //db.execSQL("DROP TABLE IF EXISTS " + table_name); //刪除舊有的資料表
+        db.execSQL("DROP TABLE IF EXISTS " + table_name); //刪除舊有的資料表
         onCreate(db);
     }
 
@@ -52,16 +53,18 @@ public class LogSQL extends SQLiteOpenHelper {
         super.close();
     }
 
-    public void insert(JSONArray timelist, JSONArray savelist, String name) {
+    public void insert(JSONArray timelist, JSONArray savelist, String name, String device) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
         Log.e(TAG, "timelist = " + timelist);
         Log.e(TAG, "savelist = " + savelist);
         Log.e(TAG, "name = " + name);
+        Log.e(TAG, "device = " + device);
         cv.put("name", name);
         cv.put("timelist", timelist.toString());
         cv.put("savelist", savelist.toString());
+        cv.put("device", device);
 
         db.insert(table_name, name, cv);
     }
@@ -78,6 +81,16 @@ public class LogSQL extends SQLiteOpenHelper {
         @SuppressLint("Recycle")
         Cursor cursor = db.rawQuery("SELECT * FROM " + table_name, null);
         return cursor.getCount();
+    }
+
+    public String getName(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        @SuppressLint("Recycle")
+        Cursor cursor = db.rawQuery("SELECT * FROM " + table_name, null);
+
+        cursor.moveToFirst();
+
+        return cursor.getString(cursor.getColumnIndex("device"));
     }
 
     public void delete(String name){
@@ -103,5 +116,10 @@ public class LogSQL extends SQLiteOpenHelper {
         jsonlist.add(save);
 
         return jsonlist;
+    }
+
+    public void deleteAll() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + table_name);
     }
 }

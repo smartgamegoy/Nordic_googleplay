@@ -65,7 +65,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class UserFunction extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        LoadListener, CountListener, TextListener, LogListener, WantListener {
+        LoadListener, CountListener, TextListener, LogListener, WantListener, CheckListener {
 
     private String TAG = "UserFunction";
     private static final int REQUEST_EXTERNAL_STORAGE = 3;
@@ -92,13 +92,14 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
     private GetLog getLog = new GetLog();
     private ByteToHex byteToHex = new ByteToHex();
     private CheckDownload checkDownload = new CheckDownload();
+    private WriteDialog writeDialog = new WriteDialog();
     private byte[] getbyte08, getbyte09;    //savedownlod
     private String logdate, logtime;    //savedownlod
     private int logcounter, loginter;   //savedownlod
     private int getflag = 0;
     private Dialog DownloadprogressDialog = null;
     private LogSQL logSQL;
-
+    private boolean checkSave = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -228,11 +229,8 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                         } else if (Arrays.equals(getover, txValue)) {
                             mHandler.removeCallbacksAndMessages(null);
                             Log.e(TAG, "ENDING");
-                            checkDownload.checklist(UserFunction.this, vibrator, mBluetoothLeService,
-                                    logdate, logtime, logcounter, loginter,
-                                    getCounter, showText, DownloadprogressDialog);
-                            Log.e(TAG, "list08 = " + NewModel.list08.size());
-                            Log.e(TAG, "list09 = " + NewModel.list09.size());
+
+                            getLog.endDownload();
                         } else if (text.contains("DATE")) {
                             Log.e(TAG, "text = " + text);
                             text = text.replace("DATE", "");
@@ -248,6 +246,9 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                             text = text.replace("COUNT", "");
                             logcounter = Integer.valueOf(text);
                             Log.e(TAG, "logcounter = " + logcounter);
+                            if(logcounter == 0){
+                                checkDownload.noCount(DownloadprogressDialog, UserFunction.this);
+                            }
                         } else if (text.contains("INTER")) {
                             Log.e(TAG, "text = " + text);
                             text = text.replace("INTER", "");
@@ -544,6 +545,37 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         finish();
     }
 
+    private Runnable todoSave = new Runnable() {
+        @Override
+        public void run() {
+            SaveList saveList = new SaveList(UserFunction.this);
+            saveList.convertLogdata(logdate, logtime, loginter, getLog);
+            checkSave = true;
+            if(writeDialog.checkshowing()){
+                writeDialog.closeDialog();
+                requeststorage();
+            }
+        }
+    };
+
+    private Runnable firsttoSave = new Runnable() {
+        @Override
+        public void run() {
+            String model = Value.deviceModel;
+            String[] arr = model.split("-");
+            String name = arr[2];
+            name = name.replace("Y", "");
+            name = name.replace("L", "");
+            name = name.replace("Z", "");
+            getLog.getJsonlist(logSQL, name);
+            checkSave = true;
+            if(writeDialog.checkshowing()){
+                writeDialog.closeDialog();
+                requeststorage();
+            }
+        }
+    };
+
     private void requeststorage() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
@@ -709,6 +741,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.datadownload) {
             vibrator.vibrate(100);
             if (Value.passwordFlag != 4) {
+                navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.start) + getString(R.string.LOG));
                 getCounter.setListener(this);
                 checkDownload.setWantListener(this);
                 DownloadDialog downloadDialog = new DownloadDialog();
@@ -727,7 +760,13 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.showdialog) {
             vibrator.vibrate(100);
             if (Value.passwordFlag != 4) {
-                requeststorage();
+                //requeststorage();
+                if (!checkSave) {
+                    writeDialog.set_Dialog(this, true);
+                }
+                else {
+                    requeststorage();
+                }
             }
         } else if (id == R.id.modifypassword) {
             vibrator.vibrate(100);
@@ -863,8 +902,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
     @Override
     public void update(int size, int count) {
         Log.e(TAG, "You got it!");
-        SaveList saveList = new SaveList(this);
-        saveList.convertLogdata(logdate, logtime, loginter, getLog);
+        new Thread(todoSave).start();
     }
 
     @SuppressLint("SetTextI18n")
@@ -883,25 +921,45 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         name = name.replace("L", "");
         name = name.replace("Z", "");
         if (logSQL.getCount(name) > 0) {
-            getLog.getJsonlist(logSQL, name);
+            new Thread(firsttoSave).start();
         }
     }
 
     @Override
     public void showjson() {
+        /*List<List<String>> alllist = new ArrayList<>();
+        alllist.clear();
+        alllist = getLog.getLoglist();
+        JSONArray logjson = new JSONArray(alllist);
+        NewModel.LogString = logjson.toString();
+        Intent intent = new Intent(this, LogListActivity.class);
+        intent.putExtra("default_model", default_model);
+        //intent.putExtra("logjson", logjson.toString());
+        startActivity(intent);
+        finish();*/
         if (logSQL.getCount() > 0) {
             List<List<String>> alllist = new ArrayList<>();
             alllist.clear();
             alllist = getLog.getLoglist();
             JSONArray logjson = new JSONArray(alllist);
+            NewModel.LogString = logjson.toString();
             Intent intent = new Intent(this, LogListActivity.class);
             intent.putExtra("default_model", default_model);
-            intent.putExtra("logjson", logjson.toString());
+            //intent.putExtra("logjson", logjson.toString());
             startActivity(intent);
             finish();
         } else {
             Toast.makeText(this, getString(R.string.logdata), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void getEnd() {
+        checkDownload.checklist(UserFunction.this, vibrator, mBluetoothLeService,
+                logdate, logtime, logcounter, loginter,
+                getCounter, showText, DownloadprogressDialog);
+        Log.e(TAG, "list08 = " + NewModel.list08.size());
+        Log.e(TAG, "list09 = " + NewModel.list09.size());
     }
 
     @Override
@@ -917,5 +975,15 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
             sendString.sendbyte(wantbyte);
             checkDownload.removerecordlist(false);
         }
+    }
+
+    @Override
+    public void sorting() {
+        //do nothing
+    }
+
+    @Override
+    public void keepWork() {
+        //do nothing
     }
 }

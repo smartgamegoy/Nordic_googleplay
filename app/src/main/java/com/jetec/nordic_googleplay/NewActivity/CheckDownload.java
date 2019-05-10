@@ -6,10 +6,12 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToInt;
+import com.jetec.nordic_googleplay.NewActivity.Listener.CheckListener;
+import com.jetec.nordic_googleplay.NewActivity.Listener.GetCheck;
 import com.jetec.nordic_googleplay.NewActivity.Listener.GetCounter;
 import com.jetec.nordic_googleplay.NewActivity.Listener.WantListener;
-import com.jetec.nordic_googleplay.NewActivity.SendByte.SendString;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
@@ -18,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CheckDownload {
+public class CheckDownload implements CheckListener {
 
     private String TAG = "CheckDownload";
     private WantListener wantListener;
@@ -36,6 +38,7 @@ public class CheckDownload {
     private Dialog dialog;
     private boolean listen;
     private Handler wanthandler;
+    private GetCheck getCheck = new GetCheck();
 
     public CheckDownload() {
         super();
@@ -62,99 +65,18 @@ public class CheckDownload {
         this.getCounter = getCounter;
         this.showtext = showtext;
         this.dialog = DownloadprogressDialog;
+        getCheck.setListener(this);
         recheck();
     }
 
     private void recheck() {
-        BubbleDownload bubbleDownload = new BubbleDownload();
-        bubbleDownload.sortList();
-        for (int i = 0; i < NewModel.list09.size(); i++) {
-            if (Arrays.equals(NewModel.list09.get(i), getnull) || Arrays.equals(NewModel.list09.get(i), getnull)) {
-                //noinspection SuspiciousListRemoveInLoop
-                NewModel.list09.remove(i);
-                //noinspection SuspiciousListRemoveInLoop
-                NewModel.list08.remove(i);
-            } else {
-                byte[] getbyte = NewModel.list09.get(i);
-                byte[] data = Arrays.copyOfRange(getbyte, 1, 4);
-                int num = byteToInt.byteToInt(data);
-                listnum.add(num);
-                //Log.e(TAG, "num = " + num);
-            }
-        }
-        for (int i = 1; i <= count; i++) {
-            countlist.add(i);
-        }
-        Log.e(TAG, "countlist = " + countlist);
-        Log.e(TAG, "listnum = " + listnum);
-        Log.e(TAG, "list08.size = " + NewModel.list08.size());
-        Log.e(TAG, "list09.size = " + NewModel.list09.size());
-        Log.e(TAG, "list08.size = " + NewModel.list08);
-        Log.e(TAG, "list09.size = " + NewModel.list09);
-        for (int i = 0; i < listnum.size(); i++) {
-            if (number < countlist.size()) {
-                if (!listnum.get(i).equals(countlist.get(number))) {
-                    recordlist.add(countlist.get(number));
-                    i--;
-                }
-                number++;
-            } else {
-                break;
-            }
-        }
-        Log.e(TAG, "countlist = " + countlist.size());
-        Log.e(TAG, "recordlist = " + recordlist);
-        Log.e(TAG, "recordlist = " + recordlist.size());
-
+        new Thread(sortList).start();
         showtext.setText(context.getString(R.string.process));
-        if (NewModel.list08.size() != count || NewModel.list09.size() != count || listnum.size() != count) {
-            NewModel.checkwant = true;
-            checkwant();
-            //getlost(0);
-        } else {
-            dialog.dismiss();
-            getCounter.readytointent(NewModel.list09.size(), count);
-            NewModel.checklost = false;
-            Value.opendialog = false;
-            Log.e(TAG, "list08.size = " + NewModel.list08.size());
-            Log.e(TAG, "list09.size = " + NewModel.list09.size());
-            Log.e(TAG, "收工");
-        }
     }
 
-    private void getlost(int i) {
-        SendString sendString = new SendString();
-        Handler lostHandler = new Handler();
-        final int[] lost_i = {i};
-        if (i < recordlist.size()) {
-            NewModel.checklost = true;
-            lostHandler.postDelayed(() -> {
-                int lost = recordlist.get(i);
-                byte[] lostbyte = byteToInt.intToByteArray(lost);
-                byte[] wantbyte = new byte[(getwant.length + lostbyte.length)];
-                System.arraycopy(getwant, 0, wantbyte, 0, getwant.length);
-                System.arraycopy(lostbyte, 0, wantbyte, getwant.length, lostbyte.length);
-                sendString.sendbyte(wantbyte);
-                lost_i[0]++;
-                getlost(lost_i[0]);
-            }, 50);
-        } //else {
-            //lostHandler.postDelayed(() -> {
-                //lostHandler.removeCallbacksAndMessages(null);
-                //sendString.sendstr("END");
-                /*recordlist.clear();
-                listnum.clear();
-                countlist.clear();
-                recheck();*/
-            //}, 300);
-            /*lostHandler.postDelayed(() -> {
-                getCounter.readytointent(NewModel.list09.size(), count);
-                dialog.dismiss();
-                NewModel.checklost = false;
-                Value.opendialog = false;
-                Log.e(TAG, "收工");
-            }, 2000);*/
-        //}
+    public void noCount(Dialog DownloadprogressDialog, Context context){
+        Toast.makeText(context, context.getString(R.string.logdata), Toast.LENGTH_SHORT).show();
+        DownloadprogressDialog.dismiss();
     }
 
     public void setWantListener(WantListener mWantListener) {
@@ -193,4 +115,76 @@ public class CheckDownload {
             }, 300);
         }
     }
+
+    @Override
+    public void sorting() {
+        new Thread(reSortlist).start();
+    }
+
+    @Override
+    public void keepWork() {
+        if (NewModel.list08.size() != count || NewModel.list09.size() != count || listnum.size() != count) {
+            NewModel.checkwant = true;
+            checkwant();
+            //getlost(0);
+        } else {
+            dialog.dismiss();
+            getCounter.readytointent(NewModel.list09.size(), count);
+            NewModel.checklost = false;
+            Value.opendialog = false;
+            Log.e(TAG, "list08.size = " + NewModel.list08.size());
+            Log.e(TAG, "list09.size = " + NewModel.list09.size());
+            Log.e(TAG, "收工");
+        }
+    }
+
+    private Runnable reSortlist = new Runnable() {
+        @Override
+        public void run() {
+            for (int i = 0; i < listnum.size(); i++) {
+                if (number < countlist.size()) {
+                    if (!listnum.get(i).equals(countlist.get(number))) {
+                        recordlist.add(countlist.get(number));
+                        i--;
+                    }
+                    number++;
+                } else {
+                    break;
+                }
+            }
+            getCheck.keeptoNext();
+            /*Log.e(TAG, "countlist = " + countlist.size());
+            Log.e(TAG, "recordlist = " + recordlist);
+            Log.e(TAG, "recordlist = " + recordlist.size());*/
+
+        }
+    };
+
+    private Runnable sortList = new Runnable() {
+        @Override
+        public void run() {
+            BubbleDownload bubbleDownload = new BubbleDownload();
+            bubbleDownload.sortList();
+            for (int i = 0; i < NewModel.list09.size(); i++) {
+                if (Arrays.equals(NewModel.list09.get(i), getnull) || Arrays.equals(NewModel.list09.get(i), getnull)) {
+                    //noinspection SuspiciousListRemoveInLoop
+                    NewModel.list09.remove(i);
+                    //noinspection SuspiciousListRemoveInLoop
+                    NewModel.list08.remove(i);
+                } else {
+                    byte[] getbyte = NewModel.list09.get(i);
+                    byte[] data = Arrays.copyOfRange(getbyte, 1, 4);
+                    int num = byteToInt.byteToInt(data);
+                    listnum.add(num);
+                    //Log.e(TAG, "num = " + num);
+                }
+            }
+            for (int i = 1; i <= count; i++) {
+                countlist.add(i);
+            }
+            Log.e(TAG, "list08.size = " + NewModel.list08.size());
+            Log.e(TAG, "list09.size = " + NewModel.list09.size());
+            getCheck.readytoNext();
+        }
+    };
 }
