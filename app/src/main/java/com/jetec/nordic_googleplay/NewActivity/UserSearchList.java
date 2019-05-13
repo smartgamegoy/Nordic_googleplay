@@ -29,7 +29,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.jetec.nordic_googleplay.Activity.SearchActivity;
+import com.jetec.nordic_googleplay.NewActivity.Function.SearchNewList;
+import com.jetec.nordic_googleplay.NewActivity.Function.SetDateTime;
+import com.jetec.nordic_googleplay.NewActivity.Function.SetEditHint;
 import com.jetec.nordic_googleplay.NewActivity.GetString.GetUnit;
 import com.jetec.nordic_googleplay.NewActivity.Listener.GetLogList;
 import com.jetec.nordic_googleplay.NewActivity.Listener.ListViewListener;
@@ -38,6 +43,7 @@ import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Value;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +62,9 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
     private List<List<String>> saveList;
     private GetLogList getLogList = new GetLogList();
     private GetUnit getUnit = new GetUnit();
-    private String chose1, chose2;
+    private SetDateTime setDateTime = new SetDateTime();
+    private SearchNewList searchNewList = new SearchNewList();
+    private String date_time, record, chose1 = "", chose2 = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +104,7 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
         Intent intent = getIntent();
         default_model = intent.getStringArrayExtra("default_model");
         String logjson = NewModel.LogString;
+        getLogList.setListener(this);
         getLogList.readytointent(logjson);
         searchmenu();
     }
@@ -114,8 +123,8 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
         t3 = findViewById(R.id.textView7);
         LinearLayout l1 = findViewById(R.id.textlinear);
 
-        String date_time = getString(R.string.datetime);    //項目，條件，數值
-        String record = getString(R.string.size);
+        date_time = getString(R.string.datetime);    //項目，條件，數值
+        record = getString(R.string.size);
 
         spinnerList.add(getString(R.string.condition1));
         spinnerList.add(date_time);
@@ -129,6 +138,7 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
         new Thread(arrayadd).start();
 
         s2.setEnabled(false);
+        t2.setText("");
         t3.setVisibility(View.GONE);
         e1.setVisibility(View.GONE);
         b1.setVisibility(View.GONE);
@@ -153,6 +163,7 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
         s1.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                vibrator.vibrate(100);
                 Log.e("myLog", "position = " + position);
                 if (position == 0) {
                     s2.setEnabled(false);
@@ -190,9 +201,9 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
                     b2.setVisibility(View.GONE);
                     l1.setVisibility(View.GONE);
                     chose1 = spinnerList.get(position);
-
+                    SetEditHint setEditHint = new SetEditHint();
+                    setEditHint.seteditHint(e1, nameList, position);
                 }
-
             }
 
             @Override
@@ -200,6 +211,56 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
             }
         });
 
+        ArrayAdapter<String> spinnerArrayAdapter2 = new ArrayAdapter<String>(
+                this, R.layout.spinner_style, spinnerList2) {    //android.R.layout.simple_spinner_item
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        };
+
+        spinnerArrayAdapter2.setDropDownViewResource(R.layout.spinner_style);    //R.layout.spinner_style
+        s2.setAdapter(spinnerArrayAdapter2);
+        s2.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                vibrator.vibrate(100);
+                Log.e("myLog", "position2 = " + position);
+                chose2 = spinnerList2.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        b1.setOnClickListener(v -> {
+            vibrator.vibrate(100);
+            setDateTime.datechose(UserSearchList.this, t2);
+        });
+        b2.setOnClickListener(v -> {
+            vibrator.vibrate(100);
+            setDateTime.timechose(UserSearchList.this, t2);
+        });
+        b3.setOnClickListener(v -> {
+            vibrator.vibrate(100);
+            if (chose1.matches(date_time)) {
+                if (!chose2.matches("") && !t2.getText().toString().trim().matches("")) {
+                    @SuppressLint("SimpleDateFormat")
+                    SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
+                    String timecomparison = t2.getText().toString().trim() + ":00";
+                    Log.e(TAG, "timecomparison = " + timecomparison);
+                    searchNewList.timeSearchList(this, default_model, chose2, sdf, timecomparison, timeList);
+                } else
+                    Toast.makeText(this, getString(R.string.wrong), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
@@ -268,13 +329,6 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
         intent.putExtra("default_model", default_model);
         startActivity(intent);
         finish();
-    }
-
-    private static String Fix(int c) {
-        if (c >= 10)
-            return String.valueOf(c);
-        else
-            return "0" + String.valueOf(c);
     }
 
     private Runnable timecheck = new Runnable() {

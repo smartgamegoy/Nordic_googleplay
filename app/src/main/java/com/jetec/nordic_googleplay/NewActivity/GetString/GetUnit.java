@@ -1,12 +1,16 @@
 package com.jetec.nordic_googleplay.NewActivity.GetString;
 
 import android.content.Context;
+import android.util.Log;
+
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Value;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GetUnit {
+
+    private String TAG = "GetUnit";
 
     public GetUnit(){
         super();
@@ -22,16 +26,21 @@ public class GetUnit {
         } else if (item.matches("C") || item.matches("D") || item.matches("E")) {
             name = context.getString(R.string.C);
         } else if (item.matches("I")) {
+            int k = 0;
             String model = Value.deviceModel;
             String[] arr = model.split("-");
             String namearr = arr[2];
+            Log.e(TAG, "namearr = " + namearr);
             List<Integer> num = new ArrayList<>();
             num.clear();
             for (int j = 0; j < namearr.length(); j++) {
-                if (!String.valueOf(name.charAt(j)).matches("Y") || !String.valueOf(name.charAt(j)).matches("Z")) {
-                    num.add(j);
+                if (!String.valueOf(namearr.charAt(j)).matches("Y") && !String.valueOf(namearr.charAt(j)).matches("Z")) {
+                    num.add(k);
                 }
+                k++;
             }
+            Log.e(TAG, "i = " + i);
+            Log.e(TAG, "num = " + num);
             if (num.get(i) == 0) {
                 name = context.getString(R.string.I1row);
             } else if (num.get(i) == 1) {
@@ -62,15 +71,17 @@ public class GetUnit {
         } else if (item.matches("C") || item.matches("D") || item.matches("E")) {
             title = "CO2/ppm";
         } else if (item.matches("I")) {
+            int k = 0;
             String model = Value.deviceModel;
             String[] arr = model.split("-");
             String namearr = arr[2];
             List<Integer> num = new ArrayList<>();
             num.clear();
             for (int j = 0; j < namearr.length(); j++) {
-                if (!String.valueOf(title.charAt(j)).matches("Y") || !String.valueOf(title.charAt(j)).matches("Z")) {
-                    num.add(j);
+                if (!String.valueOf(namearr.charAt(j)).matches("Y") && !String.valueOf(namearr.charAt(j)).matches("Z")) {
+                    num.add(k);
                 }
+                k++;
             }
             if (num.get(i) == 0) {
                 title = "Analog1";

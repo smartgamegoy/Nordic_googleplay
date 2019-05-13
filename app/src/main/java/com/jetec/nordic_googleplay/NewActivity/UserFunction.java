@@ -40,6 +40,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.jetec.nordic_googleplay.Activity.MainActivity;
 import com.jetec.nordic_googleplay.Dialog.*;
 import com.jetec.nordic_googleplay.NewActivity.Function.SaveList;
@@ -55,7 +56,9 @@ import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Value;
+
 import org.json.JSONArray;
+
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -219,6 +222,9 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                     String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                     byte[] txValue = intents.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
                     String text = new String(txValue, StandardCharsets.UTF_8);
+                    if(text.contains("NAME")){
+                        Value.BName = text.substring(4);
+                    }
                     StringBuilder hex = new StringBuilder(txValue.length * 2);
                     for (byte aData : txValue) {
                         hex.append(String.format("%02X", aData));
@@ -230,7 +236,6 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                         } else if (Arrays.equals(getover, txValue)) {
                             mHandler.removeCallbacksAndMessages(null);
                             Log.e(TAG, "ENDING");
-
                             getLog.endDownload();
                         } else if (text.contains("DATE")) {
                             Log.e(TAG, "text = " + text);
@@ -247,7 +252,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                             text = text.replace("COUNT", "");
                             logcounter = Integer.valueOf(text);
                             Log.e(TAG, "logcounter = " + logcounter);
-                            if(logcounter == 0){
+                            if (logcounter == 0) {
                                 checkDownload.noCount(DownloadprogressDialog, UserFunction.this);
                             }
                         } else if (text.contains("INTER")) {
@@ -302,7 +307,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                                 }
                             }
                         }
-                    } else if(Value.opendialog){
+                    } else if (Value.opendialog) {
                         byte[] data = Arrays.copyOfRange(txValue, 0, 1);
                         if (data[0] == 0x08) {
                             getflag = 1;
@@ -331,8 +336,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                             getbyte09 = null;
                             checkDownload.removerecordlist(true);
                         }
-                    }
-                    else {
+                    } else {
                         Log.e(TAG, "[" + currentDateTimeString + "] get: " + text);
                     }
                 });
@@ -539,7 +543,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void gotoEngin(){
+    private void gotoEngin() {
         Intent intent = new Intent(this, New_Engin.class);
         intent.putExtra("default_model", default_model);
         startActivity(intent);
@@ -552,7 +556,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
             SaveList saveList = new SaveList(UserFunction.this);
             saveList.convertLogdata(logdate, logtime, loginter, getLog);
             checkSave = true;
-            if(writeDialog.checkshowing()){
+            if (writeDialog.checkshowing()) {
                 writeDialog.closeDialog();
                 requeststorage();
             }
@@ -570,7 +574,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
             name = name.replace("Z", "");
             getLog.getJsonlist(logSQL, name);
             checkSave = true;
-            if(writeDialog.checkshowing()){
+            if (writeDialog.checkshowing()) {
                 writeDialog.closeDialog();
                 requeststorage();
             }
@@ -643,7 +647,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                 break;
             case KeyEvent.KEYCODE_BACK: {
                 vibrator.vibrate(100);
-                if(!NewModel.enginmode) {
+                if (!NewModel.enginmode) {
                     new AlertDialog.Builder(this)
                             .setTitle(getString(R.string.action_settings))
                             .setMessage(getString(R.string.disconnectdevice))
@@ -665,8 +669,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                             .setNeutralButton(R.string.butoon_no, (dialog, which) -> {
                             })
                             .show();
-                }
-                else {
+                } else {
                     new AlertDialog.Builder(this)
                             .setTitle("結束連線")
                             .setMessage("斷開藍牙")
@@ -762,11 +765,20 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
             vibrator.vibrate(100);
             if (Value.passwordFlag != 4) {
                 //requeststorage();
-                if (!checkSave) {
-                    writeDialog.set_Dialog(this, true);
-                }
-                else {
-                    requeststorage();
+                String model = Value.deviceModel;
+                String[] arr = model.split("-");
+                String name = arr[2];
+                name = name.replace("Y", "");
+                name = name.replace("L", "");
+                name = name.replace("Z", "");
+                if (logSQL.getCount(name) > 0) {
+                    if (!checkSave) {
+                        writeDialog.set_Dialog(this, true);
+                    } else {
+                        requeststorage();
+                    }
+                } else {
+                    Toast.makeText(this, getString(R.string.logdata), Toast.LENGTH_SHORT).show();
                 }
             }
         } else if (id == R.id.modifypassword) {
@@ -965,7 +977,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void checkwant(List<Integer> recordlist) {
-        if(recordlist.size() > 0) {
+        if (recordlist.size() > 0) {
             SendString sendString = new SendString();
             ByteToInt byteToInt = new ByteToInt();
             int lost = recordlist.get(0);
