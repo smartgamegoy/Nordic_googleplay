@@ -270,7 +270,7 @@ public class LogListActivity extends AppCompatActivity implements ListViewListen
                     .show();
         } else if (id == R.id.search) {
             vibrator.vibrate(100);
-            Intent intent = new Intent(this, SearchActivity.class);
+            Intent intent = new Intent(this, UserSearchList.class);
             intent.putExtra("default_model", default_model);
             startActivity(intent);
             finish();

@@ -1,10 +1,8 @@
 package com.jetec.nordic_googleplay.NewActivity;
 
 import android.content.Context;
-
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Value;
-
 import java.util.ArrayList;
 import java.util.List;
 

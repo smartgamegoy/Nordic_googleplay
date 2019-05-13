@@ -1,5 +1,6 @@
 package com.jetec.nordic_googleplay.NewActivity;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
@@ -15,22 +16,25 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
+import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import com.jetec.nordic_googleplay.NewActivity.Listener.GetLogList;
 import com.jetec.nordic_googleplay.NewActivity.Listener.ListViewListener;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Value;
-
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -48,8 +52,11 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
     private String[] default_model;
     private TextView t2, t3;
     private List<String> nameList, timeList;
+    private List<String> spinnerList, spinnerList2;
     private List<List<String>> saveList;
     private GetLogList getLogList = new GetLogList();
+    private GetUnit getUnit = new GetUnit();
+    private String chose1, chose2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,13 +81,17 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
         get_intent();
     }
 
-    private void get_intent(){
+    private void get_intent() {
         nameList = new ArrayList<>();
         timeList = new ArrayList<>();
         saveList = new ArrayList<>();
+        spinnerList = new ArrayList<>();
+        spinnerList2 = new ArrayList<>();
         nameList.clear();
         timeList.clear();
         saveList.clear();
+        spinnerList.clear();
+        spinnerList2.clear();
 
         Intent intent = getIntent();
         default_model = intent.getStringArrayExtra("default_model");
@@ -89,7 +100,7 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
         searchmenu();
     }
 
-    private void searchmenu(){
+    private void searchmenu() {
         setContentView(R.layout.searchdatalist);
 
         Spinner s1 = findViewById(R.id.spinner1);
@@ -103,6 +114,91 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
         t3 = findViewById(R.id.textView7);
         LinearLayout l1 = findViewById(R.id.textlinear);
 
+        String date_time = getString(R.string.datetime);    //項目，條件，數值
+        String record = getString(R.string.size);
+
+        spinnerList.add(getString(R.string.condition1));
+        spinnerList.add(date_time);
+        spinnerList.add(record);
+
+        for (int i = 0; i < nameList.size(); i++) {
+            spinnerList.add(getUnit.getItemString(this, nameList.get(i), i));
+        }
+
+        new Thread(timecheck).start();
+        new Thread(arrayadd).start();
+
+        s2.setEnabled(false);
+        t3.setVisibility(View.GONE);
+        e1.setVisibility(View.GONE);
+        b1.setVisibility(View.GONE);
+        b2.setVisibility(View.GONE);
+
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
+                this, R.layout.spinner_style, spinnerList) {    //android.R.layout.simple_spinner_item
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        };
+
+        spinnerArrayAdapter.setDropDownViewResource(R.layout.spinner_style);    //R.layout.spinner_style
+        s1.setAdapter(spinnerArrayAdapter);
+        s1.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.e("myLog", "position = " + position);
+                if (position == 0) {
+                    s2.setEnabled(false);
+                    t3.setVisibility(View.GONE);
+                    e1.setVisibility(View.GONE);
+                    b1.setVisibility(View.GONE);
+                    b2.setVisibility(View.GONE);
+                } else if (position == 1) {
+                    s2.setEnabled(true);
+                    e1.setVisibility(View.GONE);
+                    t3.setVisibility(View.VISIBLE);
+                    b1.setVisibility(View.VISIBLE);
+                    b2.setVisibility(View.VISIBLE);
+                    l1.setVisibility(View.VISIBLE);
+                    chose1 = spinnerList.get(position);
+                } else if (position == 2) {
+                    s2.setEnabled(true);
+                    e1.setVisibility(View.VISIBLE);
+                    e1.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    e1.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+                    e1.setHint("1 ~ " + timeList.size());
+                    t3.setVisibility(View.GONE);
+                    b1.setVisibility(View.GONE);
+                    b2.setVisibility(View.GONE);
+                    l1.setVisibility(View.GONE);
+                    chose1 = spinnerList.get(position);
+                } else {
+                    s2.setEnabled(true);
+                    e1.setVisibility(View.VISIBLE);
+                    e1.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED |
+                            InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                    //chose_position = position;
+                    t3.setVisibility(View.GONE);
+                    b1.setVisibility(View.GONE);
+                    b2.setVisibility(View.GONE);
+                    l1.setVisibility(View.GONE);
+                    chose1 = spinnerList.get(position);
+
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
     }
 
@@ -180,6 +276,28 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
         else
             return "0" + String.valueOf(c);
     }
+
+    private Runnable timecheck = new Runnable() {
+        @SuppressLint("SetTextI18n")
+        @Override
+        public void run() {
+            String f_time = timeList.get(0);
+            String e_time = timeList.get(timeList.size() - 1);
+            t3.setText(getString(R.string.timerange) + ": " + f_time + " ~ " + e_time);
+        }
+    };
+
+    private Runnable arrayadd = new Runnable() {
+        @Override
+        public void run() {
+            spinnerList2.add(getString(R.string.condition2));
+            spinnerList2.add("＞");
+            spinnerList2.add("≧");
+            spinnerList2.add("＝");
+            spinnerList2.add("≦");
+            spinnerList2.add("＜");
+        }
+    };
 
     @Override
     protected void onStop() {
@@ -265,11 +383,11 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
 
     @Override
     public void makecsv() {
-
+        //do nothing
     }
 
     @Override
     public void makepdf() {
-
+        //do nothing
     }
 }

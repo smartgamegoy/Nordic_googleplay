@@ -4,16 +4,14 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
+import com.jetec.nordic_googleplay.NewActivity.Function.BubbleDownload;
 import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToHex;
-import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToInt;
 import com.jetec.nordic_googleplay.NewActivity.Listener.GetLog;
 import com.jetec.nordic_googleplay.NewActivity.UserSQL.LogSQL;
-import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.Value;
 
 import org.json.JSONArray;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
