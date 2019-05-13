@@ -1,9 +1,7 @@
 package com.jetec.nordic_googleplay.NewActivity.Function;
 
 import android.widget.EditText;
-
 import com.jetec.nordic_googleplay.NewActivity.EditListener.SearchEditListener;
-
 import java.util.List;
 
 public class SetEditHint {

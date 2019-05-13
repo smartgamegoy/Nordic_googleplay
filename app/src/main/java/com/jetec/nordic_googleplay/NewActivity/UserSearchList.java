@@ -257,8 +257,14 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
                     SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
                     String timecomparison = t2.getText().toString().trim() + ":00";
                     Log.e(TAG, "timecomparison = " + timecomparison);
-                    searchNewList.timeSearchList(this, default_model, chose2, sdf, timecomparison, timeList);
+                    searchNewList.timeSearchList(this, default_model, chose2, sdf,
+                            timecomparison, timeList, saveList);
                 } else
+                    Toast.makeText(this, getString(R.string.wrong), Toast.LENGTH_SHORT).show();
+            } else if (chose1.matches(record)) {
+                if (!chose2.matches(getString(R.string.condition2)) && !e1.getText().toString().trim().matches(""))
+                    calculate(chose1, chose2, e1.getText().toString().trim());
+                else
                     Toast.makeText(this, getString(R.string.wrong), Toast.LENGTH_SHORT).show();
             }
         });
