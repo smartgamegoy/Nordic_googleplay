@@ -64,6 +64,7 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
     private GetUnit getUnit = new GetUnit();
     private SetDateTime setDateTime = new SetDateTime();
     private SearchNewList searchNewList = new SearchNewList();
+    private SetEditHint setEditHint = new SetEditHint();
     private String date_time, record, chose1 = "", chose2 = "";
 
     @Override
@@ -164,6 +165,7 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 vibrator.vibrate(100);
+                e1.setText("");
                 Log.e("myLog", "position = " + position);
                 if (position == 0) {
                     s2.setEnabled(false);
@@ -201,7 +203,6 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
                     b2.setVisibility(View.GONE);
                     l1.setVisibility(View.GONE);
                     chose1 = spinnerList.get(position);
-                    SetEditHint setEditHint = new SetEditHint();
                     setEditHint.seteditHint(e1, nameList, position);
                 }
             }

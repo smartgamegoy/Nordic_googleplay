@@ -9,6 +9,7 @@ import java.util.List;
 public class SetEditHint {
 
     private String TAG = "SetEditHint";
+    private SearchEditListener searchEditListener = new SearchEditListener();
 
     public SetEditHint(){
         super();
@@ -16,6 +17,7 @@ public class SetEditHint {
 
     public void seteditHint(EditText e1, List<String> nameList, int position){
         String getName = nameList.get(position - 3);
+        searchEditListener.setValue(e1, getName);
         if(getName.matches("T")){
             e1.setHint(" - 10 ~ 65");
         }else if(getName.matches("H")){
@@ -31,6 +33,6 @@ public class SetEditHint {
         }else if(getName.matches("M")){
             e1.setHint(" 0 ~ 1000");
         }
-        e1.addTextChangedListener(new SearchEditListener(e1, getName));
+        e1.addTextChangedListener(searchEditListener);
     }
 }

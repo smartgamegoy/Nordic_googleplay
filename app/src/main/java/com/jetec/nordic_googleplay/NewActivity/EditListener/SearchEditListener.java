@@ -14,7 +14,11 @@ public class SearchEditListener implements TextWatcher {
     private String name;
     private boolean last;
 
-    public SearchEditListener(EditText editText, String name) {
+    public SearchEditListener() {
+        super();
+    }
+
+    public void setValue(EditText editText, String name){
         this.editText = editText;
         this.name = name;
         Log.e(TAG, "name = " + name);
@@ -40,15 +44,15 @@ public class SearchEditListener implements TextWatcher {
         } else if (name.startsWith("H")) {
             setSize(editable, num, (float) 100.0, (float) 0.0);
         } else if (name.startsWith("C")) {
-            setSize(editable, num, (float) 0.0, (float) 2000.0);
+            setSize(editable, num, (float) 2000.0, (float) 0.0);
         }else if (name.startsWith("D")) {
-            setSize(editable, num, (float) 0.0, (float) 3000.0);
+            setSize(editable, num, (float) 3000.0, (float) 0.0);
         }else if (name.startsWith("E")) {
-            setSize(editable, num, (float) 0.0, (float) 5000.0);
+            setSize(editable, num, (float) 5000.0, (float) 0.0);
         }else if (name.startsWith("I")) {
-            setSize(editable, num, (float) -999.0, (float) 9999.0);
+            setSize(editable, num, (float) 9999.0, (float) -999.0);
         }else if (name.startsWith("M")) {
-            setSize(editable, num, (float) 0.0, (float) 1000.0);
+            setSize(editable, num, (float) 1000.0, (float) 0.0);
         }
     }
 
