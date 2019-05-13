@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.jetec.nordic_googleplay.NewActivity.New_Dialog.*;
-import com.jetec.nordic_googleplay.NewActivity.Parase;
+import com.jetec.nordic_googleplay.NewActivity.GetString.Parase;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Value;

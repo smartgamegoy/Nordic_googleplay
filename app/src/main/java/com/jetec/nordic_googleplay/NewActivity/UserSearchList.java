@@ -29,16 +29,16 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.jetec.nordic_googleplay.NewActivity.GetString.GetUnit;
 import com.jetec.nordic_googleplay.NewActivity.Listener.GetLogList;
 import com.jetec.nordic_googleplay.NewActivity.Listener.ListViewListener;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Value;
-import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class UserSearchList extends AppCompatActivity implements ListViewListener {

@@ -1,12 +1,12 @@
-package com.jetec.nordic_googleplay.NewActivity;
+package com.jetec.nordic_googleplay.NewActivity.Function;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
-import com.jetec.nordic_googleplay.NewActivity.Function.BubbleDownload;
 import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToHex;
 import com.jetec.nordic_googleplay.NewActivity.Listener.GetLog;
+import com.jetec.nordic_googleplay.NewActivity.GetString.Parase;
 import com.jetec.nordic_googleplay.NewActivity.UserSQL.LogSQL;
 import com.jetec.nordic_googleplay.Value;
 

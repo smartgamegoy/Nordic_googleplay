@@ -10,7 +10,7 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
-import com.jetec.nordic_googleplay.NewActivity.GetUnit;
+import com.jetec.nordic_googleplay.NewActivity.GetString.GetUnit;
 import com.jetec.nordic_googleplay.R;
 
 import java.util.ArrayList;

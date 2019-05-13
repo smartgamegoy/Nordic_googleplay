@@ -2,13 +2,12 @@ package com.jetec.nordic_googleplay.NewActivity.ViewAdapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import com.jetec.nordic_googleplay.NewActivity.GetUnit;
+import com.jetec.nordic_googleplay.NewActivity.GetString.GetUnit;
 import com.jetec.nordic_googleplay.R;
 import java.util.ArrayList;
 import java.util.List;

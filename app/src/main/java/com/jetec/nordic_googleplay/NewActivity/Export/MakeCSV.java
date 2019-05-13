@@ -3,7 +3,7 @@ package com.jetec.nordic_googleplay.NewActivity.Export;
 import android.os.StrictMode;
 import android.util.Log;
 
-import com.jetec.nordic_googleplay.NewActivity.GetUnit;
+import com.jetec.nordic_googleplay.NewActivity.GetString.GetUnit;
 import com.opencsv.CSVWriter;
 
 import java.io.File;

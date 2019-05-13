@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
-import com.jetec.nordic_googleplay.NewActivity.Parase;
+import com.jetec.nordic_googleplay.NewActivity.GetString.Parase;
 import com.jetec.nordic_googleplay.NewActivity.SendByte.SendString;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import java.util.ArrayList;

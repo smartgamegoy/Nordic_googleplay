@@ -17,7 +17,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToHex;
-import com.jetec.nordic_googleplay.NewActivity.Parase;
+import com.jetec.nordic_googleplay.NewActivity.GetString.Parase;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Screen;

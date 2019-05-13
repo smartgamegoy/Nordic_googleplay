@@ -1,4 +1,4 @@
-package com.jetec.nordic_googleplay.NewActivity;
+package com.jetec.nordic_googleplay.NewActivity.GetString;
 
 import android.content.Context;
 import com.jetec.nordic_googleplay.R;

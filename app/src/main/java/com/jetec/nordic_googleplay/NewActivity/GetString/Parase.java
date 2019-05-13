@@ -1,4 +1,4 @@
-package com.jetec.nordic_googleplay.NewActivity;
+package com.jetec.nordic_googleplay.NewActivity.GetString;
 
 public class Parase {
 

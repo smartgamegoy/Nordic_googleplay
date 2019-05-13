@@ -2,7 +2,7 @@ package com.jetec.nordic_googleplay.NewActivity.Function;
 
 import android.util.Log;
 
-import com.jetec.nordic_googleplay.NewActivity.Parase;
+import com.jetec.nordic_googleplay.NewActivity.GetString.Parase;
 import com.jetec.nordic_googleplay.NewModel;
 
 import java.util.ArrayList;

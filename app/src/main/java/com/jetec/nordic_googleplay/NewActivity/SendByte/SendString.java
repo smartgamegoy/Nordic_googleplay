@@ -5,8 +5,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.jetec.nordic_googleplay.Dialog.WriteDialog;
-import com.jetec.nordic_googleplay.NewActivity.GetString.ByteToInt;
-import com.jetec.nordic_googleplay.NewActivity.Parase;
+import com.jetec.nordic_googleplay.NewActivity.GetString.Parase;
 import com.jetec.nordic_googleplay.NewModel;
 
 import java.nio.charset.StandardCharsets;
