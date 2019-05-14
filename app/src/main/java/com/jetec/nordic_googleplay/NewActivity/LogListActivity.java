@@ -1,6 +1,5 @@
 package com.jetec.nordic_googleplay.NewActivity;
 
-import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
@@ -25,10 +24,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
-
-import com.jetec.nordic_googleplay.Activity.ChartActivity;
 import com.jetec.nordic_googleplay.Activity.MainActivity;
-import com.jetec.nordic_googleplay.Activity.SearchActivity;
 import com.jetec.nordic_googleplay.Dialog.WriteDialog;
 import com.jetec.nordic_googleplay.NewActivity.Export.MakeCSV;
 import com.jetec.nordic_googleplay.NewActivity.Export.MakePDF;
@@ -40,10 +36,7 @@ import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Value;
 import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -74,7 +67,7 @@ public class LogListActivity extends AppCompatActivity implements ListViewListen
 
         setContentView(R.layout.user_loglist);
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
@@ -114,7 +107,6 @@ public class LogListActivity extends AppCompatActivity implements ListViewListen
 
         Intent intent = getIntent();
         default_model = intent.getStringArrayExtra("default_model");
-        //String logjson = intent.getStringExtra("logjson");
         String logjson = NewModel.LogString;
         getLogList.setListener(this);
         getLogList.readytointent(logjson);
@@ -146,14 +138,14 @@ public class LogListActivity extends AppCompatActivity implements ListViewListen
                 Log.e(TAG, "連線狀態改變");
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 runOnUiThread(() -> {
-                    String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
+                    /*String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                     byte[] txValue = intents.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
                     String text = new String(txValue, StandardCharsets.UTF_8);
                     StringBuilder hex = new StringBuilder(txValue.length * 2);
                     for (byte aData : txValue) {
                         hex.append(String.format("%02X", aData));
                     }
-                    String gethex = hex.toString();
+                    String gethex = hex.toString();*/
                 });
             }
         }
@@ -214,7 +206,6 @@ public class LogListActivity extends AppCompatActivity implements ListViewListen
         public void run() {
             makePDF.todoPDF(LogListActivity.this, pdffile, nameList, timeList, saveList);
             doingPDF = true;
-            Log.e(TAG, "doingPDF = " + doingPDF);
             if (writeDialog.checkshowing()) {
                 writeDialog.closeDialog();
                 Intent intent = new Intent(LogListActivity.this, PDFListView.class);
@@ -291,9 +282,7 @@ public class LogListActivity extends AppCompatActivity implements ListViewListen
                         Value.BName = "";
                         disconnect();
                     })
-                    .setNeutralButton(R.string.butoon_no, (dialog, which) -> {
-                        vibrator.vibrate(100);
-                    })
+                    .setNeutralButton(R.string.butoon_no, (dialog, which) -> vibrator.vibrate(100))
                     .show();
         }
 

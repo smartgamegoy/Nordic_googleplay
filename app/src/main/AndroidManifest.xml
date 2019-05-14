@@ -144,6 +144,13 @@
             tools:ignore="InnerclassSeparator">
         </activity>
         <activity
+            android:name=".NewActivity.ShowSearchList"
+            android:theme="@style/nordic_use"
+            android:screenOrientation="user"
+            android:configChanges="orientation|keyboardHidden"
+            tools:ignore="InnerclassSeparator">
+        </activity>
+        <activity
             android:name=".Activity.ChartActivity"
             android:theme="@style/nordic_use"
             android:screenOrientation="user"

@@ -238,6 +238,7 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
                             Log.e(TAG, "ENDING");
                             getLog.endDownload();
                         } else if (text.contains("DATE")) {
+                            navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.start) + getString(R.string.LOG));
                             Log.e(TAG, "text = " + text);
                             text = text.replace("DATE", "");
                             logdate = text;
@@ -745,7 +746,6 @@ public class UserFunction extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.datadownload) {
             vibrator.vibrate(100);
             if (Value.passwordFlag != 4) {
-                navigationView.getMenu().findItem(R.id.nav_share).setTitle(getString(R.string.start) + getString(R.string.LOG));
                 getCounter.setListener(this);
                 checkDownload.setWantListener(this);
                 DownloadDialog downloadDialog = new DownloadDialog();

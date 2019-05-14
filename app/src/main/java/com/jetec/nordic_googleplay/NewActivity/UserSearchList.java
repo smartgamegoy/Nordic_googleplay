@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.text.method.DigitsKeyListener;
 import android.util.Log;
@@ -30,24 +31,24 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.jetec.nordic_googleplay.Activity.SearchActivity;
 import com.jetec.nordic_googleplay.NewActivity.Function.SearchNewList;
 import com.jetec.nordic_googleplay.NewActivity.Function.SetDateTime;
 import com.jetec.nordic_googleplay.NewActivity.Function.SetEditHint;
 import com.jetec.nordic_googleplay.NewActivity.GetString.GetUnit;
 import com.jetec.nordic_googleplay.NewActivity.Listener.GetLogList;
+import com.jetec.nordic_googleplay.NewActivity.Listener.GetSearchList;
 import com.jetec.nordic_googleplay.NewActivity.Listener.ListViewListener;
+import com.jetec.nordic_googleplay.NewActivity.Listener.SearchListener;
 import com.jetec.nordic_googleplay.NewModel;
 import com.jetec.nordic_googleplay.R;
 import com.jetec.nordic_googleplay.Service.BluetoothLeService;
 import com.jetec.nordic_googleplay.Value;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class UserSearchList extends AppCompatActivity implements ListViewListener {
+public class UserSearchList extends AppCompatActivity implements ListViewListener, SearchListener {
 
     private String TAG = "UserSearchList";
     private Vibrator vibrator;
@@ -61,6 +62,7 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
     private List<String> spinnerList, spinnerList2;
     private List<List<String>> saveList;
     private GetLogList getLogList = new GetLogList();
+    private GetSearchList getSearchList = new GetSearchList();
     private GetUnit getUnit = new GetUnit();
     private SetDateTime setDateTime = new SetDateTime();
     private SearchNewList searchNewList = new SearchNewList();
@@ -105,6 +107,7 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
         Intent intent = getIntent();
         default_model = intent.getStringArrayExtra("default_model");
         String logjson = NewModel.LogString;
+        getSearchList.setListener(this);
         getLogList.setListener(this);
         getLogList.readytointent(logjson);
         searchmenu();
@@ -131,12 +134,18 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
         spinnerList.add(date_time);
         spinnerList.add(record);
 
+        spinnerList2.add(getString(R.string.condition2));
+        spinnerList2.add("＞");
+        spinnerList2.add("≧");
+        spinnerList2.add("＝");
+        spinnerList2.add("≦");
+        spinnerList2.add("＜");
+
         for (int i = 0; i < nameList.size(); i++) {
             spinnerList.add(getUnit.getItemString(this, nameList.get(i), i));
         }
 
         new Thread(timecheck).start();
-        new Thread(arrayadd).start();
 
         s2.setEnabled(false);
         t2.setText("");
@@ -251,20 +260,22 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
         });
         b3.setOnClickListener(v -> {
             vibrator.vibrate(100);
+
             if (chose1.matches(date_time)) {
                 if (!chose2.matches("") && !t2.getText().toString().trim().matches("")) {
                     @SuppressLint("SimpleDateFormat")
                     SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
                     String timecomparison = t2.getText().toString().trim() + ":00";
                     Log.e(TAG, "timecomparison = " + timecomparison);
-                    searchNewList.timeSearchList(this, default_model, chose2, sdf,
-                            timecomparison, timeList, saveList);
+                    searchNewList.timeSearchList(this, getSearchList, chose2, sdf, timecomparison, nameList, timeList, saveList);
                 } else
                     Toast.makeText(this, getString(R.string.wrong), Toast.LENGTH_SHORT).show();
-            } else if (chose1.matches(record)) {
-                if (!chose2.matches(getString(R.string.condition2)) && !e1.getText().toString().trim().matches(""))
-                    calculate(chose1, chose2, e1.getText().toString().trim());
-                else
+            } else /*if (chose1.matches(record))*/ {
+                if (!chose2.matches(getString(R.string.condition2)) && !e1.getText().toString().trim().matches("")) {
+                    String text = e1.getText().toString().trim();
+                    searchNewList.idSearchList(this, getSearchList, chose1, chose2, text, nameList, spinnerList, timeList, saveList);
+                    //calculate(chose1, chose2, e1.getText().toString().trim());
+                } else
                     Toast.makeText(this, getString(R.string.wrong), Toast.LENGTH_SHORT).show();
             }
         });
@@ -332,7 +343,7 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
     }
 
     private void goback() {
-        Intent intent = new Intent(this, UserFunction.class);
+        Intent intent = new Intent(this, LogListActivity.class);
         intent.putExtra("default_model", default_model);
         startActivity(intent);
         finish();
@@ -345,18 +356,6 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
             String f_time = timeList.get(0);
             String e_time = timeList.get(timeList.size() - 1);
             t3.setText(getString(R.string.timerange) + ": " + f_time + " ~ " + e_time);
-        }
-    };
-
-    private Runnable arrayadd = new Runnable() {
-        @Override
-        public void run() {
-            spinnerList2.add(getString(R.string.condition2));
-            spinnerList2.add("＞");
-            spinnerList2.add("≧");
-            spinnerList2.add("＝");
-            spinnerList2.add("≦");
-            spinnerList2.add("＜");
         }
     };
 
@@ -449,6 +448,20 @@ public class UserSearchList extends AppCompatActivity implements ListViewListene
 
     @Override
     public void makepdf() {
+        //do nothing
+    }
+
+    @Override
+    public void checkList(String list) {
+        Intent intent = new Intent(this, ShowSearchList.class);
+        intent.putExtra("default_model", default_model);
+        intent.putExtra("list", list);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void setList(List<List<String>> showlist) {
         //do nothing
     }
 }

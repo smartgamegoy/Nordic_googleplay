@@ -1,7 +1,6 @@
 package com.jetec.nordic_googleplay.NewActivity.Listener;
 
 import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import java.util.ArrayList;

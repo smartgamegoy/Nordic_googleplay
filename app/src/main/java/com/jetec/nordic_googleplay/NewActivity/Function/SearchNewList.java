@@ -1,11 +1,11 @@
 package com.jetec.nordic_googleplay.NewActivity.Function;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
-
-import com.jetec.nordic_googleplay.Activity.SearchActivity;
+import com.jetec.nordic_googleplay.NewActivity.Listener.GetSearchList;
 import com.jetec.nordic_googleplay.R;
-
+import org.json.JSONArray;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,8 +26,8 @@ public class SearchNewList {
         idList.clear();
     }
 
-    public void timeSearchList(Context context, String[] default_model, String chose2, SimpleDateFormat sdf,
-                               String timecomparison, List<String> timeList, List<List<String>> saveList) {
+    public void timeSearchList(Context context, GetSearchList getSearchList, String chose2, SimpleDateFormat sdf,
+                               String timecomparison, List<String> nameList, List<String> timeList, List<List<String>> saveList) {
         try {
             if (chose2.matches("＞")) {
                 if (sdf.parse(timecomparison).after(sdf.parse(timeList.get(timeList.size() - 1)))
@@ -50,7 +50,7 @@ public class SearchNewList {
                         }
                         newSavelist.add(newList);
                     }
-                    showpage(default_model);
+                    showpage(getSearchList, nameList);
                 }
             } else if (chose2.matches("≧")) {
                 if (sdf.parse(timecomparison).after(sdf.parse(timeList.get(timeList.size() - 1)))
@@ -75,7 +75,7 @@ public class SearchNewList {
                         }
                         newSavelist.add(newList);
                     }
-                    showpage(default_model);
+                    showpage(getSearchList, nameList);
                 }
             } else if (chose2.matches("＝")) {
                 if (sdf.parse(timecomparison).after(sdf.parse(timeList.get(timeList.size() - 1)))
@@ -98,7 +98,7 @@ public class SearchNewList {
                         }
                         newSavelist.add(newList);
                     }
-                    showpage(default_model);
+                    showpage(getSearchList, nameList);
                 }
             } else if (chose2.matches("≦")) {
                 if (sdf.parse(timecomparison).after(sdf.parse(timeList.get(timeList.size() - 1)))
@@ -123,7 +123,7 @@ public class SearchNewList {
                         }
                         newSavelist.add(newList);
                     }
-                    showpage(default_model);
+                    showpage(getSearchList, nameList);
                 }
             } else if (chose2.matches("＜")) {
                 if (sdf.parse(timecomparison).after(sdf.parse(timeList.get(timeList.size() - 1)))
@@ -146,7 +146,7 @@ public class SearchNewList {
                         }
                         newSavelist.add(newList);
                     }
-                    showpage(default_model);
+                    showpage(getSearchList, nameList);
                 }
             } else
                 Toast.makeText(context, context.getString(R.string.wrong), Toast.LENGTH_SHORT).show();
@@ -155,12 +155,199 @@ public class SearchNewList {
         }
     }
 
-    public void idSearchList(Context context, String[] default_model, String chose1, String chose2,
-                             String text, ){
-
+    public void idSearchList(Context context, GetSearchList getSearchList, String chose1, String chose2,
+                             String text, List<String> nameList, List<String> spinnerList, List<String> timeList,
+                             List<List<String>> saveList) {
+        int index = spinnerList.indexOf(chose1) - 3;
+        Log.e(TAG, "saveList = " + saveList.size());
+        if (chose1.matches(spinnerList.get(2))) {
+            if (chose2.matches("＞")) {
+                int i = Integer.valueOf(text) - 1;
+                int j = timeList.size() - 1;
+                for (; i < j; i++) {
+                    newTimeList.add(timeList.get(i));
+                    idList.add(String.valueOf(i + 2));
+                }
+                for (int k = 0; k < saveList.size(); k++) {
+                    i = Integer.valueOf(text) - 1;
+                    List<String> newList = new ArrayList<>();
+                    newList.clear();
+                    for (; i < j; i++) {
+                        newList.add(saveList.get(k).get(i));
+                    }
+                    newSavelist.add(newList);
+                }
+                showpage(getSearchList, nameList);
+            } else if (chose2.matches("≧")) {
+                int i = Integer.valueOf(text) - 1;
+                int j = timeList.size() - 1;
+                for (; i <= j; i++) {
+                    newTimeList.add(timeList.get(i));
+                    idList.add(String.valueOf(i + 1));
+                }
+                for (int k = 0; k < saveList.size(); k++) {
+                    i = Integer.valueOf(text) - 1;
+                    List<String> newList = new ArrayList<>();
+                    newList.clear();
+                    for (; i <= j; i++) {
+                        newList.add(saveList.get(k).get(i));
+                    }
+                    newSavelist.add(newList);
+                }
+                showpage(getSearchList, spinnerList);
+            } else if (chose2.matches("＝")) {
+                int i = Integer.valueOf(text) - 1;
+                int j = timeList.size() - 1;
+                newTimeList.add(timeList.get(i));
+                idList.add(String.valueOf(i + 1));
+                for (int k = 0; k < saveList.size(); k++) {
+                    List<String> newList = new ArrayList<>();
+                    newList.clear();
+                    newList.add(saveList.get(k).get(j));
+                    newSavelist.add(newList);
+                }
+                showpage(getSearchList, nameList);
+            } else if (chose2.matches("≦")) {
+                int i = Integer.valueOf(text) - 1;
+                for (int j = 0; j <= i; j++) {
+                    newTimeList.add(timeList.get(j));
+                    idList.add(String.valueOf(j + 1));
+                }
+                for (int k = 0; k < saveList.size(); k++) {
+                    List<String> newList = new ArrayList<>();
+                    newList.clear();
+                    for (int j = 0; j <= i; j++) {
+                        newList.add(saveList.get(k).get(j));
+                    }
+                    newSavelist.add(newList);
+                }
+                showpage(getSearchList, nameList);
+            } else if (chose2.matches("＜")) {
+                int i = Integer.valueOf(text) - 1;
+                for (int j = 0; j < i; j++) {
+                    newTimeList.add(timeList.get(j));
+                    idList.add(String.valueOf(j + 1));
+                }
+                for (int k = 0; k < saveList.size(); k++) {
+                    List<String> newList = new ArrayList<>();
+                    newList.clear();
+                    for (int j = 0; j < i; j++) {
+                        newList.add(saveList.get(k).get(j));
+                    }
+                    newSavelist.add(newList);
+                }
+                showpage(getSearchList, nameList);
+            } else {
+                Toast.makeText(context, context.getString(R.string.wrong), Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            if (chose2.matches("＞")) {
+                float i = Float.valueOf(text);
+                for (int k = 0; k < timeList.size(); k++) {
+                    if ((Float.valueOf(saveList.get(index).get(k)) * 10) > i * 10) {
+                        newTimeList.add(timeList.get(k));
+                        idList.add(String.valueOf(k + 1));
+                    }
+                }
+                for (int j = 0; j < saveList.size(); j++) {
+                    List<String> newList = new ArrayList<>();
+                    newList.clear();
+                    for (int k = 0; k < timeList.size(); k++) {
+                        if ((Float.valueOf(saveList.get(index).get(k)) * 10) > i * 10) {
+                            newList.add(saveList.get(j).get(k));
+                        }
+                    }
+                    newSavelist.add(newList);
+                }
+                showpage(getSearchList, nameList);
+            } else if (chose2.matches("≧")) {
+                float i = Float.valueOf(text);
+                for (int k = 0; k < timeList.size(); k++) {
+                    if ((Float.valueOf(saveList.get(index).get(k)) * 10) >= i * 10) {
+                        newTimeList.add(timeList.get(k));
+                        idList.add(String.valueOf(k + 1));
+                    }
+                }
+                for (int j = 0; j < saveList.size(); j++) {
+                    List<String> newList = new ArrayList<>();
+                    newList.clear();
+                    for (int k = 0; k < timeList.size(); k++) {
+                        if ((Float.valueOf(saveList.get(index).get(k)) * 10) >= i * 10) {
+                            newList.add(saveList.get(j).get(k));
+                        }
+                    }
+                    newSavelist.add(newList);
+                }
+                showpage(getSearchList, nameList);
+            } else if (chose2.matches("＝")) {
+                float i = Float.valueOf(text);
+                for (int k = 0; k < timeList.size(); k++) {
+                    if ((Float.valueOf(saveList.get(index).get(k)) * 10) == i * 10) {
+                        newTimeList.add(timeList.get(k));
+                        idList.add(String.valueOf(k + 1));
+                    }
+                }
+                for (int j = 0; j < saveList.size(); j++) {
+                    List<String> newList = new ArrayList<>();
+                    newList.clear();
+                    for (int k = 0; k < timeList.size(); k++) {
+                        if ((Float.valueOf(saveList.get(index).get(k)) * 10) == i * 10) {
+                            newList.add(saveList.get(j).get(k));
+                        }
+                    }
+                    newSavelist.add(newList);
+                }
+                showpage(getSearchList, nameList);
+            } else if (chose2.matches("≦")) {
+                float i = Float.valueOf(text);
+                for (int k = 0; k < timeList.size(); k++) {
+                    if ((Float.valueOf(saveList.get(index).get(k)) * 10) <= i * 10) {
+                        newTimeList.add(timeList.get(k));
+                        idList.add(String.valueOf(k + 1));
+                    }
+                }
+                for (int j = 0; j < saveList.size(); j++) {
+                    List<String> newList = new ArrayList<>();
+                    newList.clear();
+                    for (int k = 0; k < timeList.size(); k++) {
+                        if ((Float.valueOf(saveList.get(index).get(k)) * 10) <= i * 10) {
+                            newList.add(saveList.get(j).get(k));
+                        }
+                    }
+                    newSavelist.add(newList);
+                }
+                showpage(getSearchList, nameList);
+            } else if (chose2.matches("＜")) {
+                float i = Float.valueOf(text);
+                for (int k = 0; k < timeList.size(); k++) {
+                    if ((Float.valueOf(saveList.get(index).get(k)) * 10) < i * 10) {
+                        newTimeList.add(timeList.get(k));
+                        idList.add(String.valueOf(k + 1));
+                    }
+                }
+                for (int j = 0; j < saveList.size(); j++) {
+                    List<String> newList = new ArrayList<>();
+                    newList.clear();
+                    for (int k = 0; k < timeList.size(); k++) {
+                        if ((Float.valueOf(saveList.get(index).get(k)) * 10) < i * 10) {
+                            newList.add(saveList.get(j).get(k));
+                        }
+                    }
+                    newSavelist.add(newList);
+                }
+                showpage(getSearchList, nameList);
+            }
+        }
     }
 
-    private void showpage(String[] default_model) {
-
+    private void showpage(GetSearchList getSearchList, List<String> nameList) {
+        List<List<String>> ListArr = new ArrayList<>();
+        ListArr.clear();
+        ListArr.add(nameList);
+        ListArr.add(newTimeList);
+        ListArr.add(idList);
+        ListArr.addAll(newSavelist);
+        JSONArray newListjson = new JSONArray(ListArr);
+        getSearchList.toshowlist(newListjson.toString());
     }
 }

@@ -12,33 +12,38 @@ import com.jetec.nordic_googleplay.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LogListViewAdapter extends BaseAdapter {
+public class SearchListViewAdapter  extends BaseAdapter {
 
     private String TAG = "LogListViewAdapter";
-    private List<String> nameList, timeList;
-    private List<List<String>> saveList;
     private LayoutInflater inflater;
+    private List<String> nameList, idList, timeList;
+    private List<List<String>> saveList;
+    private GetUnit getUnit = new GetUnit();
     private String getdate, getsize;
     private Context context;
-    private GetUnit getUnit = new GetUnit();
 
-    public LogListViewAdapter() {
+    public SearchListViewAdapter(){
         nameList = new ArrayList<>();
+        idList = new ArrayList<>();
         timeList = new ArrayList<>();
         saveList = new ArrayList<>();
         nameList.clear();
+        idList.clear();
         timeList.clear();
         saveList.clear();
     }
 
-    public void setList(Context context, List<String> nameList, List<String> timeList, List<List<String>> saveList) {
+    public void setList(Context context, List<List<String>> showlist){
         this.context = context;
         inflater = LayoutInflater.from(context);
         getdate = context.getString(R.string.datetime);
         getsize = context.getString(R.string.size);
-        this.nameList = nameList;
-        this.timeList = timeList;
-        this.saveList = saveList;
+        nameList = showlist.get(0);
+        idList = showlist.get(1);
+        timeList = showlist.get(2);
+        for(int i = 3; i < showlist.size(); i++){
+            saveList.add(showlist.get(i));
+        }
     }
 
     @Override
@@ -53,7 +58,7 @@ public class LogListViewAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return position;
+        return 0;
     }
 
     @SuppressLint("InflateParams")
@@ -113,7 +118,7 @@ public class LogListViewAdapter extends BaseAdapter {
                 textView.setText(getdate + " : " + timeList.get(position));
             }
             if (i == 1) {
-                textView.setText(getsize + " : " + String.valueOf((position + 1)));
+                textView.setText(getsize + " : " + idList.get(position));
             }
             if (i > 1) {
                 int j = i - 2;
