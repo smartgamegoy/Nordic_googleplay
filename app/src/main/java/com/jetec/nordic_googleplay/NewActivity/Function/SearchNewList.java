@@ -182,7 +182,7 @@ public class SearchNewList {
                 int i = Integer.valueOf(text) - 1;
                 int j = timeList.size() - 1;
                 for (; i <= j; i++) {
-                    newTimeList.add(timeList.get(i));
+                    newTimeList.add(timeList.get(i - 1));
                     idList.add(String.valueOf(i + 1));
                 }
                 for (int k = 0; k < saveList.size(); k++) {
@@ -190,20 +190,20 @@ public class SearchNewList {
                     List<String> newList = new ArrayList<>();
                     newList.clear();
                     for (; i <= j; i++) {
-                        newList.add(saveList.get(k).get(i));
+                        newList.add(saveList.get(k).get(i - 1));
                     }
                     newSavelist.add(newList);
                 }
-                showpage(getSearchList, spinnerList);
+                showpage(getSearchList, nameList);
             } else if (chose2.matches("＝")) {
                 int i = Integer.valueOf(text) - 1;
                 int j = timeList.size() - 1;
-                newTimeList.add(timeList.get(i));
+                newTimeList.add(timeList.get(i - 1));
                 idList.add(String.valueOf(i + 1));
                 for (int k = 0; k < saveList.size(); k++) {
                     List<String> newList = new ArrayList<>();
                     newList.clear();
-                    newList.add(saveList.get(k).get(j));
+                    newList.add(saveList.get(k).get(i - 1));
                     newSavelist.add(newList);
                 }
                 showpage(getSearchList, nameList);
