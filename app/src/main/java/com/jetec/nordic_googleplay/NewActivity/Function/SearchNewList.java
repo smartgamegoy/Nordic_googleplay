@@ -44,8 +44,8 @@ public class SearchNewList {
                         List<String> newList = new ArrayList<>();
                         newList.clear();
                         for (int j = 0; j < timeList.size(); j++) {
-                            if (sdf.parse(timecomparison).before(sdf.parse(timeList.get(i)))) {
-                                newList.add(saveList.get(j).get(i));
+                            if (sdf.parse(timecomparison).before(sdf.parse(timeList.get(j)))) {
+                                newList.add(saveList.get(i).get(j));
                             }
                         }
                         newSavelist.add(newList);
@@ -68,9 +68,9 @@ public class SearchNewList {
                         List<String> newList = new ArrayList<>();
                         newList.clear();
                         for (int j = 0; j < timeList.size(); j++) {
-                            if (sdf.parse(timecomparison).before(sdf.parse(timeList.get(i)))
-                                    || sdf.parse(timecomparison).equals(sdf.parse(timeList.get(i)))) {
-                                newList.add(saveList.get(j).get(i));
+                            if (sdf.parse(timecomparison).before(sdf.parse(timeList.get(j)))
+                                    || sdf.parse(timecomparison).equals(sdf.parse(timeList.get(j)))) {
+                                newList.add(saveList.get(i).get(j));
                             }
                         }
                         newSavelist.add(newList);
@@ -92,8 +92,8 @@ public class SearchNewList {
                         List<String> newList = new ArrayList<>();
                         newList.clear();
                         for (int j = 0; j < timeList.size(); j++) {
-                            if (sdf.parse(timecomparison).equals(sdf.parse(timeList.get(i)))) {
-                                newList.add(saveList.get(j).get(i));
+                            if (sdf.parse(timecomparison).equals(sdf.parse(timeList.get(j)))) {
+                                newList.add(saveList.get(i).get(j));
                             }
                         }
                         newSavelist.add(newList);
@@ -116,9 +116,9 @@ public class SearchNewList {
                         List<String> newList = new ArrayList<>();
                         newList.clear();
                         for (int j = 0; j < timeList.size(); j++) {
-                            if (sdf.parse(timecomparison).after(sdf.parse(timeList.get(i)))
-                                    || sdf.parse(timecomparison).equals(sdf.parse(timeList.get(i)))) {
-                                newList.add(saveList.get(j).get(i));
+                            if (sdf.parse(timecomparison).after(sdf.parse(timeList.get(j)))
+                                    || sdf.parse(timecomparison).equals(sdf.parse(timeList.get(j)))) {
+                                newList.add(saveList.get(i).get(j));
                             }
                         }
                         newSavelist.add(newList);
@@ -140,8 +140,8 @@ public class SearchNewList {
                         List<String> newList = new ArrayList<>();
                         newList.clear();
                         for (int j = 0; j < timeList.size(); j++) {
-                            if (sdf.parse(timecomparison).after(sdf.parse(timeList.get(i)))) {
-                                newList.add(saveList.get(j).get(i));
+                            if (sdf.parse(timecomparison).after(sdf.parse(timeList.get(j)))) {
+                                newList.add(saveList.get(i).get(j));
                             }
                         }
                         newSavelist.add(newList);
